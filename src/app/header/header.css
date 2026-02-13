@@ -1,0 +1,84 @@
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 70px;
+  padding: 0 20px;
+  background-color: var(--purple);
+  border-bottom: 1px solid var(--darkpurple);
+}
+
+/* IZQUIERDA */
+.header-left .logo {
+  height: 45px;
+  cursor: pointer;
+}
+
+/* CENTRO */
+.header-center {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.header-center a,
+.dropdown-title {
+  background-color: var(--purple);
+  text-decoration: none;
+  color: var(--black);
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+}
+
+.header-center a:hover,
+.dropdown-title:hover {
+  color: var(--darkpurple);
+}
+
+.active {
+  border-bottom: 2px solid var(--darkpurple);
+}
+
+/* DESPLIEGUE */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 30px;
+  left: 0;
+  background: var(--purple);
+  border: 1px solid var(--darkpurple);
+  border-radius: 0px;
+  min-width: 160px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 10px 12px;
+  color: var(--black);
+  text-decoration: none;
+}
+
+.dropdown-menu a:hover {
+  background-color: var(--lavender);
+}
+
+.dropdown-title {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* DERECHA */
+.header-right .user-avatar {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+}

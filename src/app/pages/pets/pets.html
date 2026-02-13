@@ -1,0 +1,37 @@
+<section class="pets-container">
+  <h1>Mascotas disponibles</h1>
+
+  <div class="pets-controls">
+    <button class="emergency-btn" (click)="emergencyAction()">
+      Emergencia
+    </button>
+
+    <label for="speciesFilter">Filtrar por especie:</label>
+    <select
+      id="speciesFilter"
+      [(ngModel)]="selectedSpecies"
+      (change)="filterPets()"
+    >
+      <option value="">Todas</option>
+      <option value="Perro">Perro</option>
+      <option value="Gato">Gato</option>
+    </select>
+  </div>
+
+  <div class="pets-grid">
+    <article class="pet-card" *ngFor="let pet of pets">
+      <img [src]="pet.imageUrl" [alt]="pet.name" />
+
+      <div class="pet-content">
+        <h2>{{ pet.name }}</h2>
+        <p>{{ pet.species }} - {{ pet.breed }}</p>
+        <p>{{ pet.age }} anos - {{ pet.size }}</p>
+        <p>{{ pet.location }}</p>
+        <p>{{ pet.description }}</p>
+        <span class="status" [class.adopted]="pet.adopted">
+          {{ pet.adopted ? 'Adoptada' : 'Disponible' }}
+        </span>
+      </div>
+    </article>
+  </div>
+</section>

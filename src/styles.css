@@ -1,1 +1,45 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Variables de color, se usan con var(--color) */
+:root {
+    /* Primary colors */
+    --darkpurple: #7d4d73;
+    --purple: #b78ab1;
+    --lavender: #d0b1c3;
+    --pink: #F8D9E2;
+
+    /* Secondary colors */
+    --denimblue: #326f7d;
+    --charcoal: #343d38;
+    --green: #6c7f61;
+    --lightgreen: #7ea06b;
+
+    /* Beige + Black and White */    
+    --white: #ffffff;
+    --black: #000000;
+    --gray: #76726e;
+    --beige: #c1b7ab;
+    --cream: #e7dfd4;
+    --vanilla: #f9f1ed;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+}
+
+app-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}

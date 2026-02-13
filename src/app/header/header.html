@@ -1,0 +1,73 @@
+<header class="app-header">
+
+  <!-- LOGO -->
+  <div class="header-left">
+    <img
+      src="assets/logo.png"
+      alt="Logo"
+      class="logo"
+      routerLink="/inicio"
+    />
+  </div>
+
+  <!-- NAVEGACIÓN A OTRAS PÁGINAS -->
+  <nav class="header-center">
+    <!-- Inicio -->
+    <a routerLink="/inicio" routerLinkActive="active">Inicio</a>
+
+    <!-- Mascotas -->
+    <a routerLink="/pets" routerLinkActive="active">Mascotas</a>
+
+    <!-- La Protectora (dropdown) -->
+    <div class="dropdown">
+    <span
+        class="dropdown-title"
+        [class.open]="openProtectora"
+        (click)="toggleProtectora($event)"
+    >
+        La protectora ▾
+    </span>
+
+        <div class="dropdown-menu" *ngIf="openProtectora">
+            <a routerLink="/protectora/informacion" (click)="closeAll()">
+            Información
+            </a>
+            <a routerLink="/protectora/eventos" (click)="closeAll()">
+            Eventos
+            </a>
+            <a routerLink="/protectora/contacto" (click)="closeAll()">
+            Contacto
+            </a>
+        </div>
+    </div>
+
+    <!-- Actividades (dropdown) -->
+    <div class="dropdown">
+        <span
+            class="dropdown-title"
+            [class.open]="openActividades"
+            (click)="toggleActividades($event)"
+        >
+            Actividades ▾
+        </span>
+
+        <div class="dropdown-menu" *ngIf="openActividades">
+            <a routerLink="/actividades/ayudas" (click)="closeAll()">
+            Ayudas
+            </a>
+            <a routerLink="/actividades/donaciones" (click)="closeAll()">
+            Donaciones
+            </a>
+        </div>
+    </div>
+  </nav>
+
+  <!-- FOTO DEL USUARIO -->
+  <div class="header-right">
+    <img
+    [src]="userImageUrl"
+    alt="Usuario"
+    class="user-avatar"
+    />
+  </div>
+</header>
