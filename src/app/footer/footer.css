@@ -1,39 +1,57 @@
 .footer {
-  background-color: #1f1f1f;
-  color: white;
-  padding: 40px 20px;
+  background-color: var(--purple);
+  color: var(--darkviolet);
+  padding: 50px 20px;
+  font-family: 'Winky Milky';
+  font-size: 22px;
+  border-top: 1px solid var(--darkpurple);
 }
 
 .footer-grid {
   max-width: 1100px;
   margin: auto;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  /* Crea un espacio de 3 columnas divididas por una fracción de espacio*/
+  grid-template-columns: repeat(4, 1fr);
   gap: 30px;
   text-align: center;
 }
 
 .footer-col h4 {
-  margin-bottom: 12px;
-  color: #00bcd4;
+  margin-bottom: 15px;
+  color: var(--darkviolet);
+  font-size: 25px;
+  font-weight: normal;
 }
+
+.footer-col p {
+  margin: 6px 0;
+  font-size: 20px;
+  font-family: 'Sans Serif';
+}
+
+/* Centrado del logo (lo mantengo igual que tú) */
 .footer-col:first-child {
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Centra vertical */
-  align-items: center;    /* Centra horizontal */
-  height: 100%;           /* Ocupa todo el alto de la fila si hace falta */
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 
 .footer-logo {
-  width: 90px;
+  width: 100px;
   margin-bottom: 10px;
 }
 
-.brand {
-  font-weight: bold;
-  font-size: 18px;
+/* Links navegación */
+.footer a {
+  text-decoration: none;
+  color: var(--darkviolet);
+  transition: color 0.3s ease;
+}
+
+.footer a:hover {
+  color: var(--darkpurple);
 }
 
 /* Responsive */

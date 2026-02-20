@@ -1,8 +1,46 @@
 /* You can add global styles to this file, and also import other style files */
 
+/* Fuentes */
+/* Para aplicarlas: font-family: 'Makien' + font-style: italic */
+@font-face {
+  font-family: 'Bulgia';
+  src: url('assets/fonts/Bulgia.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Cupcat';
+  src: url('assets/fonts/Cupcat.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Makien';
+  src: url('assets/fonts/Makien.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Makien';
+  src: url('assets/fonts/Makien-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Winky Milky';
+  src: url('assets/fonts/Winky-Milky.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
 /* Variables de color, se usan con var(--color) */
 :root {
     /* Primary colors */
+    --darkviolet: #33233d;
     --darkpurple: #7d4d73;
     --purple: #b78ab1;
     --lavender: #d0b1c3;

@@ -6,6 +6,9 @@
   padding: 0 20px;
   background-color: var(--purple);
   border-bottom: 1px solid var(--darkpurple);
+  font-family: 'Winky Milky';
+  color: var(--darkviolet);
+  font-size: 25px;
 }
 
 /* IZQUIERDA */
@@ -25,7 +28,7 @@
 .dropdown-title {
   background-color: var(--purple);
   text-decoration: none;
-  color: var(--black);
+  color: var(--darkviolet);
   font-weight: 500;
   cursor: pointer;
   position: relative;
@@ -47,8 +50,7 @@
 
 .dropdown-menu {
   position: absolute;
-  top: 30px;
-  left: 0;
+  top: 35px;
   background: var(--purple);
   border: 1px solid var(--darkpurple);
   border-radius: 0px;
@@ -60,7 +62,8 @@
 .dropdown-menu a {
   display: block;
   padding: 10px 12px;
-  color: var(--black);
+  color: var(--darkviolet);
+  font-size: 22px;
   text-decoration: none;
 }
 
