@@ -1,1 +1,89 @@
-<p>home works!</p>
+<!-- BANNER -->
+<section class="banner">
+  <img src="assets/banner.png" alt="Bienvenida protectora">
+</section>
+
+<!-- 🐾 QUIENES SOMOS -->
+<section class="about">
+  <p>
+    ¡Bienvenid@ a "Nombre de protectora"! Somos una protectora dedicada al rescate, cuidado y adopción responsable
+    de animales que necesitan una segunda oportunidad.
+  </p>
+</section>
+
+<!-- QUÉ HACEMOS -->
+<section class="what-we-do">
+  <h2>¿Qué hacemos?</h2>
+
+  <div class="actions">
+    <div class="action-item">
+      <img src="assets/icons/rescate.png">
+      <p>Rescatamos animales en situación de abandono.</p>
+    </div>
+
+    <div class="action-item">
+      <img src="assets/icons/cuidados.png">
+      <p>Les damos cuidados veterinarios y alimentación.</p>
+    </div>
+
+    <div class="action-item">
+      <img src="assets/icons/adopcion.png">
+      <p>Buscamos familias responsables para adopción.</p>
+    </div>
+
+    <div class="action-item">
+      <img src="assets/icons/educacion.png">
+      <p>Concienciamos sobre el respeto animal.</p>
+    </div>
+  </div>
+</section>
+
+<!-- NUESTRAS MASCOTAS -->
+<section class="pets-section">
+  <h2>Nuestras mascotas</h2>
+
+  <div class="pets-grid">
+    <div class="pet-card" *ngFor="let pet of randomPets">
+      <img [src]="pet.imageUrl" alt="{{pet.name}}">
+      <p>{{pet.name}}</p>
+    </div>
+  </div>
+
+  <button routerLink="/pets" class="btn-primary">
+    Ver más
+  </button>
+</section>
+
+<!-- 🎉 EVENTOS -->
+<section class="events">
+  <h2>Eventos</h2>
+
+  <div class="events-grid">
+    <div class="event-card">
+      <img src="assets/events/event1.jpg">
+      <h3>Feria de adopción</h3>
+      <p>Ven a conocer a nuestros animales este sábado.</p>
+    </div>
+
+    <div class="event-card">
+      <img src="assets/events/event2.jpg">
+      <h3>Charla educativa</h3>
+      <p>Aprende sobre tenencia responsable.</p>
+    </div>
+
+    <div class="event-card">
+      <img src="assets/events/event3.jpg">
+      <h3>Jornada solidaria</h3>
+      <p>Recaudación de fondos para el refugio.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 🎮 VIDEOJUEGO -->
+<section class="game-section">
+  <h2>¡Prueba nuestro videojuego!</h2>
+
+  <button routerLink="/videojuego" class="btn-game">
+    Jugar ahora →
+  </button>
+</section>

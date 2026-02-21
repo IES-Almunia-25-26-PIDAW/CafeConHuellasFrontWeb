@@ -1,41 +1,20 @@
 /* You can add global styles to this file, and also import other style files */
 
 /* Fuentes */
-/* Para aplicarlas: font-family: 'Makien' + font-style: italic */
-@font-face {
-  font-family: 'Bulgia';
-  src: url('assets/fonts/Bulgia.otf') format('opentype');
-  font-weight: 400;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Cupcat';
-  src: url('assets/fonts/Cupcat.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Makien';
-  src: url('assets/fonts/Makien.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Makien';
-  src: url('assets/fonts/Makien-Italic.ttf') format('truetype');
-  font-weight: 400;
-  font-style: italic;
-}
-
 @font-face {
   font-family: 'Winky Milky';
   src: url('assets/fonts/Winky-Milky.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
 }
+
+@font-face {
+  font-family: 'MilkyVintage';
+  src: url('assets/fonts/MilkyVintage.ttf') format('truetype');
+  font-weight: auto;
+  font-style: normal;
+}
+
 
 /* Variables de color, se usan con var(--color) */
 :root {
@@ -48,17 +27,18 @@
 
     /* Secondary colors */
     --denimblue: #326f7d;
-    --charcoal: #343d38;
+    --charcoal: #313949;
     --green: #6c7f61;
     --lightgreen: #7ea06b;
 
     /* Beige + Black and White */    
     --white: #ffffff;
     --black: #000000;
+    --brown: #5e5248;
     --gray: #76726e;
     --beige: #c1b7ab;
-    --cream: #e7dfd4;
-    --vanilla: #f9f1ed;
+    --cream: #e6d9c7;
+    --vanilla: #faf4f0;
 }
 
 html, body {
@@ -70,8 +50,13 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--vanilla);
 }
-
+/* 
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+*/
 main {
   flex: 1;
 }

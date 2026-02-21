@@ -1,7 +1,7 @@
 .footer {
   background-color: var(--purple);
   color: var(--darkviolet);
-  padding: 50px 20px;
+  padding: 20px 20px 50px;
   font-family: 'Winky Milky';
   font-size: 22px;
   border-top: 1px solid var(--darkpurple);
@@ -25,11 +25,12 @@
 
 .footer-col p {
   margin: 6px 0;
-  font-size: 20px;
-  font-family: 'Sans Serif';
+  font-size: 17px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: bold;
 }
 
-/* Centrado del logo (lo mantengo igual que tú) */
+/* Centrado del logo */
 .footer-col:first-child {
   display: flex;
   flex-direction: column;
@@ -40,7 +41,6 @@
 
 .footer-logo {
   width: 100px;
-  margin-bottom: 10px;
 }
 
 /* Links navegación */
@@ -48,6 +48,7 @@
   text-decoration: none;
   color: var(--darkviolet);
   transition: color 0.3s ease;
+  font-style: italic;  
 }
 
 .footer a:hover {

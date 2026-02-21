@@ -1,0 +1,167 @@
+section {
+  padding: 60px 10%;
+  text-align: center;
+}
+
+h2 {
+  margin-bottom: 60px;
+  font-size: 38px;
+  font-family: 'Winky Milky';
+  font-weight: normal;
+  color: var(--darkviolet);
+}
+
+/* BANNER */
+.banner {
+    padding: 0;
+}
+
+.banner img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+}
+
+/* QUIENES SOMOS */
+.about p {
+  max-width: 900px;
+  margin: auto;
+  font-size: 25px;
+  font-weight: normal;
+  font-style: italic;
+  color: var(--brown);
+  font-family: 'MilkyVintage';
+}
+
+/* QUÉ HACEMOS */
+.actions {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 60px;
+  flex-wrap: wrap;
+}
+
+.action-item {
+  width: 200px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.action-item img {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 15px;
+}
+
+.action-item:hover {
+  transform: translateY(-5px);
+}
+
+/* MASCOTAS */
+.pets-grid {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  font-family: 'MilkyVintage';
+}
+
+.pet-card p {
+  margin-top: 12px;
+  margin-bottom: 12px;
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--charcoal);
+}
+
+.pet-card {
+  width: 180px;
+  transition: transform 0.3s ease;
+}
+
+.pet-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.pet-card:hover {
+  transform: scale(1.05);
+}
+
+.btn-primary {
+  margin-top: 30px;
+  padding: 10px 25px;
+  border: none;
+  background-color: var(--green);
+  color: var(--white);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.btn-primary:hover {
+  background-color: var(--lightgreen);
+}
+
+/* EVENTOS */
+.events-grid {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.event-card {
+  width: 250px;
+  border: 2px solid var(--cream);
+  border-radius: 10px;
+  padding: 15px;
+  background-color: var(--white);
+}
+
+.event-card {
+  width: 200px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.event-card:hover {
+  transform: translateY(-5px);
+}
+
+.event-card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.event-card h3 {
+  margin: 12px 0 8px;
+  font-size: 28px;
+  font-weight: normal;
+  font-family: 'MilkyVintage';
+  color: var(--charcoal);
+}
+
+/* VIDEOJUEGO */
+.btn-game {
+  padding: 12px 25px;
+  background-color: var(--green);
+  color: var(--white);
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 80px;
+}
+
+.btn-game:hover {
+  background-color: var(--lightgreen);
+}
