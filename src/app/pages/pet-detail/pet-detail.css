@@ -1,0 +1,81 @@
+.detail-container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 40px;
+}
+
+/* Top section: imagen + info */
+.top-section {
+  display: flex;
+  gap: 20px; /* menos espacio que antes */
+  align-items: flex-start; /* alinea la parte superior de la imagen y del info-container */
+}
+
+/* Imagen */
+.top-section img {
+  width: 400px;
+  border-radius: 12px;
+  flex-shrink: 0; /* evita que la imagen se achique */
+}
+
+/* Contenedor de nombre + info */
+.info-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* espacio entre nombre e info */
+  flex: 1;
+}
+
+/* Nombre de la mascota */
+.pet-name {
+  margin: 0;
+  font-size: 2rem;
+  text-align: left;
+}
+
+/* Info de la mascota */
+.info-column {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  border: 1px solid #ccc; 
+  border-radius: 8px;
+  padding: 15px;
+  background-color: var(--purple); /* lila suave */
+}
+
+/* Descripción */
+.description-card {
+  margin-top: 40px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 28px;
+  width: 100%;
+  background-color: var(--purple);; /* lila suave */
+}
+
+.description-card h2,
+.description-card p {
+  text-align: center;
+}
+
+/* Sección ayuda */
+.help-section {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.contact-btn {
+  background-color: #7e22ce; /* violeta fuerte */
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: block;
+  margin: 0 auto;
+}
+
+h2 {
+  text-align: center;
+}

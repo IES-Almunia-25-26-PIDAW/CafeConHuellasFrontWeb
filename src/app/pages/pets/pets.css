@@ -82,3 +82,17 @@
   background: #fee2e2;
   color: #7f1d1d;
 }
+
+.emergency-btn {
+  background-color: #d8b4fe; /* violeta suave */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.emergency-btn.active {
+  background-color: #7e22ce; /* violeta fuerte */
+}

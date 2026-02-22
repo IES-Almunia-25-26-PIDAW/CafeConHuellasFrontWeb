@@ -4,12 +4,14 @@ import { RouterModule, Routes } from '@angular/router';
 import { Home } from './pages/home/home';
 import { Pets } from './pages/pets/pets';
 import { HelpUs } from './pages/help-us/help-us';
+import { PetDetail } from './pages/pet-detail/pet-detail';
 
 //rutas de mi aplicación
 const routes: Routes= [
   { path: '', component: Home },
   { path: 'pets', component: Pets },
-  { path: 'help-us', component: HelpUs }
+  { path: 'help-us', component: HelpUs },
+  { path: 'pet/:id', component: PetDetail }
 ]
 
 @NgModule({

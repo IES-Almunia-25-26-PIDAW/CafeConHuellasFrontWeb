@@ -1,0 +1,32 @@
+<section *ngIf="pet" class="detail-container">
+
+  <div class="top-section">
+    <!-- Imagen de la mascota -->
+    <img [src]="pet.imageUrl" [alt]="pet.name">
+
+    <!-- Contenedor de nombre + info -->
+    <div class="info-container">
+      <h1 class="pet-name">{{ pet.name }}</h1>
+
+      <div class="info-column">
+        <p><strong>Especie:</strong> {{ pet.species }}</p>
+        <p><strong>Raza:</strong> {{ pet.breed }}</p>
+        <p><strong>Edad:</strong> {{ pet.age }} años</p>
+        <p><strong>Ubicación:</strong> {{ pet.location }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Descripción -->
+  <div class="description-card">
+    <h2>Sobre {{ pet.name }}</h2>
+    <p>{{ pet.description }}</p>
+  </div>
+
+  <!-- Sección ayuda -->
+  <div class="help-section">
+    <h3>¿Quieres ayudarle?</h3>
+    <button class="contact-btn">Contacta con nosotros</button>
+  </div>
+
+</section>

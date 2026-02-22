@@ -9,4 +9,5 @@ export interface Pet {
   adopted: boolean;
   imageUrl: string;
   description: string;
+  emergency: boolean;
 }
