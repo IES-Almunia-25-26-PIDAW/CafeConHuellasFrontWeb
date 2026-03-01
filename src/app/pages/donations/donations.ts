@@ -4,11 +4,12 @@ import { RouterModule } from '@angular/router';
 import { Banner } from '../../shared/banner/banner';
 
 @Component({
-  selector: 'app-help-us',
+  selector: 'app-donations',
   standalone: true,
   imports: [CommonModule, RouterModule, Banner],
-  templateUrl: './help-us.html',
-  styleUrl: './help-us.css'
+  templateUrl: './donations.html',
+  styleUrl: './donations.css',
 })
+export class Donations {
 
-export class HelpUs {}
+}

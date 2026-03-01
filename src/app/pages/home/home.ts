@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { PETS_MOCK } from '../../data/pets.mock';
 import { Pet } from '../../models/pet.model';
+import { Banner } from '../../shared/banner/banner';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule,Banner],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

@@ -1,0 +1,78 @@
+<!--BANNER-->
+<app-banner
+  [imageUrl]="'assets/banners/banner-inicio.png'">
+</app-banner>
+
+<!-- CONTACTO -->
+ <section>
+
+  <h2>¿Alguna pregunta? ¡Contáctanos!</h2>
+
+  <div class="contact-container">
+
+    <!-- IZQUIERDA FORMULARIO -->
+    <div class="contact-left">
+
+      <h3>CONTACTO</h3>
+
+      <div class="card">
+
+        <form (ngSubmit)="sendForm()">
+
+          <label>Nombre</label>
+          <input type="text" [(ngModel)]="name" name="name" required>
+
+          <label>Email</label>
+          <input type="email" [(ngModel)]="email" name="email" required>
+
+          <label>Mensaje</label>
+          <textarea [(ngModel)]="message" name="message" rows="5" required></textarea>
+
+          <button type="submit" class="btn-primary">
+            Enviar mensaje
+          </button>
+
+        </form>
+
+      </div>
+
+    </div>
+
+    <!-- DERECHA INFO -->
+    <div class="contact-right">
+
+      <h3>Otras formas de contacto</h3>
+
+      <div class="card contact-info">
+
+        <p>
+          📧 contacto@protectora.com
+        </p>
+
+        <p>
+          📞 +34 600 123 456
+        </p>
+
+        <div class="socials">
+
+          <a href="https://instagram.com" target="_blank">
+            <img src="assets/social/instagram.png">
+          </a>
+
+          <a href="https://facebook.com" target="_blank">
+            <img src="assets/social/facebook.png">
+          </a>
+
+          <a href="https://twitter.com" target="_blank">
+            <img src="assets/social/twitter.png">
+          </a>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>

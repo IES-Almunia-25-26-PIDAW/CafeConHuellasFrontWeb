@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { PETS_MOCK } from '../../data/pets.mock';
 import { Pet } from '../../models/pet.model';
 import { RouterModule } from '@angular/router';
+import { Banner } from '../../shared/banner/banner';
 
 @Component({
   selector: 'app-pets',
   standalone: true,
-  imports: [CommonModule, FormsModule,RouterModule],
+  imports: [CommonModule, FormsModule,RouterModule,Banner],
   templateUrl: './pets.html',
   styleUrl: './pets.css',
 })
