@@ -51,7 +51,7 @@ class AppHeader extends StatelessWidget {
                             children: [
                               _navItem(context, 'Inicio', '/', navFontSize),
                               SizedBox(width: itemSpacing),
-                              _navItem(context, 'Eventos', '/events', navFontSize),
+                              _navItem(context, 'Mascotas', '/pets', navFontSize),
                               SizedBox(width: itemSpacing),
                               PopupMenuButton<String>(
                                 child: Text(
@@ -96,7 +96,7 @@ class AppHeader extends StatelessWidget {
                                 },
                                 itemBuilder: (context) => [
                                   PopupMenuItem(
-                                    value: '/help-us',
+                                    value: '/helpus',
                                     child: Text(
                                       'Ayudas',
                                       style: TextStyle(fontSize: menuFontSize, fontFamily: 'WinkyMilky'),
@@ -168,7 +168,7 @@ class AppHeader extends StatelessWidget {
                           },
                           itemBuilder: (context) => [
                             PopupMenuItem(
-                              value: '/help-us',
+                              value: '/helpus',
                               child: Text(
                                 'Ayudas',
                                 style: TextStyle(fontSize: menuFontSize, fontFamily: 'WinkyMilky'),

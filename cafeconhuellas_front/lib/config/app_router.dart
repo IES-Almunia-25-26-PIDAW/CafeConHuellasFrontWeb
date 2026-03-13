@@ -1,5 +1,8 @@
 
+import 'package:cafeconhuellas_front/presentation/screens/donations.dart';
+import 'package:cafeconhuellas_front/presentation/screens/helpus_screen.dart';
 import 'package:cafeconhuellas_front/presentation/screens/home_screen.dart';
+import 'package:cafeconhuellas_front/presentation/screens/information_screen.dart';
 import 'package:cafeconhuellas_front/presentation/screens/petdetail.dart';
 import 'package:cafeconhuellas_front/presentation/screens/pets_screen.dart';
 import 'package:cafeconhuellas_front/utils/globals.dart';
@@ -22,6 +25,9 @@ final GoRouter appRouter = GoRouter(
         return PetDetailScreen(petId: int.parse(id!), petsList: Globals.pets);
       },
     ),
-       
+    GoRoute(path: '/information', builder: (context, state) => const InformationScreen()),
+    GoRoute(path: '/helpus', builder: (context, state) => const HelpScreen()),
+    GoRoute(path: '/donations', builder: (context, state) => const DonationsScreen()),
+    GoRoute(path: '/events', builder: (context, state) => const EventsScreen()),
   ],
 );
