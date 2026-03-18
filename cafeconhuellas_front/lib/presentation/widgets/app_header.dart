@@ -77,7 +77,7 @@ class AppHeader extends StatelessWidget {
                                     ),
                                   ),
                                   PopupMenuItem(
-                                    value: '/contact-us',
+                                    value: '/contactus',
                                     child: Text(
                                       'Contacto',
                                       style: TextStyle(fontSize: menuFontSize, fontFamily: 'WinkyMilky'),
@@ -149,7 +149,7 @@ class AppHeader extends StatelessWidget {
                               ),
                             ),
                             PopupMenuItem(
-                              value: '/contact-us',
+                              value: '/contactus',
                               child: Text(
                                 'Contacto',
                                 style: TextStyle(fontSize: menuFontSize, fontFamily: 'WinkyMilky'),

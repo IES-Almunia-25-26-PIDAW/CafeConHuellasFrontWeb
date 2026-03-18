@@ -166,7 +166,7 @@ class PetDetailScreen extends StatelessWidget{
                                     ),
                                   ),
                                   onPressed: () {
-                                    context.go("/contact-us");
+                                    context.go("/contactus");
                                   },
                                   child: const Text("Contacta con nosotros"),
                                 ),
