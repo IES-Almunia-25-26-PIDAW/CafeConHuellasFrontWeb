@@ -1,5 +1,6 @@
 
 import 'package:cafeconhuellas_front/presentation/screens/donations.dart';
+import 'package:cafeconhuellas_front/presentation/screens/events.dart';
 import 'package:cafeconhuellas_front/presentation/screens/helpus_screen.dart';
 import 'package:cafeconhuellas_front/presentation/screens/home_screen.dart';
 import 'package:cafeconhuellas_front/presentation/screens/information_screen.dart';

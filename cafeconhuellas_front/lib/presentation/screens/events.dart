@@ -1,4 +1,5 @@
 import 'package:cafeconhuellas_front/models/event.dart';
+import 'package:cafeconhuellas_front/presentation/widgets/app_footer.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_header.dart';
 import 'package:cafeconhuellas_front/theme/AppColors.dart';
 import 'package:cafeconhuellas_front/utils/globals.dart';
@@ -7,6 +8,45 @@ import 'package:flutter/material.dart';
 
 class EventsScreen extends StatelessWidget {
   const EventsScreen({super.key});
+
+  static const double _cardWidth = 280;
+  static const double _cardHeight = 180;
+  static const double _activeDescriptionHeight = 140;
+  static const double _pastInfoCardWidth = 460;
+
+  Widget _eventImage(String imagePath, {double? width, double? height}) {
+    final isNetworkImage = imagePath.startsWith('http://') || imagePath.startsWith('https://');
+
+    if (isNetworkImage) {
+      return Image.network(
+        imagePath,
+        width: width,
+        height: height,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => Container(
+          width: width,
+          height: height,
+          color: Colors.grey.shade200,
+          alignment: Alignment.center,
+          child: const Icon(Icons.broken_image, color: Colors.grey),
+        ),
+      );
+    }
+
+    return Image.asset(
+      imagePath,
+      width: width,
+      height: height,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => Container(
+        width: width,
+        height: height,
+        color: Colors.grey.shade200,
+        alignment: Alignment.center,
+        child: const Icon(Icons.broken_image, color: Colors.grey),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +70,6 @@ class EventsScreen extends StatelessWidget {
 
             /// EVENTOS ACTIVOS
             _title("Eventos Activos"),
-
             Wrap(
               spacing: 30,
               runSpacing: 30,
@@ -39,19 +78,16 @@ class EventsScreen extends StatelessWidget {
                   .map((event) => _activeEventCard(event))
                   .toList(),
             ),
-
             const SizedBox(height: 80),
-
             /// EVENTOS PASADOS
             _title("Eventos Pasados"),
-
             Column(
               children: pastEvents
                   .map((event) => _pastEventRow(event))
                   .toList(),
             ),
-
             const SizedBox(height: 80),
+            AppFooter()
           ],
         ),
       ),
@@ -76,19 +112,13 @@ class EventsScreen extends StatelessWidget {
   /// EVENTO ACTIVO (GRID)
   Widget _activeEventCard(Event event) {
     return SizedBox(
-      width: 260,
+      width: _cardWidth,
       child: Column(
         children: [
-
           /// IMAGEN
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.asset(
-              event.imageUrl,
-              height: 160,
-              width: 260,
-              fit: BoxFit.cover,
-            ),
+            child: _eventImage(event.imageUrl, height: _cardHeight, width: _cardWidth),
           ),
 
           const SizedBox(height: 10),
@@ -106,15 +136,24 @@ class EventsScreen extends StatelessWidget {
 
           /// CARD
           Container(
+            height: _activeDescriptionHeight,
             padding: const EdgeInsets.all(15),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppColors.cream),
               color: Colors.white,
             ),
-            child: Text(
-              event.description,
-              textAlign: TextAlign.center,
+            child: Center(
+              child: Text(
+                event.description,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 18,
+                  height: 1.25,
+                ),
+                maxLines: 5,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ),
         ],
@@ -138,17 +177,13 @@ class EventsScreen extends StatelessWidget {
           /// IMAGEN
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.asset(
-              event.imageUrl,
-              width: 260,
-              height: 160,
-              fit: BoxFit.cover,
-            ),
+            child: _eventImage(event.imageUrl, width: _cardWidth, height: _cardHeight),
           ),
 
           /// CARD INFO
           Container(
-            width: 450,
+            width: _pastInfoCardWidth,
+            height: _cardHeight,
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
@@ -169,7 +204,13 @@ class EventsScreen extends StatelessWidget {
 
                 const SizedBox(height: 10),
 
-                Text(event.description),
+                Expanded(
+                  child: Text(
+                    event.description,
+                    maxLines: 5,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ],
             ),
           ),

@@ -4,6 +4,7 @@ class Event {
   final String imageUrl;
   final String description;
   final DateTime date;
+  final bool active;
 
   Event({
     required this.id,
@@ -11,6 +12,7 @@ class Event {
     required this.imageUrl,
     required this.description,
     required this.date,
+    required this.active,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class Event {
       imageUrl: json['imageUrl'],
       description: json['description'],
       date: DateTime.parse(json['date']),
+      active: json['active'] ?? false,
     );
   }
 
@@ -30,6 +33,7 @@ class Event {
       'imageUrl': imageUrl,
       'description': description,
       'date': date.toIso8601String(),
+      'active': active,
     };
   }
 
@@ -39,6 +43,7 @@ class Event {
     String? imageUrl,
     String? description,
     DateTime? date,
+    bool? active,
   }) {
     return Event(
       id: id ?? this.id,
@@ -46,6 +51,7 @@ class Event {
       imageUrl: imageUrl ?? this.imageUrl,
       description: description ?? this.description,
       date: date ?? this.date,
+      active: active ?? this.active,
     );
   }
 }
