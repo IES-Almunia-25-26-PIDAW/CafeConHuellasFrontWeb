@@ -50,25 +50,27 @@ class EventsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    /*
+    final Future<List<Event>> eventsFuture = ApiConector().getEvents();
+    return FutureBuilder<List<Event>>(
+      future: eventsFuture,
+      builder: (context, snapshot) {
+        ...
+      },
+    );
+    */
 
-    final activeEvents =
-       Globals.Futureevents.where((e) => e.active).toList();
-
-    final pastEvents =
-        Globals.PastEvents.where((e) => !e.active).toList();
+    final activeEvents = Globals.Futureevents.where((e) => e.active).toList();
+    final pastEvents = Globals.PastEvents.where((e) => !e.active).toList();
 
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
             AppHeader(userImageUrl: "assets/user.png"),
-            //banner
             Image.asset("assets/images/banners/banner-inicio.png", width: double.infinity, height: 400, fit:BoxFit.cover),
             const SizedBox(height: 40),
-            
             const SizedBox(height: 40),
-
-            /// EVENTOS ACTIVOS
             _title("Eventos Activos"),
             Wrap(
               spacing: 30,
@@ -79,7 +81,6 @@ class EventsScreen extends StatelessWidget {
                   .toList(),
             ),
             const SizedBox(height: 80),
-            /// EVENTOS PASADOS
             _title("Eventos Pasados"),
             Column(
               children: pastEvents

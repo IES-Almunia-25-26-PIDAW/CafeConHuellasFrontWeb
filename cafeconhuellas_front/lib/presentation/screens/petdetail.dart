@@ -16,8 +16,16 @@ class PetDetailScreen extends StatelessWidget{
 
   @override
   Widget build (BuildContext context) {
-    // ignore: unnecessary_nullable_for_final_variable_declarations
+    /*
+    FutureBuilder<List<Pet>>(
+      future: ApiConector().getPets(),
+      builder: (context, snapshot) {
+        ...
+      },
+    );
+    */
     final Pet? pet = petsList.firstWhereOrNull((p) => p.id == petId);
+
     if (pet == null) {
       return Scaffold(
         body: const Center(child: Text("Mascota no encontrada")),

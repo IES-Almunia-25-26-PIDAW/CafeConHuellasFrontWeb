@@ -14,7 +14,7 @@ final GoRouter appRouter = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => HomeScreen(randomPets: Globals.pets),
+      builder: (context, state) => const HomeScreen(),
     ),
     GoRoute(
       path: '/pets',

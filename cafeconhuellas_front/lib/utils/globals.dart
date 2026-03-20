@@ -2,14 +2,14 @@ import 'package:cafeconhuellas_front/models/event.dart';
 import 'package:cafeconhuellas_front/models/pet.dart';
 
 class Globals {
-  static final List<Pet> pets = [
+  static final List<Pet> _fallbackPets = [
     Pet(id: 1, name: 'Fido', species: Species.perro, breed: 'Labrador', age: 3, size: Size.grande, location: 'Madrid', adopted: false, imageUrl: 'assets/images/perrito.jpg', description: 'Friendly dog', emergency: false),
     Pet(id: 2, name: 'Whiskers', species: Species.gato, breed: 'Siamese', age: 2, size: Size.pequeno, location: 'Barcelona', adopted: false, imageUrl: 'assets/images/gatito.jpg', description: 'Playful cat', emergency: false),
     Pet(id: 3, name: 'Ushi', species: Species.perro, breed: 'Bulldog', age: 4, size: Size.mediano, location: 'Valencia', adopted: false, imageUrl: 'assets/images/perrito.jpg', description: 'Calm dog', emergency: false),
     Pet(id: 4, name: 'Elizabeth', species: Species.gato, breed: 'Persian', age: 1, size: Size.pequeno, location: 'Seville', adopted: false, imageUrl: 'assets/images/gatito.jpg', description: 'Gentle cat', emergency: false)
   
   ];
-  static final List<Event> Futureevents = [
+  static final List<Event> _fallbackFutureEvents = [
     Event(
       id: 1,
       name: 'Jornada de Paseo Solidario',
@@ -43,7 +43,7 @@ class Globals {
       active: true,
     ),
   ];
-  static final List<Event> PastEvents = [
+  static final List<Event> _fallbackPastEvents = [
     Event(
       id: 5,
       name: 'Campana de Microchipado',
@@ -77,4 +77,50 @@ class Globals {
       active: false,
     ),
   ];
+
+  static final List<Pet> pets = List<Pet>.from(_fallbackPets);
+  static final List<Event> Futureevents = List<Event>.from(_fallbackFutureEvents);
+  static final List<Event> PastEvents = List<Event>.from(_fallbackPastEvents);
+
+  /*
+  static Future<void> loadInitialData() async {
+    try {
+      final List<dynamic> results = await Future.wait<dynamic>([
+        ApiConector().getPets(),
+        ApiConector().getEvents(),
+      ]);
+
+      final List<Pet> apiPets = results[0] as List<Pet>;
+      final List<Event> apiEvents = results[1] as List<Event>;
+
+      if (apiPets.isNotEmpty) {
+        pets
+          ..clear()
+          ..addAll(apiPets);
+      }
+
+      if (apiEvents.isNotEmpty) {
+        Futureevents
+          ..clear()
+          ..addAll(apiEvents.where((event) => event.active));
+
+        PastEvents
+          ..clear()
+          ..addAll(apiEvents.where((event) => !event.active));
+      }
+    } catch (_) {
+      pets
+        ..clear()
+        ..addAll(_fallbackPets);
+
+      Futureevents
+        ..clear()
+        ..addAll(_fallbackFutureEvents);
+
+      PastEvents
+        ..clear()
+        ..addAll(_fallbackPastEvents);
+    }
+  }
+  */
 }

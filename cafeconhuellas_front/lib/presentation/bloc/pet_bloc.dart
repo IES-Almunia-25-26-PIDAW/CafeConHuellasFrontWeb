@@ -5,8 +5,10 @@ import 'package:cafeconhuellas_front/presentation/bloc/pet_state.dart';
 import 'package:cafeconhuellas_front/utils/globals.dart';
 
 class PetsBloc extends Bloc<PetsEvent, PetsState>{
-  final List<Pet> _allPets = List.from(Globals.pets);
-  PetsBloc() : super(PetsState(pets: List.from(Globals.pets), selectedSpecies: '', isEmergencyActive: false)) {
+  final List<Pet> _allPets = List<Pet>.from(Globals.pets);
+
+  PetsBloc()
+      : super(PetsState(pets: List<Pet>.from(Globals.pets), selectedSpecies: '', isEmergencyActive: false, isLoading: false)) {
     on<LoadPets>(_onLoadPets);
     on<FilterSpecies>(_onFilterSpecies);
     on<ToggleEmergency>(_onToggleEmergency);
@@ -14,7 +16,15 @@ class PetsBloc extends Bloc<PetsEvent, PetsState>{
 
 
   void _onLoadPets(LoadPets event, Emitter<PetsState> emit) {
-    emit(_applyFilters(state.copyWith(pets: _allPets)));
+    /*
+    final pets = await ApiConector().getPets();
+    _allPets = pets;
+    */
+    emit(_applyFilters(state.copyWith(
+      pets: _allPets,
+      isLoading: false,
+      clearErrorMessage: true,
+    )));
   }
   void _onFilterSpecies(FilterSpecies event, Emitter<PetsState> emit) {
     final newState = state.copyWith(selectedSpecies: event.species);

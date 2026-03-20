@@ -6,13 +6,18 @@ class Pet {
   final int id;
   final String name;
   final Species species;
-  final String breed;
-  final int age;
   final Size size;
   final String location;
   final bool adopted;
-  final String imageUrl;
   final String description;
+  final String breed;
+  final String category;
+  final int age;
+  final int weight;
+  final bool neutered;
+  final bool isPpp;
+  final String imageUrl;
+  final List<String> imageUrls;
   final bool emergency;
 
   Pet({
@@ -26,22 +31,36 @@ class Pet {
     required this.adopted,
     required this.imageUrl,
     required this.description,
+    this.category = '',
+    this.weight = 0,
+    this.neutered = false,
+    this.isPpp = false,
+    List<String>? imageUrls,
     required this.emergency,
-  });
+  }) : imageUrls = imageUrls ?? const [];
 
   factory Pet.fromJson(Map<String, dynamic> json) {
+    final String normalizedSpecies = (json['species'] ?? json['category'] ?? '').toString();
+    final String normalizedSize = (json['size'] ?? '').toString();
+    final String mainImage = (json['imageUrl'] ?? json['image_url'] ?? '').toString();
+
     return Pet(
-      id: json['id'],
-      name: json['name'],
-      species: _speciesFromString(json['species']),
-      breed: json['breed'],
-      age: json['age'],
-      size: _sizeFromString(json['size']),
-      location: json['location'],
-      adopted: json['adopted'],
-      imageUrl: json['imageUrl'],
-      description: json['description'],
-      emergency: json['emergency'],
+      id: (json['id'] as num?)?.toInt() ?? 0,
+      name: (json['name'] ?? '').toString(),
+      species: _speciesFromString(normalizedSpecies),
+      breed: (json['breed'] ?? '').toString(),
+      age: (json['age'] as num?)?.toInt() ?? 0,
+      size: _sizeFromString(normalizedSize),
+      location: (json['location'] ?? '').toString(),
+      adopted: _parseBool(json['adopted'] ?? json['isAdopted'] ?? false),
+      imageUrl: mainImage,
+      description: (json['description'] ?? '').toString(),
+      category: (json['category'] ?? '').toString(),
+      weight: (json['weight'] as num?)?.toInt() ?? 0,
+      neutered: _parseBool(json['neutered'] ?? false),
+      isPpp: _parseBool(json['isPpp'] ?? json['is_ppp'] ?? false),
+      imageUrls: _parseImageUrls(json['imageUrls'] ?? json['image_urls'], mainImage),
+      emergency: _parseBool(json['emergency'] ?? json['isEmergency'] ?? false),
     );
   }
 
@@ -51,11 +70,16 @@ class Pet {
       'name': name,
       'species': _speciesToString(species),
       'breed': breed,
+      'category': category,
       'age': age,
+      'weight': weight,
       'size': _sizeToString(size),
       'location': location,
       'adopted': adopted,
+      'neutered': neutered,
+      'isPpp': isPpp,
       'imageUrl': imageUrl,
+      'imageUrls': imageUrls,
       'description': description,
       'emergency': emergency,
     };
@@ -72,6 +96,11 @@ class Pet {
     bool? adopted,
     String? imageUrl,
     String? description,
+    String? category,
+    int? weight,
+    bool? neutered,
+    bool? isPpp,
+    List<String>? imageUrls,
     bool? emergency,
   }) {
     return Pet(
@@ -85,18 +114,25 @@ class Pet {
       adopted: adopted ?? this.adopted,
       imageUrl: imageUrl ?? this.imageUrl,
       description: description ?? this.description,
+      category: category ?? this.category,
+      weight: weight ?? this.weight,
+      neutered: neutered ?? this.neutered,
+      isPpp: isPpp ?? this.isPpp,
+      imageUrls: imageUrls ?? this.imageUrls,
       emergency: emergency ?? this.emergency,
     );
   }
 
   static Species _speciesFromString(String species) {
-    switch (species) {
-      case 'Perro':
+    switch (species.toLowerCase().trim()) {
+      case 'perro':
+      case 'dog':
         return Species.perro;
-      case 'Gato':
+      case 'gato':
+      case 'cat':
         return Species.gato;
       default:
-        throw Exception('Unknown species: $species');
+        return Species.perro;
     }
   }
 
@@ -110,15 +146,19 @@ class Pet {
   }
 
   static Size _sizeFromString(String size) {
-    switch (size) {
-      case 'Pequeno':
+    switch (size.toLowerCase().trim()) {
+      case 'pequeno':
+      case 'pequeño':
+      case 'small':
         return Size.pequeno;
-      case 'Mediano':
+      case 'mediano':
+      case 'medium':
         return Size.mediano;
-      case 'Grande':
+      case 'grande':
+      case 'large':
         return Size.grande;
       default:
-        throw Exception('Unknown size: $size');
+        return Size.mediano;
     }
   }
 
@@ -131,5 +171,29 @@ class Pet {
       case Size.grande:
         return 'Grande';
     }
+  }
+
+  static bool _parseBool(dynamic value) {
+    if (value is bool) {
+      return value;
+    }
+    if (value is num) {
+      return value != 0;
+    }
+    if (value is String) {
+      final String normalized = value.toLowerCase().trim();
+      return normalized == 'true' || normalized == '1' || normalized == 'yes';
+    }
+    return false;
+  }
+
+  static List<String> _parseImageUrls(dynamic value, String fallbackImage) {
+    if (value is List) {
+      return value.map((e) => e.toString()).where((e) => e.isNotEmpty).toList();
+    }
+    if (fallbackImage.isNotEmpty) {
+      return <String>[fallbackImage];
+    }
+    return const <String>[];
   }
 }

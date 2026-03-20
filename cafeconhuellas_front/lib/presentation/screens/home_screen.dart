@@ -1,18 +1,16 @@
 
-import 'package:cafeconhuellas_front/models/pet.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/actionitem.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_footer.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_header.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/eventcard.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/petcard.dart';
 import 'package:cafeconhuellas_front/theme/AppColors.dart';
+import 'package:cafeconhuellas_front/utils/globals.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class HomeScreen extends StatelessWidget {
-  final List <Pet> randomPets;
-  
-  const HomeScreen({super.key, required this.randomPets});
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -56,12 +54,21 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(height: 60),
           //Mascotas
             _sectionTitle("Nuestras mascotas"),
+          /*
+          FutureBuilder<List<Pet>>(
+            future: ApiConector().getPets(),
+            builder: (context, snapshot) {
+              ...
+            },
+          ),
+          */
           Wrap(
             spacing: 30,
             runSpacing: 30,
             alignment: WrapAlignment.center,
-            children: randomPets
-              .map((pet) => PetCard(pet))
+            children: Globals.pets
+                .take(4)
+                .map((pet) => PetCard(pet))
                 .toList(),
           ),
           const SizedBox(height: 20),
