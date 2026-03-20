@@ -188,9 +188,14 @@ class AppHeader extends StatelessWidget {
                   ),
           ),
           SizedBox(width: itemSpacing),
-          CircleAvatar(
-            radius: avatarRadius,
-            backgroundImage: AssetImage(userImageUrl),
+          GestureDetector(
+            onTap: () {
+              context.go('/login');
+            },
+            child: CircleAvatar(
+              radius: avatarRadius,
+              backgroundImage: AssetImage(userImageUrl),
+            ),
           )
         ],
       ),

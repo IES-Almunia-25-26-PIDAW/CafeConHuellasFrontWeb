@@ -5,8 +5,10 @@ import 'package:cafeconhuellas_front/presentation/screens/events.dart';
 import 'package:cafeconhuellas_front/presentation/screens/helpus_screen.dart';
 import 'package:cafeconhuellas_front/presentation/screens/home_screen.dart';
 import 'package:cafeconhuellas_front/presentation/screens/information_screen.dart';
+import 'package:cafeconhuellas_front/presentation/screens/login_screen.dart';
 import 'package:cafeconhuellas_front/presentation/screens/petdetail.dart';
 import 'package:cafeconhuellas_front/presentation/screens/pets_screen.dart';
+import 'package:cafeconhuellas_front/presentation/screens/register_screen.dart';
 import 'package:cafeconhuellas_front/utils/globals.dart';
 import 'package:go_router/go_router.dart';
 
@@ -32,5 +34,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/donations', builder: (context, state) => const DonationsScreen()),
     GoRoute(path: '/events', builder: (context, state) => const EventsScreen()),
     GoRoute(path: '/contactus', builder: (context, state) => const ContactusScreen()),
+    GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
+    GoRoute(path: '/register', builder: (context, state) => const RegisterScreen()),
   ],
 );
