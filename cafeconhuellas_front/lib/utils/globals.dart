@@ -3,10 +3,10 @@ import 'package:cafeconhuellas_front/models/pet.dart';
 
 class Globals {
   static final List<Pet> _fallbackPets = [
-    Pet(id: 1, name: 'Fido', species: Species.perro, breed: 'Labrador', age: 3, size: Size.grande, location: 'Madrid', adopted: false, imageUrl: 'assets/images/perrito.jpg', description: 'Friendly dog', emergency: false),
-    Pet(id: 2, name: 'Whiskers', species: Species.gato, breed: 'Siamese', age: 2, size: Size.pequeno, location: 'Barcelona', adopted: false, imageUrl: 'assets/images/gatito.jpg', description: 'Playful cat', emergency: false),
-    Pet(id: 3, name: 'Ushi', species: Species.perro, breed: 'Bulldog', age: 4, size: Size.mediano, location: 'Valencia', adopted: false, imageUrl: 'assets/images/perrito.jpg', description: 'Calm dog', emergency: false),
-    Pet(id: 4, name: 'Elizabeth', species: Species.gato, breed: 'Persian', age: 1, size: Size.pequeno, location: 'Seville', adopted: false, imageUrl: 'assets/images/gatito.jpg', description: 'Gentle cat', emergency: false)
+    Pet(id: 1, name: 'Fido', species: Species.perro, breed: 'Labrador', age: 3, adopted: false, imageUrl: 'assets/images/perrito.jpg', description: 'Friendly dog', emergency: false),
+    Pet(id: 2, name: 'Whiskers', species: Species.gato, breed: 'Siamese', age: 2, adopted: false, imageUrl: 'assets/images/gatito.jpg', description: 'Playful cat', emergency: false),
+    Pet(id: 3, name: 'Ushi', species: Species.perro, breed: 'Bulldog', age: 4, adopted: false, imageUrl: 'assets/images/perrito.jpg', description: 'Calm dog', emergency: false),
+    Pet(id: 4, name: 'Elizabeth', species: Species.gato, breed: 'Persian', age: 1, adopted: false, imageUrl: 'assets/images/gatito.jpg', description: 'Gentle cat', emergency: false)
   
   ];
   static final List<Event> _fallbackFutureEvents = [

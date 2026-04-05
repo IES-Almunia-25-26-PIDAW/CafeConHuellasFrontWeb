@@ -10,19 +10,56 @@ class ApiConector {
   }
 
   late Dio dio;
+  String? _token;
 
   ApiConector._internal() {
     dio = Dio(
       BaseOptions(
         baseUrl:
-            'http://localhost:8087/api', // <-- aquí va la URL base de tu API
+            'http://localhost:8087/api', // <-- url base de la API, cambiar si es necesario
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
         headers: {'Content-Type': 'application/json'},
       ),
     );
+
+    //Interceptor para agregar el token a cada petición
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          if (_token != null) {
+            options.headers['Authorization'] = 'Bearer $_token';
+          }
+          return handler.next(options);
+        },
+      ),
+    );
   }
 
+    // guardar token después del login
+      void setToken(String token) {
+       _token = token;
+    }
+  
+Future<void> login(String email, String password) async {
+  final response = await dio.post(
+    '/auth/login',
+    data: {
+      'email': email,
+      'password': password,
+    },
+  );
+
+  final token = response.data['token'];
+  setToken(token);
+}
+
+Future<void> register(Map<String, dynamic> user) async {
+  await dio.post(
+    '/auth/register',
+    data: user,
+  );
+}
 
   Future<List<Pet>> getPets() async {
     final Response<dynamic> response = await dio.get('/pets');
@@ -43,7 +80,7 @@ class ApiConector {
         .map(Event.fromJson)
         .toList();
   }
-  //con este método aseguramos normalizar la respuesta de la Api antes de comnvertirla enm pobketcos
+  //con este método aseguramos normalizar la respuesta de la Api antes de convertirla en objetos
   List<dynamic> _extractList(dynamic data) {
     if (data is List) {
       return data;

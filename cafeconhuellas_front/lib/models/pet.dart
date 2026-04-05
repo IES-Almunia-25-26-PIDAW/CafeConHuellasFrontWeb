@@ -1,19 +1,15 @@
 enum Species { perro, gato }
 
-enum Size { pequeno, mediano, grande }
-
 class Pet {
   final int id;
   final String name;
   final Species species;
-  final Size size;
-  final String location;
   final bool adopted;
   final String description;
   final String breed;
   final String category;
   final int age;
-  final int weight;
+  final double weight;
   final bool neutered;
   final bool isPpp;
   final String imageUrl;
@@ -26,13 +22,11 @@ class Pet {
     required this.species,
     required this.breed,
     required this.age,
-    required this.size,
-    required this.location,
     required this.adopted,
     required this.imageUrl,
     required this.description,
     this.category = '',
-    this.weight = 0,
+    this.weight = 0.0,
     this.neutered = false,
     this.isPpp = false,
     List<String>? imageUrls,
@@ -41,7 +35,6 @@ class Pet {
 
   factory Pet.fromJson(Map<String, dynamic> json) {
     final String normalizedSpecies = (json['species'] ?? json['category'] ?? '').toString();
-    final String normalizedSize = (json['size'] ?? '').toString();
     final String mainImage = (json['imageUrl'] ?? json['image_url'] ?? '').toString();
 
     return Pet(
@@ -50,13 +43,11 @@ class Pet {
       species: _speciesFromString(normalizedSpecies),
       breed: (json['breed'] ?? '').toString(),
       age: (json['age'] as num?)?.toInt() ?? 0,
-      size: _sizeFromString(normalizedSize),
-      location: (json['location'] ?? '').toString(),
       adopted: _parseBool(json['adopted'] ?? json['isAdopted'] ?? false),
       imageUrl: mainImage,
       description: (json['description'] ?? '').toString(),
       category: (json['category'] ?? '').toString(),
-      weight: (json['weight'] as num?)?.toInt() ?? 0,
+      weight: (json['weight'] as num?)?.toDouble() ?? 0.0,
       neutered: _parseBool(json['neutered'] ?? false),
       isPpp: _parseBool(json['isPpp'] ?? json['is_ppp'] ?? false),
       imageUrls: _parseImageUrls(json['imageUrls'] ?? json['image_urls'], mainImage),
@@ -73,8 +64,6 @@ class Pet {
       'category': category,
       'age': age,
       'weight': weight,
-      'size': _sizeToString(size),
-      'location': location,
       'adopted': adopted,
       'neutered': neutered,
       'isPpp': isPpp,
@@ -91,13 +80,11 @@ class Pet {
     Species? species,
     String? breed,
     int? age,
-    Size? size,
-    String? location,
     bool? adopted,
     String? imageUrl,
     String? description,
     String? category,
-    int? weight,
+    double? weight,
     bool? neutered,
     bool? isPpp,
     List<String>? imageUrls,
@@ -109,8 +96,6 @@ class Pet {
       species: species ?? this.species,
       breed: breed ?? this.breed,
       age: age ?? this.age,
-      size: size ?? this.size,
-      location: location ?? this.location,
       adopted: adopted ?? this.adopted,
       imageUrl: imageUrl ?? this.imageUrl,
       description: description ?? this.description,
@@ -142,34 +127,6 @@ class Pet {
         return 'Perro';
       case Species.gato:
         return 'Gato';
-    }
-  }
-
-  static Size _sizeFromString(String size) {
-    switch (size.toLowerCase().trim()) {
-      case 'pequeno':
-      case 'pequeño':
-      case 'small':
-        return Size.pequeno;
-      case 'mediano':
-      case 'medium':
-        return Size.mediano;
-      case 'grande':
-      case 'large':
-        return Size.grande;
-      default:
-        return Size.mediano;
-    }
-  }
-
-  static String _sizeToString(Size size) {
-    switch (size) {
-      case Size.pequeno:
-        return 'Pequeno';
-      case Size.mediano:
-        return 'Mediano';
-      case Size.grande:
-        return 'Grande';
     }
   }
 

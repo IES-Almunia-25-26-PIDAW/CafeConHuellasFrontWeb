@@ -3,6 +3,7 @@ class User {
     final String firstName;
     final String lastName1;
     final String lastName2;
+    final String password;
     final String email;
     final String phone;
     final String role;
@@ -13,6 +14,7 @@ class User {
         required this.firstName,
         required this.lastName1,
         required this.lastName2,
+        required this.password,
         required this.email,
         required this.phone,
         required this.role,
@@ -25,6 +27,7 @@ class User {
             firstName: (json['firstName'] ?? json['first_name'] ?? '').toString(),
             lastName1: (json['lastName1'] ?? json['last_name1'] ?? '').toString(),
             lastName2: (json['lastName2'] ?? json['last_name2'] ?? '').toString(),
+            password: (json['password'] ?? '').toString(),
             email: (json['email'] ?? '').toString(),
             phone: (json['phone'] ?? '').toString(),
             role: (json['role'] ?? '').toString(),
@@ -38,6 +41,7 @@ class User {
             'firstName': firstName,
             'lastName1': lastName1,
             'lastName2': lastName2,
+            'password': password,
             'email': email,
             'phone': phone,
             'role': role,
@@ -50,6 +54,7 @@ class User {
         String? firstName,
         String? lastName1,
         String? lastName2,
+        String? password,
         String? email,
         String? phone,
         String? role,
@@ -60,6 +65,7 @@ class User {
             firstName: firstName ?? this.firstName,
             lastName1: lastName1 ?? this.lastName1,
             lastName2: lastName2 ?? this.lastName2,
+            password: password ?? this.password,
             email: email ?? this.email,
             phone: phone ?? this.phone,
             role: role ?? this.role,

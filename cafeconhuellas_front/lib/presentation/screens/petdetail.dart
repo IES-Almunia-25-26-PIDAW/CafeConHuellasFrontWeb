@@ -80,7 +80,6 @@ class PetDetailScreen extends StatelessWidget{
             children: [
               Text("Raza: ${pet.breed}"),
               Text("Edad: ${pet.age} años"),
-              Text("Ubicación: ${pet.location}"),
             ],
           ),
         ),

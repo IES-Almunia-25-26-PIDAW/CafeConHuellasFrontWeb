@@ -1,9 +1,26 @@
 import 'package:cafeconhuellas_front/theme/AppColors.dart';
+import 'package:cafeconhuellas_front/utils/api_conector.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  //aquí controlamos el estado de los campos de texto, es importante liberar los recursos que usan estos controladores cuando el widget se destruye, por eso el dispose() abajo.
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,26 +47,50 @@ class LoginPage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 20),
-                          _input("Nombre"),
+                          _input("Email", emailController),
                           const SizedBox(height: 15),
-                          _input("Contraseña", isPassword: true),
+                          _input("Contraseña", passwordController, isPassword: true),
                           const SizedBox(height: 20),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.purple,
-                              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                              padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 20),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            onPressed: () {
-                              // Acción al presionar el botón de inicio de sesión
+                            onPressed: () async {
+                              try {
+                                await ApiConector().login(
+                                  emailController.text,
+                                  passwordController.text,
+                                );
+                                if (!context.mounted) return;
+                                context.go('/home');
+                                  } catch (e) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: const Text("Error"),
+                                          content: const Text("Email o contraseña incorrectos"),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () => Navigator.pop(context),
+                                              child: const Text("OK"),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  }
                             },
                             child: const Text(
                               "Iniciar sesión",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontFamily: 'MilkyVintage',
+                                fontSize: 23
                               ),
                             ),
                           ),
@@ -70,8 +111,9 @@ class LoginPage extends StatelessWidget {
     );
   }
 }
-Widget _input(String label, {bool isPassword = false}) {
+Widget _input(String label, TextEditingController controller, {bool isPassword = false}) {
   return TextField(
+    controller: controller,
     obscureText: isPassword,
     decoration: InputDecoration(
       labelText: label,

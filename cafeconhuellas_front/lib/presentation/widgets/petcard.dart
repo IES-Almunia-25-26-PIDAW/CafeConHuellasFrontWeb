@@ -60,7 +60,6 @@ class PetCard extends StatelessWidget {
               const SizedBox(height: 6),
               Text('Raza: ${pet.breed}'),
               Text('Edad: ${pet.age} años'),
-              Text('Ubicación: ${pet.location}'),
               Text(pet.emergency ? 'Estado: Emergencia' : 'Estado: Normal'),
             ],
           ),
