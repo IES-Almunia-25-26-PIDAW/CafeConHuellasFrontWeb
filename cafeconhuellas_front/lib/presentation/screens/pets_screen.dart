@@ -34,7 +34,6 @@ class PetScreen extends StatelessWidget {
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                     
                       /// BOTON EMERGENCIA
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -52,17 +51,9 @@ class PetScreen extends StatelessWidget {
                         },
                         child: const Text("Emergencia"),
                       ),
-
-
                       const SizedBox(width: 20),
-
-
                       const Text("Filtrar por especie:"),
-
-
                       const SizedBox(width: 10),
-
-
                       /// DROPDOWN
                       DropdownButton<String>(
                         value: state.selectedSpecies.isEmpty
@@ -94,7 +85,6 @@ class PetScreen extends StatelessWidget {
 
               const SizedBox(height: 30),
 
-
               /// GRID DE MASCOTAS
               BlocBuilder<PetsBloc, PetsState>(
                 builder: (context, state) {
@@ -111,8 +101,6 @@ class PetScreen extends StatelessWidget {
                   );
                 },
               ),
-
-
               const SizedBox(height: 40),
               AppFooter()
           ],),

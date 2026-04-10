@@ -1,4 +1,5 @@
-
+import 'package:cafeconhuellas_front/presentation/bloc/pet_bloc.dart';
+import 'package:cafeconhuellas_front/presentation/bloc/pet_event.dart';
 import 'package:cafeconhuellas_front/presentation/screens/contactus.dart';
 import 'package:cafeconhuellas_front/presentation/screens/donations.dart';
 import 'package:cafeconhuellas_front/presentation/screens/events.dart';
@@ -10,31 +11,44 @@ import 'package:cafeconhuellas_front/presentation/screens/petdetail.dart';
 import 'package:cafeconhuellas_front/presentation/screens/pets_screen.dart';
 import 'package:cafeconhuellas_front/presentation/screens/register_screen.dart';
 import 'package:cafeconhuellas_front/utils/globals.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 final GoRouter appRouter = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => const HomeScreen(),
+      builder: (context, state) => BlocProvider(
+        create: (_) => PetsBloc()..add(LoadPets()),
+        child: const HomeScreen(),
+      ),
     ),
+    GoRoute(path: '/pets', builder: (context, state) => const PetScreen()),
     GoRoute(
-      path: '/pets',
-      builder: (context, state) => const PetScreen(),
-    ),
-      GoRoute(
       path: '/pets/:id',
       builder: (context, state) {
         final id = state.pathParameters['id'];
         return PetDetailScreen(petId: int.parse(id!), petsList: Globals.pets);
       },
     ),
-    GoRoute(path: '/information', builder: (context, state) => const InformationScreen()),
+    GoRoute(
+      path: '/information',
+      builder: (context, state) => const InformationScreen(),
+    ),
     GoRoute(path: '/helpus', builder: (context, state) => const HelpScreen()),
-    GoRoute(path: '/donations', builder: (context, state) => const DonationsScreen()),
+    GoRoute(
+      path: '/donations',
+      builder: (context, state) => const DonationsScreen(),
+    ),
     GoRoute(path: '/events', builder: (context, state) => const EventsScreen()),
-    GoRoute(path: '/contactus', builder: (context, state) => const ContactusScreen()),
+    GoRoute(
+      path: '/contactus',
+      builder: (context, state) => const ContactusScreen(),
+    ),
     GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
-    GoRoute(path: '/register', builder: (context, state) => const RegisterScreen()),
+    GoRoute(
+      path: '/register',
+      builder: (context, state) => const RegisterScreen(),
+    ),
   ],
 );
