@@ -84,7 +84,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   "password": passwordController.text,
                                   "phone": phoneController.text,
                                   "role": "USER",
-                                  "imageUrl": ""
                                 });
                                 //cuando hacemos un await el context puede haberse destruido mientras esperabas, esto ayuda a que nos aseguremos de que
                                 //el widget sigue activo antes de usar el contexto abajo, sin esta producción podría dar un error

@@ -13,7 +13,7 @@ class PetCard extends StatelessWidget {
       width: 220,
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () => context.go('/pets/${pet.id}'),
+        onTap: () => context.go('/pets/${pet.id}', extra: pet),
         child: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(

@@ -1,9 +1,11 @@
 import 'package:cafeconhuellas_front/models/event.dart';
+import 'package:cafeconhuellas_front/presentation/bloc/pet_bloc.dart';
+import 'package:cafeconhuellas_front/presentation/bloc/pet_state.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_footer.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_header.dart';
 import 'package:cafeconhuellas_front/theme/AppColors.dart';
-import 'package:cafeconhuellas_front/utils/globals.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 
 class EventsScreen extends StatelessWidget {
@@ -50,48 +52,72 @@ class EventsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /*
-    final Future<List<Event>> eventsFuture = ApiConector().getEvents();
-    return FutureBuilder<List<Event>>(
-      future: eventsFuture,
-      builder: (context, snapshot) {
-        ...
+    return BlocBuilder<PetsBloc, PetsState>(
+      builder: (context, state) {
+        final DateTime now = DateTime.now();
+        final List<Event> activeEvents = state.events
+            .where((event) => event.eventdate.isAfter(now))
+            .toList();
+        final List<Event> pastEvents = state.events
+            .where((event) => event.eventdate.isBefore(now))
+            .toList();
+
+        return Scaffold(
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                AppHeader(userImageUrl: "assets/user.png"),
+                Image.asset("assets/images/banners/banner-inicio.png", width: double.infinity, height: 400, fit:BoxFit.cover),
+                const SizedBox(height: 40),
+                if (state.isLoading)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 24),
+                    child: CircularProgressIndicator(),
+                  ),
+                if (!state.isLoading && state.errorMessage != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    child: Text(
+                      state.errorMessage!,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  ),
+                const SizedBox(height: 40),
+                _title("Eventos Activos"),
+                if (activeEvents.isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Text('No hay eventos activos por fecha.'),
+                  )
+                else
+                  Wrap(
+                    spacing: 30,
+                    runSpacing: 30,
+                    alignment: WrapAlignment.center,
+                    children: activeEvents
+                        .map((event) => _activeEventCard(event))
+                        .toList(),
+                  ),
+                const SizedBox(height: 80),
+                _title("Eventos Pasados"),
+                if (pastEvents.isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Text('No hay eventos pasados por fecha.'),
+                  )
+                else
+                  Column(
+                    children: pastEvents
+                        .map((event) => _pastEventRow(event))
+                        .toList(),
+                  ),
+                const SizedBox(height: 80),
+                AppFooter()
+              ],
+            ),
+          ),
+        );
       },
-    );
-    */
-
-    final activeEvents = Globals.Futureevents.where((e) => e.active).toList();
-    final pastEvents = Globals.PastEvents.where((e) => !e.active).toList();
-
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            AppHeader(userImageUrl: "assets/user.png"),
-            Image.asset("assets/images/banners/banner-inicio.png", width: double.infinity, height: 400, fit:BoxFit.cover),
-            const SizedBox(height: 40),
-            const SizedBox(height: 40),
-            _title("Eventos Activos"),
-            Wrap(
-              spacing: 30,
-              runSpacing: 30,
-              alignment: WrapAlignment.center,
-              children: activeEvents
-                  .map((event) => _activeEventCard(event))
-                  .toList(),
-            ),
-            const SizedBox(height: 80),
-            _title("Eventos Pasados"),
-            Column(
-              children: pastEvents
-                  .map((event) => _pastEventRow(event))
-                  .toList(),
-            ),
-            const SizedBox(height: 80),
-            AppFooter()
-          ],
-        ),
-      ),
     );
   }
 

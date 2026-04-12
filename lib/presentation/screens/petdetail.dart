@@ -2,37 +2,50 @@
 import 'package:cafeconhuellas_front/models/pet.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_footer.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_header.dart';
+import 'package:cafeconhuellas_front/utils/api_conector.dart';
 import 'package:flutter/material.dart';
-import 'package:collection/collection.dart';
 import 'package:go_router/go_router.dart';
 
 class PetDetailScreen extends StatelessWidget{
   final int petId;
-  final List<Pet> petsList;
+  final Pet? pet;
 
 
-  const PetDetailScreen({super.key, required this.petId, required this.petsList});
+  const PetDetailScreen({super.key, required this.petId, this.pet});
+
+  Future<Pet?> _loadPet() async {
+    if (pet != null) {
+      return pet;
+    }
+
+    if (petId < 0) {
+      return null;
+    }
+
+    return ApiConector().getPetById(petId);
+  }
 
 
   @override
   Widget build (BuildContext context) {
-    /*
-    FutureBuilder<List<Pet>>(
-      future: ApiConector().getPets(),
+    return FutureBuilder<Pet?>(
+      future: _loadPet(),
       builder: (context, snapshot) {
-        ...
-      },
-    );
-    */
-    final Pet? pet = petsList.firstWhereOrNull((p) => p.id == petId);
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
 
-    if (pet == null) {
-      return Scaffold(
-        body: const Center(child: Text("Mascota no encontrada")),
-      );
-    }
+        final Pet? resolvedPet = snapshot.data;
 
-    final Widget petImage = Container(
+        if (resolvedPet == null) {
+          return const Scaffold(
+            body: Center(child: Text("Mascota no encontrada")),
+          );
+        }
+
+        final Widget petImage = Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -41,15 +54,15 @@ class PetDetailScreen extends StatelessWidget{
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
-        child: pet.imageUrl.startsWith('http')
+        child: resolvedPet.imageUrl.startsWith('http')
             ? Image.network(
-                pet.imageUrl,
+                resolvedPet.imageUrl,
                 height: 280,
                 width: 280,
                 fit: BoxFit.cover,
               )
             : Image.asset(
-                pet.imageUrl,
+                resolvedPet.imageUrl,
                 height: 280,
                 width: 280,
                 fit: BoxFit.cover,
@@ -57,11 +70,11 @@ class PetDetailScreen extends StatelessWidget{
       ),
     );
 
-    final Widget petInfo = Column(
+        final Widget petInfo = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          pet.name,
+          resolvedPet.name,
           style: const TextStyle(
             fontSize: 40,
             fontFamily: "WinkyMilky",
@@ -78,15 +91,18 @@ class PetDetailScreen extends StatelessWidget{
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Raza: ${pet.breed}"),
-              Text("Edad: ${pet.age} años"),
+              Text("Raza: ${resolvedPet.breed}"),
+              Text("Edad: ${resolvedPet.age} años"),
+              Text("Peso: ${resolvedPet.weight} kg"),
+              Text("Ppp ${resolvedPet.isPpp ? 'Sí' : 'No'}"),
+              Text ("Castrado: ${resolvedPet.neutered ? 'Sí' : 'No'}"),
             ],
           ),
         ),
       ],
     );
 
-    return Scaffold(
+        return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -137,7 +153,7 @@ class PetDetailScreen extends StatelessWidget{
                             child: Column(
                               children: [
                                 Text(
-                                  "Sobre ${pet.name}",
+                                  "Sobre ${resolvedPet.name}",
                                   style: const TextStyle(
                                     fontSize: 35,
                                     fontFamily: "MilkyVintage",
@@ -145,7 +161,7 @@ class PetDetailScreen extends StatelessWidget{
                                 ),
                                 const SizedBox(height: 15),
                                 Text(
-                                  pet.description,
+                                  resolvedPet.description,
                                   textAlign: TextAlign.center,
                                 ),
                               ],
@@ -192,6 +208,8 @@ class PetDetailScreen extends StatelessWidget{
           ],
         ),
       ),
+        );
+      },
     );
   }
 }

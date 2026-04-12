@@ -1,7 +1,9 @@
+import 'package:cafeconhuellas_front/models/event.dart';
 import 'package:cafeconhuellas_front/models/pet.dart';
 
 class PetsState {
   final List<Pet> pets;
+  final List <Event> events;
   final String selectedSpecies;
   final bool isEmergencyActive;
   final bool isLoading;
@@ -10,6 +12,7 @@ class PetsState {
 
   PetsState({
     required this.pets,
+    required this.events,
     required this.selectedSpecies,
     required this.isEmergencyActive,
     this.isLoading = false,
@@ -24,6 +27,7 @@ class PetsState {
     bool? isLoading,
     String? errorMessage,
     bool clearErrorMessage = false,
+    List<Event>? events,
   }) {
     return PetsState(
       pets: pets ?? this.pets,
@@ -31,6 +35,7 @@ class PetsState {
       isEmergencyActive: isEmergencyActive ?? this.isEmergencyActive,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: clearErrorMessage ? null : (errorMessage ?? this.errorMessage),
+      events: events ?? this.events,
     );
   }
 }

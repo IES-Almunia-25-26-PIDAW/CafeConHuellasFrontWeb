@@ -70,13 +70,14 @@ class HomeScreen extends StatelessWidget {
             _sectionTitle("Nuestras mascotas"),
             BlocBuilder<PetsBloc, PetsState>(
               builder: (context, state) {
+                //si estña cargando mostramos un indicador de carga
                 if (state.isLoading) {
                   return const Padding(
                     padding: EdgeInsets.symmetric(vertical: 24),
                     child: CircularProgressIndicator(),
                   );
                 }
-
+                //si hay un error lo mostramos
                 if (state.errorMessage != null) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 24),
@@ -86,16 +87,16 @@ class HomeScreen extends StatelessWidget {
                     ),
                   );
                 }
-
+                //si todo va bien guardo los pets en una variable y los muestro
                 final pets = state.pets.take(4).toList();
-
+                //si no he podido coger mascotas retorno un aviso
                 if (pets.isEmpty) {
                   return const Padding(
                     padding: EdgeInsets.symmetric(vertical: 24),
                     child: Text("No hay mascotas disponibles en este momento."),
                   );
                 }
-
+                //si he podido cargar mascotas muestro pet cards
                 return Wrap(
                   spacing: 30,
                   runSpacing: 30,
@@ -105,6 +106,7 @@ class HomeScreen extends StatelessWidget {
               },
             ),
             const SizedBox(height: 20),
+            //añado un botón que me lleva hasta la página de mascotas
             ElevatedButton(
               onPressed: () {
                 context.go("/pets");
@@ -112,35 +114,50 @@ class HomeScreen extends StatelessWidget {
               child: const Text("Ver más"),
             ),
             const SizedBox(height: 60),
-            //Eventos
+            //Sección de eventos
             _sectionTitle("Eventos"),
-            Wrap(
-              spacing: 30,
-              runSpacing: 30,
-              alignment: WrapAlignment.center,
-              children: const [
-                EventCard(
-                  "assets/images/events/event1.jpg",
-                  "Feria de adopción",
-                  "Ven a conocer a nuestros animales este sábado.",
-                ),
-                EventCard(
-                  "assets/images/events/event2.jpg",
-                  "Charla educativa",
-                  "Aprende sobre tenencia responsable.",
-                ),
-                EventCard(
-                  "assets/images/events/event3.jpg",
-                  "Jornada solidaria",
-                  "Recaudación de fondos para el refugio.",
-                ),
-              ],
-            ),
+            //funciona exactamente igual que la sección de mascotas, pero con eventos en vez de mascotas
+            BlocBuilder<PetsBloc, PetsState>(
+              builder: (context, state) {
+                if (state.isLoading) {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 24),
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (state.errorMessage != null) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24),
+                    child: Text(
+                      state.errorMessage!,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+                final events = state.events.take(3).toList();
 
+                if (events.isEmpty) {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 24),
+                    child: Text("No hay eventos disponibles en este momento."),
+                  );
+                }
+                //si he podido cargar eventos muestro event cards, gracias al método map
+                return Wrap(
+                  spacing: 30,
+                  runSpacing: 30,
+                  alignment: WrapAlignment.center,
+                  children: events.map((event) => EventCard(
+                    event.imageUrl,
+                    event.name,
+                    event.description,
+                  )).toList(),
+                );
+              },
+            ),
             const SizedBox(height: 60),
             //videojuego
             _sectionTitle("¡Prueba nuestro videojuego!"),
-
             ElevatedButton(
               onPressed: () {
                 context.go("/videojuego");

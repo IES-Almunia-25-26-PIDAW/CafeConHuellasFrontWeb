@@ -55,10 +55,21 @@ Future<void> login(String email, String password) async {
 }
 
 Future<void> register(Map<String, dynamic> user) async {
-  await dio.post(
-    '/auth/register',
-    data: user,
-  );
+  final Map<String, dynamic> sanitizedUser = Map<String, dynamic>.from(user);
+  final String? imageUrl = sanitizedUser['imageUrl']?.toString().trim();
+
+  if (imageUrl == null || imageUrl.isEmpty) {
+    sanitizedUser.remove('imageUrl');
+  }
+
+  try {
+    await dio.post(
+      '/auth/register',
+      data: sanitizedUser,
+    );
+  } on DioException catch (error) {
+    throw Exception(_extractApiErrorMessage(error));
+  }
 }
 
   Future<List<Pet>> getPets() async {
@@ -69,6 +80,32 @@ Future<void> register(Map<String, dynamic> user) async {
         .whereType<Map<String, dynamic>>()
         .map(Pet.fromJson)
         .toList();
+  }
+
+  Future<Pet?> getPetById(int id) async {
+    try {
+      final Response<dynamic> response = await dio.get('/pets/$id');
+      final dynamic data = response.data;
+
+      if (data is Map<String, dynamic>) {
+        return Pet.fromJson(data);
+      }
+
+      if (data is List && data.isNotEmpty && data.first is Map<String, dynamic>) {
+        return Pet.fromJson(data.first as Map<String, dynamic>);
+      }
+    } catch (_) {
+      // Fallback to list endpoint for backends that do not expose /pets/:id.
+    }
+
+    final List<Pet> pets = await getPets();
+    for (final Pet pet in pets) {
+      if (pet.id == id) {
+        return pet;
+      }
+    }
+
+    return null;
   }
 
   Future<List<Event>> getEvents() async {
@@ -108,5 +145,23 @@ Future<void> register(Map<String, dynamic> user) async {
       requestOptions: RequestOptions(path: ''),
       error: 'La respuesta de la API no contiene una lista válida.',
     );
+  }
+
+  String _extractApiErrorMessage(DioException error) {
+    final dynamic data = error.response?.data;
+
+    if (data is Map<String, dynamic>) {
+      final dynamic errors = data['errors'];
+      if (errors is List && errors.isNotEmpty) {
+        return errors.map((item) => item.toString()).join('\n');
+      }
+
+      final dynamic message = data['message'];
+      if (message != null && message.toString().trim().isNotEmpty) {
+        return message.toString();
+      }
+    }
+
+    return error.message ?? 'No se pudo completar el registro.';
   }
 }
