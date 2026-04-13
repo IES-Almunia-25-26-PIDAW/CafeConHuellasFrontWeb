@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../bloc/auth_bloc.dart';
+import '../bloc/auth_state.dart';
 
 class AppHeader extends StatelessWidget {
   final String userImageUrl;
-  const AppHeader({super.key, required this.userImageUrl});
+  const AppHeader({super.key, this.userImageUrl = "assets/user.png"});
 
 
   @override
   Widget build(BuildContext context) {
+    //lo hacemos para el diferente tamaño de pantallas
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isCompactHeader = screenWidth < 1100;
     final logoHeight = screenWidth < 900 ? 50.0 : screenWidth < 1200 ? 58.0 : 66.0;
@@ -190,11 +194,28 @@ class AppHeader extends StatelessWidget {
           SizedBox(width: itemSpacing),
           GestureDetector(
             onTap: () {
-              context.go('/login');
+              final authState = context.read<AuthBloc>().state;
+              //si esta logeado nos lleva a perfil
+              if (authState.isAuthenticated) {
+                context.go('/profile'); 
+                //si no está logeado nos lleva a login
+              } else {
+                context.go('/login');
+              }
             },
-            child: CircleAvatar(
-              radius: avatarRadius,
-              backgroundImage: AssetImage(userImageUrl),
+            child: BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                final String resolvedImage =
+                    (state.user?.imageUrl.isNotEmpty ?? false) ? state.user!.imageUrl : userImageUrl;
+                final ImageProvider imageProvider = resolvedImage.startsWith('http')
+                    ? NetworkImage(resolvedImage)
+                    : AssetImage(resolvedImage) as ImageProvider;
+
+                return CircleAvatar(
+                  radius: avatarRadius,
+                  backgroundImage: imageProvider,
+                );
+              },
             ),
           )
         ],

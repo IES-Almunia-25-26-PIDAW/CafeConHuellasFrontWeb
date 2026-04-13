@@ -4,13 +4,14 @@ import 'package:go_router/go_router.dart';
 
 class PetCard extends StatelessWidget {
   final Pet pet;
+  final double? fixedWidth;
 
-  const PetCard(this.pet);
+  const PetCard(this.pet, {super.key, this.fixedWidth});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 220,
+      width: fixedWidth,
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () => context.go('/pets/${pet.id}', extra: pet),
@@ -21,47 +22,71 @@ class PetCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: Colors.black12, width: 1.5),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: pet.imageUrl.startsWith('http')
-                    ? Image.network(
-                        pet.imageUrl,
-                        width: 220,
-                        height: 180,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            width: 220,
-                            height: 180,
-                            color: Colors.grey.shade200,
-                            alignment: Alignment.center,
-                            child: const Icon(Icons.pets, size: 48, color: Colors.grey),
-                          );
-                        },
-                      )
-                    : Image.asset(
-                        pet.imageUrl,
-                        width: 220,
-                        height: 180,
-                        fit: BoxFit.cover,
-                      ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                pet.name,
-                style: const TextStyle(
-                  fontSize: 26,
-                  fontFamily: "MilkyVintage",
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text('Raza: ${pet.breed}'),
-              Text('Edad: ${pet.age} años'),
-              Text(pet.emergency ? 'Estado: Emergencia' : 'Estado: Normal'),
-            ],
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final compact = constraints.maxWidth < 220;
+              final nameStyle = TextStyle(
+                fontSize: compact ? 17 : 20,
+                fontFamily: "MilkyVintage",
+              );
+              final bodyStyle = TextStyle(fontSize: compact ? 12 : 14);
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: AspectRatio(
+                      aspectRatio: 1.2,
+                      child: pet.imageUrl.startsWith('http')
+                          ? Image.network(
+                              pet.imageUrl,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  color: Colors.grey.shade200,
+                                  alignment: Alignment.center,
+                                  child: const Icon(Icons.pets, size: 48, color: Colors.grey),
+                                );
+                              },
+                            )
+                          : Image.asset(
+                              pet.imageUrl,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    pet.name,
+                    style: nameStyle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Raza: ${pet.breed}',
+                    style: bodyStyle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    'Edad: ${pet.age} años',
+                    style: bodyStyle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    pet.emergency ? 'Estado: Emergencia' : 'Estado: Normal',
+                    style: bodyStyle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),

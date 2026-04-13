@@ -101,7 +101,7 @@ class HomeScreen extends StatelessWidget {
                   spacing: 30,
                   runSpacing: 30,
                   alignment: WrapAlignment.center,
-                  children: pets.map((pet) => PetCard(pet)).toList(),
+                  children: pets.map((pet) => PetCard(pet, fixedWidth: 220)).toList(),
                 );
               },
             ),

@@ -16,7 +16,7 @@ class ApiConector {
     dio = Dio(
       BaseOptions(
         baseUrl:
-            'http://localhost:8087/api', // <-- url base de la API, cambiar si es necesario
+            'http://localhost:8087/api', // <- url base de la API, cambiar si es necesario
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
         headers: {'Content-Type': 'application/json'},
@@ -41,7 +41,7 @@ class ApiConector {
        _token = token;
     }
   
-Future<void> login(String email, String password) async {
+Future<Map<String, dynamic>> login(String email, String password) async {
   final response = await dio.post(
     '/auth/login',
     data: {
@@ -50,8 +50,30 @@ Future<void> login(String email, String password) async {
     },
   );
 
-  final token = response.data['token'];
+  final dynamic data = response.data;
+  String token = '';
+  dynamic user;
+
+  if (data is Map<String, dynamic>) {
+    token = (data['token'] ?? data['accessToken'] ?? data['jwt'] ?? '').toString();
+
+    if (token.isEmpty && data['data'] is Map<String, dynamic>) {
+      final nested = data['data'] as Map<String, dynamic>;
+      token = (nested['token'] ?? nested['accessToken'] ?? nested['jwt'] ?? '').toString();
+      user = nested['user'];
+    }
+
+    user ??= data['user'] ?? data['usuario'];
+  } else if (data is String) {
+    token = data;
+  }
+
+  if (token.isEmpty) {
+    throw Exception('No se recibio token en la respuesta de login.');
+  }
+
   setToken(token);
+  return {'token': token, 'user': user};
 }
 
 Future<void> register(Map<String, dynamic> user) async {
