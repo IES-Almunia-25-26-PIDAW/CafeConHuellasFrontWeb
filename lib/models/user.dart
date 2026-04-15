@@ -73,3 +73,50 @@ class User {
         );
     }
 }
+
+class UserWithoutPassword {
+    final int id;
+    final String firstName;
+    final String lastName1;
+    final String lastName2;
+    final String email;
+    final String phone;
+    final String role;
+    final String imageUrl;
+
+    UserWithoutPassword({
+        required this.id,
+        required this.firstName,
+        required this.lastName1,
+        required this.lastName2,
+        required this.email,
+        required this.phone,
+        required this.role,
+        required this.imageUrl,
+    });
+
+    factory UserWithoutPassword.fromJson(Map<String, dynamic> json) {
+        return UserWithoutPassword(
+            id: (json['id'] as num?)?.toInt() ?? 0,
+            firstName: (json['firstName'] ?? json['first_name'] ?? '').toString(),
+            lastName1: (json['lastName1'] ?? json['last_name1'] ?? '').toString(),
+            lastName2: (json['lastName2'] ?? json['last_name2'] ?? '').toString(),
+            email: (json['email'] ?? '').toString(),
+            phone: (json['phone'] ?? '').toString(),
+            role: (json['role'] ?? '').toString(),
+            imageUrl: (json['imageUrl'] ?? json['image_url'] ?? '').toString(),
+        );
+    }
+    Map <String, dynamic> toJson() {
+        return {
+            'id': id,
+            'firstName': firstName,
+            'lastName1': lastName1,
+            'lastName2': lastName2,
+            'email': email,
+            'phone': phone,
+            'role': role,
+            'imageUrl': imageUrl,
+        };
+    }
+}

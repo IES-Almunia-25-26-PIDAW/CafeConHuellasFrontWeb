@@ -1,6 +1,9 @@
 
+import 'dart:typed_data';
+
 import 'package:cafeconhuellas_front/models/event.dart';
 import 'package:cafeconhuellas_front/models/pet.dart';
+import 'package:cafeconhuellas_front/models/user.dart';
 import 'package:dio/dio.dart';
 
 class ApiConector {
@@ -52,7 +55,6 @@ Future<Map<String, dynamic>> login(String email, String password) async {
 
   final dynamic data = response.data;
   String token = '';
-  dynamic user;
 
   if (data is Map<String, dynamic>) {
     token = (data['token'] ?? data['accessToken'] ?? data['jwt'] ?? '').toString();
@@ -60,10 +62,9 @@ Future<Map<String, dynamic>> login(String email, String password) async {
     if (token.isEmpty && data['data'] is Map<String, dynamic>) {
       final nested = data['data'] as Map<String, dynamic>;
       token = (nested['token'] ?? nested['accessToken'] ?? nested['jwt'] ?? '').toString();
-      user = nested['user'];
+    
     }
 
-    user ??= data['user'] ?? data['usuario'];
   } else if (data is String) {
     token = data;
   }
@@ -73,7 +74,42 @@ Future<Map<String, dynamic>> login(String email, String password) async {
   }
 
   setToken(token);
-  return {'token': token, 'user': user};
+  return {'token': token};
+}
+// método para coger los datos del usuario que me da el token:
+Future<UserWithoutPassword> getMe() async {
+  final response = await dio.get('/users/me');
+  final dynamic data = response.data;
+
+  if (data is Map<String, dynamic>) {
+    return UserWithoutPassword.fromJson(data);
+  }
+
+  throw Exception('Respuesta inesperada en /users/me');
+}
+//MÉTODO PARA UPLOAD AVATAR, tenemos q enviar el archivo como multipart/form-data y nos devuelve una url con la imagen subida, que luego podremos guardar en el perfil del usuario
+Future<String> uploadAvatar(Uint8List fileBytes, String fileName) async {
+  final formData = FormData.fromMap({
+    'file': MultipartFile.fromBytes(
+      fileBytes,
+      filename: fileName,
+      contentType: DioMediaType('image', fileName.endsWith('.png') ? 'png' : 'jpeg'),
+    ),
+  });
+
+  final response = await dio.post(
+    '/files/upload-avatar',
+    data: formData,
+    options: Options(contentType: 'multipart/form-data'),
+  );
+
+  final dynamic data = response.data;
+  if (data is Map<String, dynamic>) {
+    final String url = (data['imageUrl'] ?? '').toString();
+    if (url.isNotEmpty) return url;
+  }
+
+  throw Exception('No se recibió imageUrl en la respuesta.');
 }
 
 Future<void> register(Map<String, dynamic> user) async {
@@ -90,9 +126,12 @@ Future<void> register(Map<String, dynamic> user) async {
       data: sanitizedUser,
     );
   } on DioException catch (error) {
-    throw Exception(_extractApiErrorMessage(error));
+    print("ERROR BACKEND:");
+  print(error.response?.data);
+  throw Exception(_extractApiErrorMessage(error));
   }
 }
+
 
   Future<List<Pet>> getPets() async {
     final Response<dynamic> response = await dio.get('/pets');

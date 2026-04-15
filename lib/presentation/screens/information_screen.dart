@@ -35,25 +35,22 @@ class InformationScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: AppColors.cream),
                   ),
-                child: const Text ("Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
-                      "Curabitur tristique elit elit. Nunc dictum mauris sit amet "
-                      "quam vestibulum lobortis.",
+                child: const Text ("Hola! Nosotras somos patitas unidas, una protectora que nace del del amor profundo por los animales"
+                      "y de la unión de tres amigas con el mismo sueño: darles una segunda oportunidad.",
                 style: TextStyle(
-                        fontSize: 18,
+                        fontFamily: "MilkyVintage",
+                        fontSize: 23,
                         color: AppColors.brown,
                         fontWeight: FontWeight.w500,),
                         textAlign: TextAlign.center,)                
               ),
               Row (mainAxisSize: MainAxisSize.min,
                     children: [
-
-                      _smallImage("assets/help/protectora1.jpg", 200),
-
+                      _smallImage("assets/information_section/somos.jpg", 200),
                       const SizedBox(width: 15),
-
                       Padding(
                         padding: const EdgeInsets.only(top: 120),
-                        child: _smallImage("assets/help/protectora2.jpg", 140),
+                        child: _smallImage("assets/information_section/somos2.jpg", 140),
                       ),
                     ],
                   ),
@@ -64,16 +61,17 @@ class InformationScreen extends StatelessWidget {
               //NUESTRO PROPOSITO
               _sectionTitle("Nuestro propósito:"),
               _infoSection(
-              image: "assets/help/voluntariado.jpg",
+              image: "assets/information_section/proposito.jpg",
               text:
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur tristique elit elit.",
+                  "Nuestra misión es clara: salvar, proteger y encontrar un hogar lleno de amor para todos los animales que lo necesiten"
+                  "En Patitas Unidas luchamos por un mundo donde ningún animal tenga que vivir en el abandono.",
               reverse: false,
             ),
             const SizedBox(height: 60),
             //UBICACIÓN
               _sectionTitle("Aquí estamos:"),
              _infoSection(
-              image: "assets/help/acogida.jpg",
+              image: "assets/information_section/ubicacion.jpg",
               text:
                   "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
               reverse: true,
@@ -82,9 +80,12 @@ class InformationScreen extends StatelessWidget {
              //HISTORIA
               _sectionTitle("Historia"),
               _infoSection(
-              image: "assets/help/paseos.jpg",
+              image: "assets/information_section/historia.jpg",
               text:
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                  "Patitas unidas nace en 2023, cuando tres chicas tras finalizar sus estudios dedicieron plasmar la energía y amor por los animales"
+                  "Durante ese momento de cambio en nuestras vidas, fuimos más conscientes que nunca de la realidad que viven muchos de los animales sin hogar"
+                  "Así lo que comenzó como una idea se convirtío en un proyecto, trabajando ahora día a día para rescatar cuidary acompañar a cada animal que llega a nosotras"
+                  ,
               reverse: false,
             ),
              const SizedBox(height: 80),
@@ -175,9 +176,11 @@ class InformationScreen extends StatelessWidget {
       ),
       child: Text(
         text,
+      
         textAlign: TextAlign.center,
         style: const TextStyle(
-          fontSize: 18,
+          fontFamily: "MilkyVintage",
+          fontSize: 23,
           color: AppColors.brown,
           fontWeight: FontWeight.w500,
         ),

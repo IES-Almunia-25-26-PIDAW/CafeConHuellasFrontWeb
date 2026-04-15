@@ -16,20 +16,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final response = await ApiConector().login(event.email, event.password);
       final String token = (response['token'] ?? '').toString();
-      final dynamic rawUser = response['user'];
+
 
       if (token.isEmpty) {
         throw Exception('Token vacío o ausente');
       }
-
-      User? user;
+      //Una vez que ya tenemos el token seteado podemos hacer la petición a users/me
+      
+      UserWithoutPassword? user;
       try {
-        if (rawUser is Map<String, dynamic>) {
-          user = User.fromJson(rawUser);
+          user = await ApiConector().getMe();
         }
-      } catch (parseError) {
+       catch (parseError) {
         // Si falla el parseo de usuario, continuamos sin él
-        print('Error al parsear user: $parseError');
+        print('No se pudo cargar el perfil');
       }
 
       emit(state.copyWith(
