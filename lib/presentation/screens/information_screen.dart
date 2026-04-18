@@ -1,3 +1,4 @@
+import 'package:cafeconhuellas_front/presentation/widgets/MapWidget.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_footer.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_header.dart';
 import 'package:cafeconhuellas_front/theme/AppColors.dart';
@@ -46,11 +47,11 @@ class InformationScreen extends StatelessWidget {
               ),
               Row (mainAxisSize: MainAxisSize.min,
                     children: [
-                      _smallImage("assets/information_section/somos.jpg", 200),
+                      _smallImage("assets/images/information_section/somos.jpg", 200),
                       const SizedBox(width: 15),
                       Padding(
                         padding: const EdgeInsets.only(top: 120),
-                        child: _smallImage("assets/information_section/somos2.jpg", 140),
+                        child: _smallImage("assets/images/information_section/somos2.jpg", 140),
                       ),
                     ],
                   ),
@@ -61,7 +62,7 @@ class InformationScreen extends StatelessWidget {
               //NUESTRO PROPOSITO
               _sectionTitle("Nuestro propósito:"),
               _infoSection(
-              image: "assets/information_section/proposito.jpg",
+              image: "assets/images/information_section/proposito.jpg",
               text:
                   "Nuestra misión es clara: salvar, proteger y encontrar un hogar lleno de amor para todos los animales que lo necesiten"
                   "En Patitas Unidas luchamos por un mundo donde ningún animal tenga que vivir en el abandono.",
@@ -70,23 +71,19 @@ class InformationScreen extends StatelessWidget {
             const SizedBox(height: 60),
             //UBICACIÓN
               _sectionTitle("Aquí estamos:"),
-             _infoSection(
-              image: "assets/information_section/ubicacion.jpg",
-              text:
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-              reverse: true,
-            ),
+             const MapWidget(),
              const SizedBox(height: 60),
              //HISTORIA
               _sectionTitle("Historia"),
               _infoSection(
-              image: "assets/information_section/historia.jpg",
+              image: "assets/images/information_section/historia.jpg",
               text:
                   "Patitas unidas nace en 2023, cuando tres chicas tras finalizar sus estudios dedicieron plasmar la energía y amor por los animales"
                   "Durante ese momento de cambio en nuestras vidas, fuimos más conscientes que nunca de la realidad que viven muchos de los animales sin hogar"
                   "Así lo que comenzó como una idea se convirtío en un proyecto, trabajando ahora día a día para rescatar cuidary acompañar a cada animal que llega a nosotras"
                   ,
               reverse: false,
+              imageTopPadding: 40,
             ),
              const SizedBox(height: 80),
             //FOOTER
@@ -118,9 +115,10 @@ class InformationScreen extends StatelessWidget {
     required String image,
     required String text,
     required bool reverse,
+    double imageTopPadding = 0,
   }) {
     final content = [
-      _largeImage(image),
+      _largeImage(image, topPadding: imageTopPadding),
       _infoCard(text),
     ];
 
@@ -135,14 +133,17 @@ class InformationScreen extends StatelessWidget {
     );
   }
 
-  Widget _largeImage(String path) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: Image.asset(
-        path,
-        width: 380,
-        height: 260,
-        fit: BoxFit.cover,
+  Widget _largeImage(String path, {double topPadding = 0}) {
+    return Padding(
+      padding: EdgeInsets.only(top: topPadding),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Image.asset(
+          path,
+          width: 380,
+          height: 260,
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
