@@ -7,6 +7,7 @@ import 'package:cafeconhuellas_front/presentation/bloc/pet_state.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_footer.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_header.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/petcard.dart';
+import 'package:cafeconhuellas_front/utils/api_conector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -16,7 +17,7 @@ class PetScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => PetsBloc()..add(LoadPets()),
+      create: (_) => PetsBloc(api:ApiConector())..add(LoadPets()),
       child: Scaffold(
         body: Column(
           children: [

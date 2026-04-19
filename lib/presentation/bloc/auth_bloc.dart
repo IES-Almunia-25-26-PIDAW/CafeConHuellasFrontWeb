@@ -6,7 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 // hacemos un bloc nuevo para la autenticación ya que es una parte bastante importante y está bien que la separemos de otras partes de la app, como mascotas u eventos.
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc() : super(AuthState()) {
+  final ApiConector api;
+  AuthBloc(this.api) : super(AuthState()) {
     on<LoginSubmitted>(_onLogin);
     on<LogoutRequested>(_onLogout);
   }
@@ -14,7 +15,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onLogin(LoginSubmitted event, Emitter<AuthState> emit) async {
     emit(state.copyWith(isLoading: true, clearError: true));
     try {
-      final response = await ApiConector().login(event.email, event.password);
+      final response = await api.login(event.email, event.password);
       final String token = (response['token'] ?? '').toString();
 
 
@@ -25,7 +26,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       
       UserWithoutPassword? user;
       try {
-          user = await ApiConector().getMe();
+          user = await api.getMe();
         }
        catch (parseError) {
         // Si falla el parseo de usuario, continuamos sin él

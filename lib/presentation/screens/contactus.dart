@@ -209,32 +209,34 @@ class _ContactusScreenState extends State<ContactusScreen> {
   }
 
   Widget _infoRow(IconData icon, String text) {
-    return Row(
-      children: [
-        Icon(icon, color: AppColors.darkViolet, size: 20),
-        const SizedBox(width: 10),
-        Text(text, style: const TextStyle(fontSize: 15)),
-      ],
-    );
-  }
+  return Row(
+    children: [
+      Icon(icon, color: AppColors.darkViolet, size: 20),
+      const SizedBox(width: 10),
+      Flexible(  // <- añade Flexible aquí
+        child: Text(text, style: const TextStyle(fontSize: 15)),
+      ),
+    ],
+  );
+}
 
-  Widget _socialChip(IconData icon, String label) {
-    return Container(
-      width: 120,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: AppColors.vanilla,
-        border: Border.all(color: AppColors.cream),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 18, color: AppColors.darkViolet),
-          const SizedBox(width: 6),
-          Text(label, style: const TextStyle(fontSize: 13, color: AppColors.darkViolet)),
-        ],
-      ),
-    );
-  }
+Widget _socialChip(IconData icon, String label) {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    decoration: BoxDecoration(
+      color: AppColors.vanilla,
+      border: Border.all(color: AppColors.cream),
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min, // <- que el Row no ocupe todo el ancho
+      children: [
+        Icon(icon, size: 18, color: AppColors.darkViolet),
+        const SizedBox(width: 6),
+        Text(label, style: const TextStyle(fontSize: 13, color: AppColors.darkViolet)),
+      ],
+    ),
+  );
+}
 }

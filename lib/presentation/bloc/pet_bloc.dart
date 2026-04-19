@@ -8,8 +8,9 @@ import 'package:cafeconhuellas_front/utils/api_conector.dart';
 class PetsBloc extends Bloc<PetsEvent, PetsState> {
   final List<Pet> _allPets = <Pet>[];
   final List<Event> _allEvents = <Event>[];
+  final ApiConector api;
 
-  PetsBloc()
+  PetsBloc({required this.api})
     : super(
         PetsState(
           pets: const <Pet>[],
@@ -29,7 +30,7 @@ class PetsBloc extends Bloc<PetsEvent, PetsState> {
     emit(state.copyWith(isLoading: true, clearErrorMessage: true));
 
     try {
-      final List<Event> events = await ApiConector().getEvents();
+      final List<Event> events = await api.getEvents();
       _allEvents
         ..clear()
         ..addAll(events);
@@ -50,7 +51,7 @@ class PetsBloc extends Bloc<PetsEvent, PetsState> {
     emit(state.copyWith(isLoading: true, clearErrorMessage: true));
 
     try {
-      final List<Pet> pets = await ApiConector().getPets();
+      final List<Pet> pets = await api.getPets();
       _allPets
         ..clear()
         ..addAll(pets);
