@@ -20,8 +20,8 @@ Frontend web de la protectora de animales **Café con Huellas**, desarrollado en
 ### 1. Clonar el repositorio
 
 ```bash
-git clone <url-del-repo-frontend>
-cd cafeconhuellas-front
+git clone https://github.com/IES-Almunia-25-26-PIDAW/CafeConHuellasFrontWeb.git
+cd CafeConHuellasFrontWeb
 ```
 
 ### 2. Crear el archivo `.env`
