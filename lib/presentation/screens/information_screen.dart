@@ -1,9 +1,8 @@
-import 'package:cafeconhuellas_front/presentation/widgets/MapWidget.dart';
+import 'package:cafeconhuellas_front/presentation/widgets/mapWidget.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_footer.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_header.dart';
 import 'package:cafeconhuellas_front/theme/AppColors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class InformationScreen extends StatelessWidget {
   const InformationScreen({super.key});

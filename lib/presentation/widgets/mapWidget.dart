@@ -25,9 +25,26 @@ class MapWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     _mapViewRegistered;
 
-    return SizedBox(
-      height: 300,
-      child: const HtmlElementView(viewType: _mapViewType),
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 520),
+        child: Container(
+          height: 260,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: Colors.brown.shade200, width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 16,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: const HtmlElementView(viewType: _mapViewType),
+        ),
+      ),
     );
   }
 }

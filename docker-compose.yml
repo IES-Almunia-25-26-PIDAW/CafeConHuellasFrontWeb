@@ -1,0 +1,16 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BACKEND_URL: ${BACKEND_URL:-http://localhost:8087}
+    container_name: cafe_con_huellas_frontend
+    ports:
+      - "4200:80"
+    restart: unless-stopped
+
+networks:
+  default:
+    name: cafe_con_huellas_network
+    external: true
