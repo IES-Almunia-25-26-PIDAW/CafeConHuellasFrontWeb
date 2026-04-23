@@ -1,4 +1,5 @@
 
+import 'package:cafeconhuellas_front/models/event.dart';
 import 'package:cafeconhuellas_front/models/pet.dart';
 import 'package:cafeconhuellas_front/models/user.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
@@ -112,6 +113,263 @@ group('PetsBloc', () {
     // esperamos a que se cumplan todas las expectativas
     await future;
     await bloc.close();
+  });
+});
+// casos adicionales de petsbloc
+
+group('PetsBloc — casos adicionales', () {
+  late MockApi mockApi;
+  late PetsBloc bloc;
+
+  final perro = Pet(
+    id: 1, name: 'Dog', species: Species.perro,
+    breed: '', age: 1, adopted: false,
+    imageUrl: '', description: '', emergency: true,
+  );
+  final gato = Pet(
+    id: 2, name: 'Cat', species: Species.gato,
+    breed: '', age: 1, adopted: false,
+    imageUrl: '', description: '', emergency: false,
+  );
+
+  setUp(() {
+    mockApi = MockApi();
+    bloc = PetsBloc(api: mockApi);
+  });
+
+  tearDown(() => bloc.close());
+
+  // Error al cargar mascotas 
+  test('emite error cuando getPets lanza excepción', () async {
+    when(() => mockApi.getPets()).thenThrow(Exception('sin red'));
+
+    final future = expectLater(
+      bloc.stream,
+      emitsInOrder([
+        isA<PetsState>().having((s) => s.isLoading, 'loading', true),
+        isA<PetsState>()
+            .having((s) => s.isLoading, 'loading', false)
+            .having((s) => s.pets, 'pets', isEmpty)
+            .having((s) => s.errorMessage, 'error', isNotNull),
+      ]),
+    );
+
+    bloc.add(LoadPets());
+    await future;
+  });
+
+  // Filtro por gato 
+  test('filtra por especie gato', () async {
+    when(() => mockApi.getPets()).thenAnswer((_) async => [perro, gato]);
+
+    bloc.add(LoadPets());
+    await bloc.stream.firstWhere((s) => !s.isLoading && s.pets.isNotEmpty);
+
+    final future = expectLater(
+      bloc.stream,
+      emits(
+        isA<PetsState>()
+            .having((s) => s.selectedSpecies, 'species', 'Gato')
+            .having((s) => s.pets.length, 'length', 1)
+            .having((s) => s.pets.first.species, 'species', Species.gato),
+      ),
+    );
+
+    bloc.add(FilterSpecies('Gato'));
+    await future;
+  });
+
+  //  Filtro vacío (sin especie) 
+  test('sin filtro de especie muestra todos', () async {
+    when(() => mockApi.getPets()).thenAnswer((_) async => [perro, gato]);
+
+    bloc.add(LoadPets());
+    await bloc.stream.firstWhere((s) => !s.isLoading && s.pets.isNotEmpty);
+    bloc.add(FilterSpecies('Perro'));
+    await bloc.stream.firstWhere((s) => s.selectedSpecies == 'Perro');
+
+    final future = expectLater(
+      bloc.stream,
+      emits(
+        isA<PetsState>()
+            .having((s) => s.pets.length, 'all pets', 2),
+      ),
+    );
+
+    bloc.add(FilterSpecies(''));
+    await future;
+  });
+
+  //  Toggle emergency
+  test('toggle emergency filtra solo mascotas urgentes', () async {
+    when(() => mockApi.getPets()).thenAnswer((_) async => [perro, gato]);
+
+    bloc.add(LoadPets());
+    await bloc.stream.firstWhere((s) => !s.isLoading && s.pets.isNotEmpty);
+
+    final future = expectLater(
+      bloc.stream,
+      emitsInOrder([
+        // ON: solo el perro (emergency: true)
+        isA<PetsState>()
+            .having((s) => s.isEmergencyActive, 'emergency', true)
+            .having((s) => s.pets.length, 'filtered', 1),
+        // OFF: vuelven los dos
+        isA<PetsState>()
+            .having((s) => s.isEmergencyActive, 'emergency', false)
+            .having((s) => s.pets.length, 'all', 2),
+      ]),
+    );
+
+    bloc.add(ToggleEmergency());
+    await bloc.stream.firstWhere((s) => s.isEmergencyActive);
+    bloc.add(ToggleEmergency());
+    await future;
+  });
+
+  // LoadEvents éxito 
+  test('LoadEvents emite los eventos cargados', () async {
+    final evento = Event(id: 1, description: '', date: DateTime.now (), name: '', imageUrl: '', active: false);
+    when(() => mockApi.getEvents()).thenAnswer((_) async => [evento]);
+
+    final future = expectLater(
+      bloc.stream,
+      emitsInOrder([
+        isA<PetsState>().having((s) => s.isLoading, 'loading', true),
+        isA<PetsState>()
+            .having((s) => s.events.length, 'events', 1)
+            .having((s) => s.isLoading, 'loading', false),
+      ]),
+    );
+
+    bloc.add(LoadEvents());
+    await future;
+  });
+
+  // LoadEvents error 
+  test('LoadEvents emite error cuando la API falla', () async {
+    when(() => mockApi.getEvents()).thenThrow(Exception('timeout'));
+
+    final future = expectLater(
+      bloc.stream,
+      emitsInOrder([
+        isA<PetsState>().having((s) => s.isLoading, 'loading', true),
+        isA<PetsState>()
+            .having((s) => s.events, 'events', isEmpty)
+            .having((s) => s.errorMessage, 'error', isNotNull),
+      ]),
+    );
+
+    bloc.add(LoadEvents());
+    await future;
+  });
+});
+
+//AUTH BLOC casos adicionales
+
+group('AuthBloc — casos adicionales', () {
+  late MockApi mockApi;
+  late AuthBloc bloc;
+
+  setUp(() {
+    mockApi = MockApi();
+    bloc = AuthBloc(mockApi);
+  });
+
+  tearDown(() => bloc.close());
+
+  // Estado inicial 
+  test('estado inicial es correcto', () {
+    expect(bloc.state.isLoading, false);
+    expect(bloc.state.token, isNull);
+    expect(bloc.state.errorMessage, isNull);
+  });
+
+  //  Login fallido 
+  test('emite error cuando el login lanza excepción', () async {
+    when(() => mockApi.login(any(), any()))
+        .thenThrow(Exception('credenciales incorrectas'));
+
+    final future = expectLater(
+      bloc.stream,
+      emitsInOrder([
+        isA<AuthState>().having((s) => s.isLoading, 'loading', true),
+        isA<AuthState>()
+            .having((s) => s.isLoading, 'loading', false)
+            .having((s) => s.errorMessage, 'error', isNotNull)
+            .having((s) => s.token, 'token', isNull),
+      ]),
+    );
+
+    bloc.add(LoginSubmitted('mal@email.com', 'wrongpass'));
+    await future;
+  });
+
+  //  Token vacío 
+  test('emite error cuando la API devuelve token vacío', () async {
+    when(() => mockApi.login(any(), any()))
+        .thenAnswer((_) async => {'token': ''});
+
+    final future = expectLater(
+      bloc.stream,
+      emitsInOrder([
+        isA<AuthState>().having((s) => s.isLoading, 'loading', true),
+        isA<AuthState>()
+            .having((s) => s.isLoading, 'loading', false)
+            .having((s) => s.errorMessage, 'error', isNotNull),
+      ]),
+    );
+
+    bloc.add(LoginSubmitted('andreita@gmail.com', '123'));
+    await future;
+  });
+
+  // getMe falla tras login OK 
+  test('login OK aunque getMe falle — guarda el token igualmente', () async {
+    when(() => mockApi.login(any(), any()))
+        .thenAnswer((_) async => {'token': 'abc'});
+    when(() => mockApi.getMe()).thenThrow(Exception('parse error'));
+
+    final future = expectLater(
+      bloc.stream,
+      emitsInOrder([
+        isA<AuthState>().having((s) => s.isLoading, 'loading', true),
+        isA<AuthState>()
+            .having((s) => s.token, 'token', 'abc')
+            .having((s) => s.user, 'user', isNull),
+      ]),
+    );
+
+    bloc.add(LoginSubmitted('andreita@gmail.com', '123'));
+    await future;
+  });
+
+  //  Logout 
+  test('LogoutRequested resetea el estado completamente', () async {
+    when(() => mockApi.login(any(), any()))
+        .thenAnswer((_) async => {'token': 'abc'});
+    when(() => mockApi.getMe()).thenAnswer(
+      (_) async => UserWithoutPassword(
+        id: 1, firstName: 'Andrea', lastName1: '',
+        lastName2: '', email: '', phone: '',
+        role: '', imageUrl: '',
+      ),
+    );
+
+    bloc.add(LoginSubmitted('andreita@gmail.com', '123'));
+    await bloc.stream.firstWhere((s) => s.token != null);
+
+    final future = expectLater(
+      bloc.stream,
+      emits(
+        isA<AuthState>()
+            .having((s) => s.token, 'token', isNull)
+            .having((s) => s.user, 'user', isNull),
+      ),
+    );
+
+    bloc.add(LogoutRequested());
+    await future;
   });
 });
 }
