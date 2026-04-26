@@ -23,8 +23,30 @@ class PetsBloc extends Bloc<PetsEvent, PetsState> {
     on<LoadPets>(_onLoadPets);
     on<LoadEvents>(_onLoadEvents);
     on<FilterSpecies>(_onFilterSpecies);
+    on<AddPet>(_onAddPet);
+    on<UpdatePet>(_onUpdatePet);
+    on<DeletePet>(_onDeletePet);
     on<ToggleEmergency>(_onToggleEmergency);
+    on<AddEvent>(_onAddEvent);
+    on<UpdateEvent>(_onUpdateEvent);
+    on<DeleteEvent>(_onDeleteEvent);
   }
+  //AÑADIR MASCOTA SOLO ADMIN
+   Future<void> _onAddPet(AddPet event, Emitter<PetsState> emit) async {
+    emit(state.copyWith(isLoading: true, clearErrorMessage: true));
+    try {
+      await api.addPet(event.pet);
+      // recargamos la lista completa para reflejar el nuevo id que asigna el backend
+      final List<Pet> pets = await api.getPets();
+      _allPets
+        ..clear()
+        ..addAll(pets);
+      emit(_applyFilters(state.copyWith(isLoading: false, clearErrorMessage: true)));
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+    }
+  }
+
   //cargamos los eventos para mostrarlos en la pantalla de eventos, aunque no se usen en la pantalla de mascotas
   Future <void> _onLoadEvents(LoadEvents event, Emitter<PetsState> emit) async {
     emit(state.copyWith(isLoading: true, clearErrorMessage: true));
@@ -71,6 +93,69 @@ class PetsBloc extends Bloc<PetsEvent, PetsState> {
       );
     }
   }
+  // SOLO ADMIN: editar una mascota existente y actualizar la lista local
+  Future<void> _onUpdatePet(UpdatePet event, Emitter<PetsState> emit) async {
+    emit(state.copyWith(isLoading: true, clearErrorMessage: true));
+    try {
+      await api.updatePet(event.pet);
+      // sustituimos la mascota editada en la lista local sin hacer un GET extra
+      final int idx = _allPets.indexWhere((p) => p.id == event.pet.id);
+      if (idx != -1) _allPets[idx] = event.pet;
+      emit(_applyFilters(state.copyWith(isLoading: false, clearErrorMessage: true)));
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+    }
+  }
+ 
+  // SOLO ADMIN: borrar una mascota y quitarla de la lista local
+  Future<void> _onDeletePet(DeletePet event, Emitter<PetsState> emit) async {
+    emit(state.copyWith(isLoading: true, clearErrorMessage: true));
+    try {
+      await api.deletePet(event.petId);
+      _allPets.removeWhere((p) => p.id == event.petId);
+      emit(_applyFilters(state.copyWith(isLoading: false, clearErrorMessage: true)));
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+    }
+  }
+
+  // SOLO ADMIN: añadir evento
+  Future<void> _onAddEvent(AddEvent event, Emitter<PetsState> emit) async {
+    emit(state.copyWith(isLoading: true, clearErrorMessage: true));
+    try {
+      await api.addEvent(event.event);
+      final List<Event> events = await api.getEvents();
+      _allEvents..clear()..addAll(events);
+      emit(state.copyWith(events: events, isLoading: false));
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+    }
+  }
+
+  // SOLO ADMIN: editar evento
+  Future<void> _onUpdateEvent(UpdateEvent event, Emitter<PetsState> emit) async {
+    emit(state.copyWith(isLoading: true, clearErrorMessage: true));
+    try {
+      await api.updateEvent(event.event);
+      final int idx = _allEvents.indexWhere((e) => e.id == event.event.id);
+      if (idx != -1) _allEvents[idx] = event.event;
+      emit(state.copyWith(events: List<Event>.from(_allEvents), isLoading: false));
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+    }
+  }
+
+  // SOLO ADMIN: borrar evento
+  Future<void> _onDeleteEvent(DeleteEvent event, Emitter<PetsState> emit) async {
+    emit(state.copyWith(isLoading: true, clearErrorMessage: true));
+    try {
+      await api.deleteEvent(event.eventId);
+      _allEvents.removeWhere((e) => e.id == event.eventId);
+      emit(state.copyWith(events: List<Event>.from(_allEvents), isLoading: false));
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+    }
+  }
 
   void _onFilterSpecies(FilterSpecies event, Emitter<PetsState> emit) {
     final newState = state.copyWith(selectedSpecies: event.species);
@@ -88,10 +173,9 @@ class PetsBloc extends Bloc<PetsEvent, PetsState> {
     final filtered = _allPets.where((pet) {
       final matchesSpecies =
           state.selectedSpecies.isEmpty ||
-          (state.selectedSpecies == 'Perro' && pet.species == Species.perro) ||
-          (state.selectedSpecies == 'Gato' && pet.species == Species.gato);
+          pet.category.toLowerCase() == state.selectedSpecies.toLowerCase();
 
-      final matchesEmergency = !state.isEmergencyActive || pet.emergency;
+      final matchesEmergency = !state.isEmergencyActive || pet.urgentAdoption;
 
       return matchesSpecies && matchesEmergency;
     }).toList();

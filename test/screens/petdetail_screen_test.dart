@@ -20,9 +20,9 @@ void main() {
     neutered: true,
     description: 'Una perrita muy cariñosa.',
     imageUrl: 'assets/user.png',
-    species: Species.perro, 
+    category: 'Perro', 
     adopted: true, 
-    emergency: true,
+    urgentAdoption: true,
   );
 
   Widget buildWidget() => MaterialApp.router(

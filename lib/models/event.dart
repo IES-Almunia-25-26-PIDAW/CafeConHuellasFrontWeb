@@ -9,7 +9,6 @@ class Event {
   final String status;
   final int maxCapacity;
   final DateTime createdAt;
-  final bool active;
 
   Event({
     required this.id,
@@ -23,7 +22,6 @@ class Event {
     this.status = '',
     this.maxCapacity = 0,
     DateTime? createdAt,
-    required this.active,
   }) : eventdate = eventdate ?? date ?? DateTime.now(),
        createdAt = createdAt ?? DateTime.now();
 
@@ -42,24 +40,21 @@ class Event {
       status: (json['status'] ?? '').toString(),
       maxCapacity: (json['maxCapacity'] as num?)?.toInt() ?? 0,
       createdAt: _parseDate(rawCreatedAt),
-      active: _parseBool(json['active'] ?? json['isActive'] ?? false),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'name': name,
-      'imageUrl': imageUrl,
+      'id':          id,
+      'name':        name,
+      'imageUrl':    imageUrl,
       'description': description,
-      'eventdate': eventdate.toIso8601String(),
-      'date': eventdate.toIso8601String(),
-      'location': location,
-      'eventType': eventType,
-      'status': status,
+      'eventDate':   eventdate.toIso8601String(),  
+      'location':    location,
+      'eventType':   eventType,
+      'status':      status,
       'maxCapacity': maxCapacity,
-      'createdAt': createdAt.toIso8601String(),
-      'active': active,
+      'createdAt':   createdAt.toIso8601String(),
     };
   }
 
@@ -75,7 +70,6 @@ class Event {
     String? status,
     int? maxCapacity,
     DateTime? createdAt,
-    bool? active,
   }) {
     return Event(
       id: id ?? this.id,
@@ -88,7 +82,6 @@ class Event {
       status: status ?? this.status,
       maxCapacity: maxCapacity ?? this.maxCapacity,
       createdAt: createdAt ?? this.createdAt,
-      active: active ?? this.active,
     );
   }
 
@@ -102,17 +95,4 @@ class Event {
     return DateTime.now();
   }
 
-  static bool _parseBool(dynamic value) {
-    if (value is bool) {
-      return value;
-    }
-    if (value is num) {
-      return value != 0;
-    }
-    if (value is String) {
-      final String normalized = value.toLowerCase().trim();
-      return normalized == 'true' || normalized == '1' || normalized == 'active';
-    }
-    return false;
-  }
 }

@@ -62,9 +62,9 @@ Pet _makePet({
       name: name,
       breed: breed,
       age: age,
-      emergency: emergency,
+      category: 'Perro',
+      urgentAdoption: emergency,
       imageUrl: imageUrl,
-      species: Species.perro,
       adopted: false,
       description: '',
     );

@@ -11,13 +11,12 @@ void main (){
               'name': 'Evento',
               'description': 'Desc',
               'eventdate': '2024-01-01T10:00:00Z',
-              'imageUrl': 'img.jpg',
-              'active': true,
+              'imageUrl': 'img.jpg'
             };
             final event= Event.fromJson(json);
             expect(event.id,1);
             expect(event.name, 'Evento');
-            expect(event.active,true);
+      
           }
         );
         test('toJson devuelve un mapa válido', () {
@@ -26,7 +25,7 @@ void main (){
             name: 'Evento',
             description: 'Desc',
             imageUrl: 'img.jpg',
-            active: true,
+
           );
 
           final json = event.toJson();
@@ -41,7 +40,6 @@ void main (){
             name: 'Evento',
             description: 'Desc',
             imageUrl: 'img.jpg',
-            active: true,
           );
           final updated = event.copyWith(name: 'Nuevo');
           expect(updated.name, 'Nuevo');

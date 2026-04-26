@@ -24,7 +24,7 @@ void main() {
     name: 'Adopción Primavera',
     description: 'Ven a conocer a nuestros animales',
     imageUrl: 'https://example.com/img.jpg',
-    eventdate: DateTime.now().add(const Duration(days: 5)), active: true,
+    eventdate: DateTime.now().add(const Duration(days: 5)), 
   );
 
   final eventPasado = Event(
@@ -32,7 +32,7 @@ void main() {
     name: 'Feria de Navidad',
     description: 'Evento ya celebrado',
     imageUrl: 'https://example.com/img2.jpg',
-    eventdate: DateTime.now().subtract(const Duration(days: 5)), active: true,
+    eventdate: DateTime.now().subtract(const Duration(days: 5)),
   );
 
   // Estado base vacío
@@ -196,7 +196,7 @@ void main() {
             name: 'Evento roto',
             description: 'Imagen fallida',
             imageUrl: 'https://url-que-no-existe.xyz/img.jpg',
-            eventdate: DateTime.now().add(const Duration(days: 1)), active: true,
+            eventdate: DateTime.now().add(const Duration(days: 1)),
           ),
         ]),
       );

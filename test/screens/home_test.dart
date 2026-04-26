@@ -35,19 +35,19 @@ void main() {
 
   // Mascotas de ejemplo
   final pets = [
-    Pet(id: 1, name: 'Rex', species: Species.perro, breed: 'Labrador',
+    Pet(id: 1, name: 'Rex', category: 'Perro', breed: 'Labrador',
         age: 3, adopted: false, imageUrl: 'https://example.com/pet.jpg',
-        description: '', emergency: false),
-    Pet(id: 2, name: 'Luna', species: Species.gato, breed: 'Siamés',
+        description: '', urgentAdoption: false),
+    Pet(id: 2, name: 'Luna', category: 'Gato', breed: 'Siamés',
         age: 2, adopted: false, imageUrl: 'https://example.com/cat.jpg',
-        description: '', emergency: false),
+        description: '', urgentAdoption: false),
   ];
 
   // Eventos de ejemplo
   final events = [
     Event(id: 1, name: 'Adopción', description: 'Gran evento',
         imageUrl: 'https://example.com/ev.jpg',
-        eventdate: DateTime.now().add(const Duration(days: 5)), active: true),
+        eventdate: DateTime.now().add(const Duration(days: 5))),
   ];
 
   setUp(() {
@@ -221,13 +221,13 @@ void main() {
         (i) => Pet(
           id: i,
           name: 'Pet$i',
-          species: Species.perro,
+          category: 'Perro',
           breed: '',
           age: 1,
           adopted: false,
           imageUrl: 'https://example.com/pet$i.jpg',
           description: '',
-          emergency: false,
+          urgentAdoption: false,
         ),
       );
       when(() => petsBloc.state).thenReturn(

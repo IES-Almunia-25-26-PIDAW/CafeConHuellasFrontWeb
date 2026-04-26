@@ -3,10 +3,10 @@ import 'package:cafeconhuellas_front/models/pet.dart';
 
 class Globals {
   static final List<Pet> _fallbackPets = [
-    Pet(id: 1, name: 'Fido', species: Species.perro, breed: 'Labrador', age: 3, adopted: false, imageUrl: 'assets/images/perrito.jpg', description: 'Friendly dog', emergency: false),
-    Pet(id: 2, name: 'Whiskers', species: Species.gato, breed: 'Siamese', age: 2, adopted: false, imageUrl: 'assets/images/gatito.jpg', description: 'Playful cat', emergency: false),
-    Pet(id: 3, name: 'Ushi', species: Species.perro, breed: 'Bulldog', age: 4, adopted: false, imageUrl: 'assets/images/perrito.jpg', description: 'Calm dog', emergency: false),
-    Pet(id: 4, name: 'Elizabeth', species: Species.gato, breed: 'Persian', age: 1, adopted: false, imageUrl: 'assets/images/gatito.jpg', description: 'Gentle cat', emergency: false)
+    Pet(id: 1, name: 'Fido', category: 'Perro', breed: 'Labrador', age: 3, adopted: false, imageUrl: 'assets/images/perrito.jpg', description: 'Friendly dog', urgentAdoption: false),
+    Pet(id: 2, name: 'Whiskers', category: 'Gato', breed: 'Siamese', age: 2, adopted: false, imageUrl: 'assets/images/gatito.jpg', description: 'Playful cat', urgentAdoption: false),
+    Pet(id: 3, name: 'Ushi', category: 'Perro', breed: 'Bulldog', age: 4, adopted: false, imageUrl: 'assets/images/perrito.jpg', description: 'Calm dog', urgentAdoption: false),
+    Pet(id: 4, name: 'Elizabeth', category: 'Gato', breed: 'Persian', age: 1, adopted: false, imageUrl: 'assets/images/gatito.jpg', description: 'Gentle cat', urgentAdoption: false)
   
   ];
   static final List<Event> _fallbackFutureEvents = [
@@ -16,7 +16,7 @@ class Globals {
       imageUrl: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b',
       description: 'Salida grupal para pasear perros del refugio y socializarlos.',
       date: DateTime(2026, 4, 12, 10, 0),
-      active: true,
+ 
     ),
     Event(
       id: 2,
@@ -24,7 +24,7 @@ class Globals {
       imageUrl: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9',
       description: 'Venta solidaria para recaudar fondos para vacunas y alimento.',
       date: DateTime(2026, 5, 3, 11, 30),
-      active: true,
+
     ),
     Event(
       id: 3,
@@ -32,7 +32,7 @@ class Globals {
       imageUrl: 'https://images.unsplash.com/photo-1450778869180-41d0601e046e',
       description: 'Taller practico sobre cuidados, adopcion y bienestar animal.',
       date: DateTime(2026, 6, 7, 18, 0),
-      active: true,
+
     ),
     Event(
       id: 4,
@@ -40,7 +40,7 @@ class Globals {
       imageUrl: 'https://images.unsplash.com/photo-1517849845537-4d257902454a',
       description: 'Encuentro con familias para impulsar adopciones responsables.',
       date: DateTime(2026, 7, 19, 9, 30),
-      active: true,
+ 
     ),
   ];
   static final List<Event> _fallbackPastEvents = [
@@ -50,7 +50,7 @@ class Globals {
       imageUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9',
       description: 'Jornada gratuita de identificacion para perros y gatos.',
       date: DateTime(2025, 2, 15, 10, 0),
-      active: false,
+  
     ),
     Event(
       id: 6,
@@ -58,7 +58,7 @@ class Globals {
       imageUrl: 'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8',
       description: 'Visita al centro para conocer voluntariado y proceso de adopcion.',
       date: DateTime(2025, 4, 20, 12, 0),
-      active: false,
+ 
     ),
     Event(
       id: 7,
@@ -66,7 +66,7 @@ class Globals {
       imageUrl: 'https://images.unsplash.com/photo-1507146426996-ef05306b995a',
       description: 'Recorrido por la ciudad para fomentar convivencia con mascotas.',
       date: DateTime(2025, 8, 10, 9, 0),
-      active: false,
+  
     ),
     Event(
       id: 8,
@@ -74,7 +74,7 @@ class Globals {
       imageUrl: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1',
       description: 'Campana de sensibilizacion y recogida de donaciones.',
       date: DateTime(2025, 12, 14, 17, 0),
-      active: false,
+
     ),
   ];
 

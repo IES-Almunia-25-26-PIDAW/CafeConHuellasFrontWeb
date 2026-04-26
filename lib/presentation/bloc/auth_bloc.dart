@@ -10,6 +10,28 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc(this.api) : super(AuthState()) {
     on<LoginSubmitted>(_onLogin);
     on<LogoutRequested>(_onLogout);
+    on<UpdateAvatarRequested>((event, emit) async {
+      if (state.user == null) return;
+      // Construimos el UserWithoutPassword con la nueva imagen,cogemos el usuario que ya habia
+     final updatedUser = state.user!.copyWith(imageUrl: event.imageUrl);
+      // PUT al backend — creamos un User temporal solo para la llamada a la API
+       await ApiConector().updateAvatar(
+        User(
+          id: updatedUser.id,
+          firstName: updatedUser.firstName,
+          lastName1: updatedUser.lastName1,
+          lastName2: updatedUser.lastName2,
+          password: '', // el backend no lo usa en este PUT
+          email: updatedUser.email,
+          phone: updatedUser.phone,
+          role: updatedUser.role,
+          imageUrl: event.imageUrl,
+        ),
+        state.user!.id,
+      );
+    // Actualizamos el estado
+    emit(state.copyWith(user: updatedUser));
+    });
   }
   //emitimos un estado de carga mientras hacemos la petición, luego emitimos el token y el usuario si todo ha ido bien, o un mensaje de error si ha habido algún problema, como credenciales incorrectas o problemas de conexión.
   Future<void> _onLogin(LoginSubmitted event, Emitter<AuthState> emit) async {
@@ -30,7 +52,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
        catch (parseError) {
         // Si falla el parseo de usuario, continuamos sin él
-        print('No se pudo cargar el perfil');
       }
 
       emit(state.copyWith(

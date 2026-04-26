@@ -79,7 +79,7 @@ class PetCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    pet.emergency ? 'Estado: Emergencia' : 'Estado: Normal',
+                    pet.urgentAdoption? 'Estado: Emergencia' : 'Estado: Normal',
                     style: bodyStyle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

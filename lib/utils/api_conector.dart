@@ -43,7 +43,35 @@ class ApiConector {
       void setToken(String token) {
        _token = token;
     }
-  
+//método apra cambiar foto de perfil
+Future<void> updateAvatar(User user, int id) async {
+  try {
+    // mandamos solo imageUrl ya que es lo único que cambia
+    final response = await dio.put(
+      '/users/$id',
+      data: {
+        'id':        user.id,
+        'firstName': user.firstName,
+        'lastName1': user.lastName1,
+        'lastName2': user.lastName2,
+        'email':     user.email,
+        'phone':     user.phone,
+        'role':      user.role,
+        'imageUrl':  user.imageUrl,
+        // password vacío: el backend debería ignorarlo o tenerlo ya
+        'password':  user.password.isNotEmpty ? user.password : null,
+      },
+    );
+ 
+    if (response.statusCode != 200) {
+      throw Exception('Error al actualizar el avatar. Código: ${response.statusCode}');
+    }
+  } on DioException catch (error) {
+    throw Exception('Error al actualizar el avatar: ${error.message}');
+  }
+}
+
+
 Future<Map<String, dynamic>> login(String email, String password) async {
   final response = await dio.post(
     '/auth/login',
@@ -111,6 +139,53 @@ Future<String> uploadAvatar(Uint8List fileBytes, String fileName) async {
 
   throw Exception('No se recibió imageUrl en la respuesta.');
 }
+//método para cargar foto de los perros
+Future<String> uploadPetsImage(Uint8List fileBytes, String fileName) async {
+  final formData = FormData.fromMap({
+    'file': MultipartFile.fromBytes(
+      fileBytes,
+      filename: fileName,
+      contentType: DioMediaType('image', fileName.endsWith('.png') ? 'png' : 'jpeg'),
+    ),
+  });
+
+  final response = await dio.post(
+    '/files/upload-pet-image',
+    data: formData,
+    options: Options(contentType: 'multipart/form-data'),
+  );
+
+  final dynamic data = response.data;
+  if (data is Map<String, dynamic>) {
+    final String url = (data['imageUrl'] ?? '').toString();
+    if (url.isNotEmpty) return url;
+  }
+
+  throw Exception('No se recibió imageUrl en la respuesta.');
+}
+Future<String> uploadEventsImages(Uint8List fileBytes, String fileName) async {
+  final formData = FormData.fromMap({
+    'file': MultipartFile.fromBytes(
+      fileBytes,
+      filename: fileName,
+      contentType: DioMediaType('image', fileName.endsWith('.png') ? 'png' : 'jpeg'),
+    ),
+  });
+
+  final response = await dio.post(
+    '/files/upload-event-image',
+    data: formData,
+    options: Options(contentType: 'multipart/form-data'),
+  );
+
+  final dynamic data = response.data;
+  if (data is Map<String, dynamic>) {
+    final String url = (data['imageUrl'] ?? '').toString();
+    if (url.isNotEmpty) return url;
+  }
+
+  throw Exception('No se recibió imageUrl en la respuesta.');
+}
 
 Future<void> register(Map<String, dynamic> user) async {
   final Map<String, dynamic> sanitizedUser = Map<String, dynamic>.from(user);
@@ -126,8 +201,6 @@ Future<void> register(Map<String, dynamic> user) async {
       data: sanitizedUser,
     );
   } on DioException catch (error) {
-    print("ERROR BACKEND:");
-  print(error.response?.data);
   throw Exception(_extractApiErrorMessage(error));
   }
 }
@@ -168,6 +241,38 @@ Future<void> register(Map<String, dynamic> user) async {
 
     return null;
   }
+  //post de mascotas, añadir una mascota
+  Future<void> addPet (Pet pet) async {
+    final Map<String, dynamic> petData = pet.toJson();
+    try {
+      await dio.post(
+        '/pets',
+        data: petData,
+      );
+    } on DioException catch (error) {
+      throw Exception(_extractApiErrorMessage(error));
+    }
+  }
+  //put de mascotas, editar una mascota
+  Future<void> updatePet (Pet pet) async {
+    final Map<String, dynamic> petData = pet.toJson();
+    try {
+      await dio.put(
+        '/pets/${pet.id}',
+        data: petData,
+      );
+    } on DioException catch (error) {
+      throw Exception(_extractApiErrorMessage(error));
+    }
+  }
+  //delete de mascotas, eliminar una mascota
+  Future<void> deletePet (int id) async {
+    try {
+      await dio.delete('/pets/$id');
+    } on DioException catch (error) {
+      throw Exception(_extractApiErrorMessage(error));
+    }
+  }
 
   Future<List<Event>> getEvents() async {
     final Response<dynamic> response = await dio.get('/events');
@@ -177,6 +282,38 @@ Future<void> register(Map<String, dynamic> user) async {
         .whereType<Map<String, dynamic>>()
         .map(Event.fromJson)
         .toList();
+  }
+  //método para añadir un evento
+  Future<void> addEvent (Event event) async {
+    final Map<String, dynamic> eventData = event.toJson();
+    try {
+      await dio.post(
+        '/events',
+        data: eventData,
+      );
+    } on DioException catch (error) {
+      throw Exception(_extractApiErrorMessage(error));
+    }
+  }
+  //método para editar un evento
+  Future<void> updateEvent (Event event) async {
+    final Map<String, dynamic> eventData = event.toJson();
+    try {
+      await dio.put(
+        '/events/${event.id}',
+        data: eventData,
+      );
+    } on DioException catch (error) {
+      throw Exception(_extractApiErrorMessage(error));
+    }
+  }
+  //método para eliminar un evento
+  Future<void> deleteEvent (int id) async {
+    try {
+      await dio.delete('/events/$id');
+    } on DioException catch (error) {
+      throw Exception(_extractApiErrorMessage(error));
+    }
   }
   //con este método aseguramos normalizar la respuesta de la Api antes de convertirla en objetos
   List<dynamic> _extractList(dynamic data) {

@@ -64,24 +64,24 @@ group('PetsBloc', () {
         Pet(
           id: 1,
           name: 'Dog',
-          species: Species.perro,
           breed: '',
+          category: 'Perro',
           age: 1,
           adopted: false,
           imageUrl: '',
           description: '',
-          emergency: true,
+          urgentAdoption: true,
         ),
         Pet(
           id: 2,
           name: 'Cat',
-          species: Species.gato,
           breed: '',
+          category: 'Gato',
           age: 1,
           adopted: false,
           imageUrl: '',
           description: '',
-          emergency: false,
+          urgentAdoption: false,
         ),
       ],
     );
@@ -122,14 +122,14 @@ group('PetsBloc — casos adicionales', () {
   late PetsBloc bloc;
 
   final perro = Pet(
-    id: 1, name: 'Dog', species: Species.perro,
+    id: 1, name: 'Dog', category: 'Perro',
     breed: '', age: 1, adopted: false,
-    imageUrl: '', description: '', emergency: true,
+    imageUrl: '', description: '', urgentAdoption: true,
   );
   final gato = Pet(
-    id: 2, name: 'Cat', species: Species.gato,
+    id: 2, name: 'Cat', category: 'Gato',
     breed: '', age: 1, adopted: false,
-    imageUrl: '', description: '', emergency: false,
+    imageUrl: '', description: '', urgentAdoption: false,
   );
 
   setUp(() {
@@ -171,7 +171,7 @@ group('PetsBloc — casos adicionales', () {
         isA<PetsState>()
             .having((s) => s.selectedSpecies, 'species', 'Gato')
             .having((s) => s.pets.length, 'length', 1)
-            .having((s) => s.pets.first.species, 'species', Species.gato),
+            .having((s) => s.pets.first.category, 'category', 'Gato'),
       ),
     );
 
@@ -229,7 +229,7 @@ group('PetsBloc — casos adicionales', () {
 
   // LoadEvents éxito 
   test('LoadEvents emite los eventos cargados', () async {
-    final evento = Event(id: 1, description: '', date: DateTime.now (), name: '', imageUrl: '', active: false);
+    final evento = Event(id: 1, description: '', date: DateTime.now (), name: '', imageUrl: '',);
     when(() => mockApi.getEvents()).thenAnswer((_) async => [evento]);
 
     final future = expectLater(

@@ -1,4 +1,5 @@
 
+import 'package:cafeconhuellas_front/presentation/screens/admin_screen.dart';
 import 'package:cafeconhuellas_front/presentation/screens/contactus.dart';
 import 'package:cafeconhuellas_front/presentation/screens/donations.dart';
 import 'package:cafeconhuellas_front/presentation/screens/events.dart';
@@ -61,6 +62,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/profile',
       builder: (context, state) => const ProfileScreen(),
-    )
+    ),
+    GoRoute (path: '/admin', builder: (context, state) => const AdminScreen()),
   ],
 );

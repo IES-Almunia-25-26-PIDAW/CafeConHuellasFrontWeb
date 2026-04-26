@@ -119,4 +119,25 @@ class UserWithoutPassword {
             'imageUrl': imageUrl,
         };
     }
+    UserWithoutPassword copyWith({
+      int? id,
+      String? firstName,
+      String? lastName1,
+      String? lastName2,
+      String? email,
+      String? phone,
+      String? role,
+      String? imageUrl,
+    }) {
+      return UserWithoutPassword(
+        id: id ?? this.id,
+        firstName: firstName ?? this.firstName,
+        lastName1: lastName1 ?? this.lastName1,
+        lastName2: lastName2 ?? this.lastName2,
+        email: email ?? this.email,
+        phone: phone ?? this.phone,
+        role: role ?? this.role,
+        imageUrl: imageUrl ?? this.imageUrl,
+      );
+}
 }

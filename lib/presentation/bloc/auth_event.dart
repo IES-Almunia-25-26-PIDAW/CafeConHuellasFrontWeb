@@ -9,3 +9,8 @@ class LoginSubmitted extends AuthEvent {
 }
 
 class LogoutRequested extends AuthEvent {}
+class UpdateAvatarRequested extends AuthEvent {
+  final String imageUrl;
+  UpdateAvatarRequested(this.imageUrl);
+
+}

@@ -1,14 +1,97 @@
+import 'dart:typed_data';
+
 import 'package:cafeconhuellas_front/presentation/widgets/app_footer.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_header.dart';
+import 'package:cafeconhuellas_front/utils/api_conector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker_for_web/image_picker_for_web.dart';
+import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_state.dart';
 import '../bloc/auth_event.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  bool _uploadingAvatar = false;
+
+  //tenemos que mostrar el díalogo de confirmación si el usuario le hace tap a su foto de perfil para poder cambiar dicha foto de perfil:
+  //el método para realizar eso es el siguiente:
+  Future<void> _onAvatarTap(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text("Cambiar foto de perfil"),
+        content: const Text("¿Quieres seleccionar una nueva foto de perfil?"),
+        actions: [
+          //botón para cancelar
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text("Cancelar"),
+          ),
+          //botón para seleccionar la foto
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.purple,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text("Seleccionar"),
+          ),
+        ],
+      ),
+    );
+
+    //si la confirmación no ha sido verdadera no hacemos nada, si ha sido verdadera abrimos el selector de imagen
+    if (confirmed != true) return;
+
+    final plugin = ImagePickerPlugin();
+    final XFile? picked = await plugin.getImageFromSource(
+      source: ImageSource.gallery,
+      options: const ImagePickerOptions(maxWidth: 800, imageQuality: 85),
+    );
+    if (picked == null) return;
+
+    final Uint8List bytes = await picked.readAsBytes();
+    final String fileName = picked.name;
+
+    setState(() => _uploadingAvatar = true);
+    try {
+      final String newImageUrl = await ApiConector().uploadAvatar(bytes, fileName);
+
+      // el Bloc se encarga del PUT al backend y de actualizar el estado
+      if (!context.mounted) return;
+      context.read<AuthBloc>().add(UpdateAvatarRequested(newImageUrl));
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Foto de perfil actualizada correctamente ✓"),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error al actualizar la foto: $e"),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _uploadingAvatar = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,22 +103,18 @@ class ProfileScreen extends StatelessWidget {
           if (!state.isAuthenticated) {
             return const Center(child: Text("No has iniciado sesión"));
           }
-
           // cogemos el usuario del estado del bloc
           final user = state.user;
-
+          final bool isAdmin = user?.role.toUpperCase() == "ADMIN";
           return SingleChildScrollView(
             child: Column(
               children: [
-
                 AppHeader(),
-
                 // HEADER BONITO CON EL AVATAR FLOTANTE
                 Stack(
                   clipBehavior: Clip.none,
                   alignment: Alignment.center,
                   children: [
-
                     // Banner
                     Container(
                       height: 220,
@@ -49,20 +128,44 @@ class ProfileScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-
-                    // Avatar flotante para que se vea bonito
+                   // Avatar flotante para que se vea bonito, con GestureDetector para poder cambiar la foto
                     Positioned(
                       bottom: -50,
-                      child: CircleAvatar(
-                        radius: 62,
-                        backgroundColor: Colors.white,
-                        child: CircleAvatar(
-                          radius: 56,
-                          backgroundImage: user != null &&
-                                  user.imageUrl.isNotEmpty
-                              ? NetworkImage(user.imageUrl)
-                              : const AssetImage("assets/user.png")
-                                  as ImageProvider,
+                      child: GestureDetector(
+                        onTap: _uploadingAvatar
+                            ? null
+                            : () => _onAvatarTap(context),
+                        child: Stack(
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            CircleAvatar(
+                              radius: 62,
+                              backgroundColor: Colors.white,
+                              // si está subiendo mostramos el loading, si no la foto
+                              child: _uploadingAvatar
+                                  ? const CircularProgressIndicator(
+                                      color: Colors.purple)
+                                  : CircleAvatar(
+                                      radius: 56,
+                                      backgroundImage: user != null &&
+                                              user.imageUrl.isNotEmpty
+                                          ? NetworkImage(user.imageUrl)
+                                          : const AssetImage("assets/user.png")
+                                              as ImageProvider,
+                                    ),
+                            ),
+                            // icono de cámara para indicarle al usuario que puede pulsar para cambiar la foto
+                            if (!_uploadingAvatar)
+                              CircleAvatar(
+                                radius: 16,
+                                backgroundColor: Colors.purple,
+                                child: const Icon(
+                                  Icons.camera_alt,
+                                  size: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                     ),
@@ -77,7 +180,6 @@ class ProfileScreen extends StatelessWidget {
                   child: Center(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 600),
-
                       child: Card(
                         elevation: 6,
                         shape: RoundedRectangleBorder(
@@ -133,12 +235,34 @@ class ProfileScreen extends StatelessWidget {
 
                                 const SizedBox(height: 20),
 
-                                CircularProgressIndicator(
+                                const CircularProgressIndicator(
                                   color: Colors.purple,
                                 ),
                               ],
 
                               const SizedBox(height: 30),
+
+                              // botón de configuración web, solo visible si el usuario es ADMIN
+                              //nos lleva a la página del admin
+                              if (isAdmin) ...[
+                                ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.purple,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24,
+                                      vertical: 12,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  onPressed: () => context.go('/admin'),
+                                  icon: const Icon(Icons.settings),
+                                  label: const Text("Configuración Web"),
+                                ),
+                                const SizedBox(height: 12),
+                              ],
 
                               // botón logout
                               ElevatedButton.icon(
