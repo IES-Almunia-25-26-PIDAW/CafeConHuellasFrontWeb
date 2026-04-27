@@ -23,14 +23,13 @@ class _EventFormDialogState extends State<EventFormDialog> {
   late String _imageUrl;
 
   // valores exactos que acepta el backend — usamos dropdowns para evitar typos
-  static const List<String> _eventTypes    = ['RECAUDACION', 'ADOPCION', 'VOLUNTARIADO', 'SENSIBILIZACION'];
-  static const List<String> _statusOptions = ['PROXIMAMENTE', 'EN_CURSO', 'FINALIZADO', 'CANCELADO'];
+  static const List<String> _eventTypes    = ['RECAUDACION', 'ADOPCION', 'MERCADILLO', 'EDUCACIÓN','OTRO'];
+  static const List<String> _statusOptions = ['PROGRAMADO', 'EN_CURSO', 'FINALIZADO', 'CANCELADO'];
   late String _selectedType;
   late String _selectedStatus;
 
   Uint8List? _imageBytes;
   bool _uploadingImage = false;
-  bool _submitting     = false;
 
   bool get _isEditing => widget.event != null;
 
@@ -135,58 +134,42 @@ class _EventFormDialogState extends State<EventFormDialog> {
   // Submit
   // Llama directamente a la API para poder capturar errores del backend y
   // mostrarlos en un diálogo. Si tiene éxito cierra el dialog devolviendo el Event.
-  Future<void> _submit() async {
-    final name = _nameCtrl.text.trim();
-    final desc = _descCtrl.text.trim();
-    final loc  = _locCtrl.text.trim();
+Future<void> _submit() async {
+  final name = _nameCtrl.text.trim();
+  final desc = _descCtrl.text.trim();
+  final loc  = _locCtrl.text.trim();
 
-    // validaciones cliente — mismas reglas que el backend para evitar viaje de ida y vuelta
-    if (name.isEmpty) {
-      await _showError('El nombre del evento es obligatorio.');
-      return;
-    }
-    if (desc.length < 20) {
-      await _showError(
-        'La descripción debe tener al menos 20 caracteres.\n'
-        'Actualmente tiene ${desc.length} caractere${desc.length == 1 ? '' : 's'}.',
-      );
-      return;
-    }
-    if (loc.isEmpty) {
-      await _showError('La ubicación es obligatoria.');
-      return;
-    }
-
-    // construimos el evento con los campos exactos del modelo (sin active)
-    final event = Event(
-      id:          _isEditing ? widget.event!.id : 0,
-      name:        name,
-      description: desc,
-      eventdate:   _eventDate,   // toJson() lo manda como eventDate con D mayúscula
-      location:    loc,
-      imageUrl:    _imageUrl,
-      eventType:   _selectedType,
-      status:      _selectedStatus,
-      maxCapacity: int.tryParse(_capacityCtrl.text) ?? 100,
-    );
-
-    setState(() => _submitting = true);
-    try {
-      // llamamos a la API directamente para capturar errores del backend
-      if (_isEditing) {
-        await ApiConector().updateEvent(event);
-      } else {
-        await ApiConector().addEvent(event);
-      }
-      // éxito: cerramos y devolvemos el event al padre para que refresque el Bloc
-      if (mounted) Navigator.pop(context, event);
-    } catch (e) {
-      // mostramos el error del backend en el diálogo de error
-      await _showError(e.toString().replaceAll('Exception: ', ''));
-    } finally {
-      if (mounted) setState(() => _submitting = false);
-    }
+  if (name.isEmpty) {
+    await _showError('El nombre del evento es obligatorio.');
+    return;
   }
+  if (desc.length < 20) {
+    await _showError(
+      'La descripción debe tener al menos 20 caracteres.\n'
+      'Actualmente tiene ${desc.length} caractere${desc.length == 1 ? '' : 's'}.',
+    );
+    return;
+  }
+  if (loc.isEmpty) {
+    await _showError('La ubicación es obligatoria.');
+    return;
+  }
+
+  final event = Event(
+    id:          _isEditing ? widget.event!.id : 0,
+    name:        name,
+    description: desc,
+    eventdate:   _eventDate,
+    location:    loc,
+    imageUrl:    _imageUrl,
+    eventType:   _selectedType,
+    status:      _selectedStatus,
+    maxCapacity: int.tryParse(_capacityCtrl.text) ?? 100,
+  );
+
+  // simplemente devolvemos el evento al padre — él llama al Bloc, el Bloc llama a la API
+  if (mounted) Navigator.pop(context, event);
+}
 
   // Build 
   @override
@@ -308,7 +291,7 @@ class _EventFormDialogState extends State<EventFormDialog> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: _submitting ? null : () => Navigator.pop(context),
+                    onPressed: () => Navigator.pop(context),
                     child: Text('Cancelar', style: TextStyle(color: Colors.grey[600])),
                   ),
                   const SizedBox(width: 10),
@@ -319,11 +302,8 @@ class _EventFormDialogState extends State<EventFormDialog> {
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    onPressed: (_submitting || _uploadingImage) ? null : _submit,
-                    icon: _submitting
-                        ? const SizedBox(width: 16, height: 16,
-                            child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                        : const Icon(Icons.save),
+                    onPressed: _uploadingImage ? null : _submit,
+                    icon: const Icon(Icons.save),
                     label: Text(_isEditing ? 'Guardar cambios' : 'Crear evento'),
                   ),
                 ],

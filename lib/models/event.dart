@@ -43,20 +43,24 @@ class Event {
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id':          id,
-      'name':        name,
-      'imageUrl':    imageUrl,
-      'description': description,
-      'eventDate':   eventdate.toIso8601String(),  
-      'location':    location,
-      'eventType':   eventType,
-      'status':      status,
-      'maxCapacity': maxCapacity,
-      'createdAt':   createdAt.toIso8601String(),
-    };
-  }
+ Map<String, dynamic> toJson() {
+  final map = <String, dynamic>{
+    'name':        name,
+    'imageUrl':    imageUrl,
+    'description': description,
+    'eventDate':   eventdate.toIso8601String(),
+    'location':    location,
+    'eventType':   eventType,
+    'status':      status,
+    'maxCapacity': maxCapacity,
+    'createdAt':   createdAt.toIso8601String(),
+  };
+
+  // solo mandamos el id en edición — en creación el backend lo asigna él
+  if (id != 0) map['id'] = id;
+
+  return map;
+}
 
   Event copyWith({
     int? id,
