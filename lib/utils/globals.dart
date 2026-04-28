@@ -3,10 +3,10 @@ import 'package:cafeconhuellas_front/models/pet.dart';
 
 class Globals {
   static final List<Pet> _fallbackPets = [
-    Pet(id: 1, name: 'Fido', category: 'Perro', breed: 'Labrador', age: 3, adopted: false, imageUrl: 'assets/images/perrito.jpg', description: 'Friendly dog', urgentAdoption: false),
-    Pet(id: 2, name: 'Whiskers', category: 'Gato', breed: 'Siamese', age: 2, adopted: false, imageUrl: 'assets/images/gatito.jpg', description: 'Playful cat', urgentAdoption: false),
-    Pet(id: 3, name: 'Ushi', category: 'Perro', breed: 'Bulldog', age: 4, adopted: false, imageUrl: 'assets/images/perrito.jpg', description: 'Calm dog', urgentAdoption: false),
-    Pet(id: 4, name: 'Elizabeth', category: 'Gato', breed: 'Persian', age: 1, adopted: false, imageUrl: 'assets/images/gatito.jpg', description: 'Gentle cat', urgentAdoption: false)
+    Pet(id: 1, name: 'Fido', category: 'Perro', breed: 'Labrador', age: 3,  imageUrl: 'assets/images/perrito.jpg', description: 'Friendly dog', urgentAdoption: false, adoptionStatus: ''),
+    Pet(id: 2, name: 'Whiskers', category: 'Gato', breed: 'Siamese', age: 2,  imageUrl: 'assets/images/gatito.jpg', description: 'Playful cat', urgentAdoption: false, adoptionStatus: ''),
+    Pet(id: 3, name: 'Ushi', category: 'Perro', breed: 'Bulldog', age: 4,  imageUrl: 'assets/images/perrito.jpg', description: 'Calm dog', urgentAdoption: false, adoptionStatus: ''),
+    Pet(id: 4, name: 'Elizabeth', category: 'Gato', breed: 'Persian', age: 1,  imageUrl: 'assets/images/gatito.jpg', description: 'Gentle cat', urgentAdoption: false, adoptionStatus: '')
   
   ];
   static final List<Event> _fallbackFutureEvents = [

@@ -1,6 +1,7 @@
 
 import 'dart:typed_data';
 
+import 'package:cafeconhuellas_front/models/donation.dart';
 import 'package:cafeconhuellas_front/models/event.dart';
 import 'package:cafeconhuellas_front/models/pet.dart';
 import 'package:cafeconhuellas_front/models/user.dart';
@@ -256,12 +257,14 @@ Future<void> register(Map<String, dynamic> user) async {
   //put de mascotas, editar una mascota
   Future<void> updatePet (Pet pet) async {
     final Map<String, dynamic> petData = pet.toJson();
+    print('ENVIANDO: $petData'); 
     try {
       await dio.put(
         '/pets/${pet.id}',
         data: petData,
       );
     } on DioException catch (error) {
+        print('RESPUESTA ERROR: ${error.response?.data}'); 
       throw Exception(_extractApiErrorMessage(error));
     }
   }
@@ -362,4 +365,41 @@ Future<void> register(Map<String, dynamic> user) async {
 
     return error.message ?? 'No se pudo completar el registro.';
   }
+  //método para cargar donaciones
+  Future<List<Donation>> getDonations() async {
+    final Response<dynamic> response = await dio.get('/donations');
+    final List<dynamic> items = _extractList(response.data);
+
+    return items
+        .whereType<Map<String, dynamic>>()
+        .map(Donation.fromJson)
+        .toList();
+  }
+
+  //método para hacer una nueva donaciçon
+  Future<void> addDonation (Donation donation) async {
+    final Map<String, dynamic> donationData = donation.toJson();
+    try {
+      await dio.post(
+        '/donations',
+        data: donationData,
+      );
+    } on DioException catch (error) {
+      throw Exception(_extractApiErrorMessage(error));
+    }
+  }
+  
+  //método para cargar mis donaciones
+  Future<List<Donation>> getMeDonation() async {
+    final Response<dynamic> response = await dio.get('/donations/me');
+    final List<dynamic> items = _extractList(response.data);
+
+    return items
+        .whereType<Map<String, dynamic>>()
+        .map(Donation.fromJson)
+        .toList();
+
+    
+}
+
 }

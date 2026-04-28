@@ -27,10 +27,11 @@ class _PetFormDialogState extends State<PetFormDialog> {
   late final TextEditingController _ageCtrl;
   late final TextEditingController _weightCtrl;
   late final TextEditingController _categoryCtrl;
+  static const List<String> _adoptionStatusOptions = ['NO_ADOPTADO', 'EN_PROCESO', 'ADOPTADO'];
 
   //  Estado de los campos que no son texto 
+  late String _adoptionStatus;
   late String _category;
-  late bool _adopted;
   late bool _neutered;
   late bool _isPpp;
   late bool _urgentAdoption;
@@ -56,11 +57,11 @@ class _PetFormDialogState extends State<PetFormDialog> {
     _weightCtrl      = TextEditingController(text: p != null ? p.weight.toString() : '');
     _categoryCtrl    = TextEditingController(text: p?.category ?? '');
     _category        = p?.category ?? 'Perro';
-    _adopted         = p?.adopted ?? false;
     _neutered        = p?.neutered ?? false;
     _isPpp           = p?.isPpp ?? false;
     _urgentAdoption  = p?.urgentAdoption ?? false;
     _imageUrl        = p?.imageUrl ?? '';
+    _adoptionStatus = p?.adoptionStatus ?? 'NO_ADOPTADO';
   }
 
   @override
@@ -118,12 +119,12 @@ class _PetFormDialogState extends State<PetFormDialog> {
       breed:       _breedCtrl.text.trim(),
       age:         int.tryParse(_ageCtrl.text) ?? 0,
       weight:      double.tryParse(_weightCtrl.text) ?? 0.0,
-      adopted:     _adopted,
       neutered:    _neutered,
       isPpp:       _isPpp,
       urgentAdoption:   _urgentAdoption,
       description: _descriptionCtrl.text.trim(),
       category:    _category,
+      adoptionStatus: _adoptionStatus,
       imageUrl:    _imageUrl,
       imageUrls: [_imageUrl]
       
@@ -227,11 +228,31 @@ class _PetFormDialogState extends State<PetFormDialog> {
                   _categoryChip('Gato', 'Gato', Icons.catching_pokemon),
                 ],
               ),
-
+              const SizedBox(height: 16),
+              const Text('Estado de adopción', style: TextStyle(fontSize: 13, color: Colors.grey)),
+              const SizedBox(height: 6),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.purple[50],
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.purple[200]!),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: _adoptionStatus,
+                    isExpanded: true,
+                    icon: const Icon(Icons.arrow_drop_down, color: Colors.purple),
+                    items: _adoptionStatusOptions
+                        .map((o) => DropdownMenuItem(value: o, child: Text(o)))
+                        .toList(),
+                    onChanged: (v) => setState(() => _adoptionStatus = v!),
+                  ),
+                ),
+              ),
               // Switches
               const SizedBox(height: 12),
-              //elegir click si o no, entre estás opociones
-              _switch('Adoptado', _adopted, (v) => setState(() => _adopted = v)),
+    
               _switch('Castrado / Esterilizado', _neutered, (v) => setState(() => _neutered = v)),
               _switch('Es PPP (Potencialmente Peligroso)', _isPpp, (v) => setState(() => _isPpp = v)),
               _switch('Emergencia', _urgentAdoption, (v) => setState(() => _urgentAdoption = v)),

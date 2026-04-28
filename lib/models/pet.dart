@@ -1,7 +1,6 @@
 class Pet {
   final int id;
   final String name;
-  final bool adopted;
   final String description;
   final String breed;
   final String category;
@@ -12,13 +11,14 @@ class Pet {
   final String imageUrl;
   final List<String> imageUrls;
   final bool urgentAdoption;
+  final String adoptionStatus;
+
 
   Pet({
     required this.id,
     required this.name,
     required this.breed,
     required this.age,
-    required this.adopted,
     required this.imageUrl,
     required this.description,
     required this.category,
@@ -27,6 +27,7 @@ class Pet {
     this.isPpp = false,
     List<String>? imageUrls,
     required this.urgentAdoption,
+    required this.adoptionStatus,
   }) : imageUrls = imageUrls ?? const [];
 
   factory Pet.fromJson(Map<String, dynamic> json) {
@@ -38,7 +39,6 @@ class Pet {
       name: (json['name'] ?? '').toString(),
       breed: (json['breed'] ?? '').toString(),
       age: (json['age'] as num?)?.toInt() ?? 0,
-      adopted: _parseBool(json['adopted'] ?? json['isAdopted'] ?? false),
       imageUrl: mainImage,
       description: (json['description'] ?? '').toString(),
       category: cat,
@@ -47,25 +47,29 @@ class Pet {
       isPpp: _parseBool(json['isPpp'] ?? json['is_ppp'] ?? false),
       imageUrls: _parseImageUrls(json['imageUrls'] ?? json['image_urls'], mainImage),
       urgentAdoption: _parseBool(json['urgentAdoption'] ?? json['isUrgentAdoption'] ?? false),
+      adoptionStatus: (json['adoptionStatus'] ?? json['adoption_status'] ?? 'available').toString(),
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'category': category,
-      'breed': breed,
-      'age': age,
-      'weight': weight,
-      'adopted': adopted,
-      'neutered': neutered,
-      'isPpp': isPpp,
-      'imageUrl': imageUrl,
-      'imageUrls': imageUrls,
-      'description': description,
-      'urgentAdoption': urgentAdoption,
-    };
+    final map = <String, dynamic>{
+    'name':           name,
+    'category':       category,
+    'breed':          breed,
+    'age':            age,
+    'weight':         weight,
+    'neutered':       neutered,
+    'isPpp':          isPpp,
+    'imageUrl':       imageUrl,
+    'imageUrls':      imageUrls,
+    'description':    description,
+    'urgentAdoption': urgentAdoption,
+    'adoptionStatus': adoptionStatus,
+  };
+
+  if (id != 0) map['id'] = id;
+
+  return map;
   }
 
   Pet copyWith({
@@ -82,13 +86,13 @@ class Pet {
     bool? isPpp,
     List<String>? imageUrls,
     bool? urgentAdoption,
+    String? adoptionStatus,
   }) {
     return Pet(
       id: id ?? this.id,
       name: name ?? this.name,
       breed: breed ?? this.breed,
       age: age ?? this.age,
-      adopted: adopted ?? this.adopted,
       imageUrl: imageUrl ?? this.imageUrl,
       description: description ?? this.description,
       category: category ?? this.category,
@@ -97,6 +101,7 @@ class Pet {
       isPpp: isPpp ?? this.isPpp,
       imageUrls: imageUrls ?? this.imageUrls,
       urgentAdoption: urgentAdoption ?? this.urgentAdoption,
+      adoptionStatus: adoptionStatus ?? this.adoptionStatus,  
     );
   }
 

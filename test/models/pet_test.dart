@@ -28,7 +28,6 @@ void main() {
       expect(pet.name, 'Bobby');
       expect(pet.breed, 'Labrador');
       expect(pet.age, 2);
-      expect(pet.adopted, true);
       expect(pet.imageUrl, 'img.jpg');
       expect(pet.category, 'Perro');
       expect(pet.urgentAdoption, true);
@@ -59,10 +58,9 @@ void main() {
         category: 'Perro',
         breed: 'Labrador',
         age: 2,
-        adopted: true,
         imageUrl: 'img.jpg',
         description: 'Desc',
-        urgentAdoption: false,
+        urgentAdoption: false, adoptionStatus: '',
       );
 
       final json = pet.toJson();
@@ -79,10 +77,10 @@ void main() {
         category: 'Perro',
         breed: 'Labrador',
         age: 2,
-        adopted: true,
+
         imageUrl: 'img.jpg',
         description: 'Desc',
-        urgentAdoption: false,
+        urgentAdoption: false, adoptionStatus: '',
       );
 
       final updated = pet.copyWith(name: 'Max');

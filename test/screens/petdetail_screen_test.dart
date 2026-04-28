@@ -21,8 +21,7 @@ void main() {
     description: 'Una perrita muy cariñosa.',
     imageUrl: 'assets/user.png',
     category: 'Perro', 
-    adopted: true, 
-    urgentAdoption: true,
+    urgentAdoption: true, adoptionStatus: '',
   );
 
   Widget buildWidget() => MaterialApp.router(

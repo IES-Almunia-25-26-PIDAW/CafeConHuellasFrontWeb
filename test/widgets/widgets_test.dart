@@ -65,8 +65,8 @@ Pet _makePet({
       category: 'Perro',
       urgentAdoption: emergency,
       imageUrl: imageUrl,
-      adopted: false,
       description: '',
+      adoptionStatus: 'NO_ADOPTADO',
     );
 void main (){
 //EVENT CARD 

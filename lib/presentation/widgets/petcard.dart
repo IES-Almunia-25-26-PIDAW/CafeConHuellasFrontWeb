@@ -84,6 +84,8 @@ class PetCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  const SizedBox(height: 4),
+                  _adoptionBadge(pet.adoptionStatus, compact)
                 ],
               );
             },
@@ -92,4 +94,32 @@ class PetCard extends StatelessWidget {
       ),
     );
   }
+}
+Widget _adoptionBadge(String status, bool compact) {
+  final color = status == 'ADOPTADO'
+      ? Colors.green
+      : status == 'PENDIENTE'
+          ? Colors.orange
+          : Colors.blue;
+  final label = status == 'ADOPTADO'
+      ? '✓ Adoptado'
+      : status == 'PENDIENTE'
+          ? '⏳ Pendiente'
+          : '🐾 Disponible';
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: compact ? 6 : 8, vertical: 3),
+    decoration: BoxDecoration(
+      color: color.withOpacity(0.1),
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(color: color.withOpacity(0.5)),
+    ),
+    child: Text(
+      label,
+      style: TextStyle(
+        color: color,
+        fontWeight: FontWeight.bold,
+        fontSize: compact ? 11 : 13,
+      ),
+    ),
+  );
 }

@@ -67,10 +67,9 @@ group('PetsBloc', () {
           breed: '',
           category: 'Perro',
           age: 1,
-          adopted: false,
           imageUrl: '',
           description: '',
-          urgentAdoption: true,
+          urgentAdoption: true, adoptionStatus: '',
         ),
         Pet(
           id: 2,
@@ -78,10 +77,9 @@ group('PetsBloc', () {
           breed: '',
           category: 'Gato',
           age: 1,
-          adopted: false,
           imageUrl: '',
           description: '',
-          urgentAdoption: false,
+          urgentAdoption: false, adoptionStatus: '',
         ),
       ],
     );
@@ -123,13 +121,13 @@ group('PetsBloc — casos adicionales', () {
 
   final perro = Pet(
     id: 1, name: 'Dog', category: 'Perro',
-    breed: '', age: 1, adopted: false,
-    imageUrl: '', description: '', urgentAdoption: true,
+    breed: '', age: 1,
+    imageUrl: '', description: '', urgentAdoption: true, adoptionStatus: '',
   );
   final gato = Pet(
     id: 2, name: 'Cat', category: 'Gato',
-    breed: '', age: 1, adopted: false,
-    imageUrl: '', description: '', urgentAdoption: false,
+    breed: '', age: 1,
+    imageUrl: '', description: '', urgentAdoption: false, adoptionStatus: '',
   );
 
   setUp(() {

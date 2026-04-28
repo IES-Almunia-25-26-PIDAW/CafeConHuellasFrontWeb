@@ -36,11 +36,11 @@ void main() {
   // Mascotas de ejemplo
   final pets = [
     Pet(id: 1, name: 'Rex', category: 'Perro', breed: 'Labrador',
-        age: 3, adopted: false, imageUrl: 'https://example.com/pet.jpg',
-        description: '', urgentAdoption: false),
+        age: 3,  imageUrl: 'https://example.com/pet.jpg',
+        description: '', urgentAdoption: false, adoptionStatus: ''),
     Pet(id: 2, name: 'Luna', category: 'Gato', breed: 'Siamés',
-        age: 2, adopted: false, imageUrl: 'https://example.com/cat.jpg',
-        description: '', urgentAdoption: false),
+        age: 2,  imageUrl: 'https://example.com/cat.jpg',
+        description: '', urgentAdoption: false, adoptionStatus: ''),
   ];
 
   // Eventos de ejemplo
@@ -224,10 +224,9 @@ void main() {
           category: 'Perro',
           breed: '',
           age: 1,
-          adopted: false,
           imageUrl: 'https://example.com/pet$i.jpg',
           description: '',
-          urgentAdoption: false,
+          urgentAdoption: false, adoptionStatus: '',
         ),
       );
       when(() => petsBloc.state).thenReturn(
