@@ -17,8 +17,7 @@ class Donation {
   });
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
+    final map= <String, dynamic>{
       'userId': userId,
       'date': date.toIso8601String(),
       'category': category,
@@ -26,6 +25,8 @@ class Donation {
       'amount': amount,
       'notes': notes,
     };
+     if (id != 0) map['id'] = id;
+    return map;
   }
   factory Donation.fromJson(Map<String, dynamic> json) {
     return Donation(

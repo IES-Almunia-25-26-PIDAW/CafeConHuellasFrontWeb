@@ -5,6 +5,7 @@ import 'package:cafeconhuellas_front/models/donation.dart';
 import 'package:cafeconhuellas_front/models/event.dart';
 import 'package:cafeconhuellas_front/models/pet.dart';
 import 'package:cafeconhuellas_front/models/user.dart';
+import 'package:cafeconhuellas_front/models/userPetRelationship.dart';
 import 'package:dio/dio.dart';
 
 class ApiConector {
@@ -398,8 +399,48 @@ Future<void> register(Map<String, dynamic> user) async {
         .whereType<Map<String, dynamic>>()
         .map(Donation.fromJson)
         .toList();
+  }
 
-    
-}
+  Future <List<Userpetrelationship>> getUserPetRelationShip() async {
+    final Response<dynamic> response = await dio.get('/relationships');
+      final List<dynamic> items = _extractList(response.data);
+
+    return items
+        .whereType<Map<String, dynamic>>()
+        .map(Userpetrelationship.fromJson)
+        .toList();
+  }
+
+//método para añadir una nueva relaciçon la idea es que cuando el usuario le de en la parte de ayudas etc, le salga un cuestionario en pantalla en donde pueda meter la fecha
+  // de cuando le gustarçia empezar a ayudar y la fecha de tyerminar,a demás que mascota le gustaría, se guardaria como active false y cuando nosotros le aceptemos la ayuda, se pondría active a true y se le asignaría una mascota concreta, entonces el usuario podría ver en su perfil que mascota tiene asignada y durante cuanto tiempo va a ayudar, etc.
+  //además mientras tanto verá pendiente, tengo idea de poner algo como /formulario:voluntariado etc y q cambie dependiendo de q botón le des
+  //y desde el back te llevbara a formulario:adopcion osea desde el enlace q se le manda al mailpit del usuario,
+
+  Future<void> addUserPetRelationship(Userpetrelationship relationship) async {
+    final Map<String, dynamic> relationshipData = relationship.toJson();
+    try {
+      await dio.post(
+        '/relationships',
+        data: relationshipData,
+      );
+    } on DioException catch (error) {
+      throw Exception(_extractApiErrorMessage(error));
+    }
+  }
+//método para cargar mis relaciones 
+  Future<List<Userpetrelationship>> getMyRelationships(int idUser) async {
+    final Response<dynamic> response = await dio.get('/relationships/user/$idUser');
+      final List<dynamic> items = _extractList(response.data);
+
+    return items
+        .whereType<Map<String, dynamic>>()
+        .map(Userpetrelationship.fromJson)
+        .toList();
+  }
+  //acuerdate de hacer bloc pa esto q cambiamos el estado y pa las adopciones
+
+  
+
+
 
 }
