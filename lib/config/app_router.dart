@@ -13,6 +13,7 @@ import 'package:cafeconhuellas_front/presentation/screens/pets_screen.dart';
 import 'package:cafeconhuellas_front/presentation/screens/profile_sreen.dart';
 import 'package:cafeconhuellas_front/presentation/screens/register_screen.dart';
 import 'package:cafeconhuellas_front/models/pet.dart';
+import 'package:cafeconhuellas_front/presentation/screens/relationships_screen.dart';
 import 'package:go_router/go_router.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -66,5 +67,6 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute (path: '/panel', builder: (context, state) => const PanelScreen()),
     GoRoute (path: '/panel/donations', builder: (context, state) => const MyDonationsScreen()),
+    GoRoute(path: '/panel/relationships', builder: (context, state) => const RelationshipsScreen()),
   ],
 );

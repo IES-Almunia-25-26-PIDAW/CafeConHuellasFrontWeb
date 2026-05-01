@@ -1,6 +1,7 @@
 
+import 'dart:core';
 import 'dart:typed_data';
-
+import 'package:cafeconhuellas_front/models/adoptionForm.dart';
 import 'package:cafeconhuellas_front/models/donation.dart';
 import 'package:cafeconhuellas_front/models/event.dart';
 import 'package:cafeconhuellas_front/models/pet.dart';
@@ -437,10 +438,42 @@ Future<void> register(Map<String, dynamic> user) async {
         .map(Userpetrelationship.fromJson)
         .toList();
   }
-  //acuerdate de hacer bloc pa esto q cambiamos el estado y pa las adopciones
+  //método para hacer la llamada a la api y que mande por email el enlace al formulario de adopción, 
+  Future<void> requestAdoptionForm(int idUser, int idPet) async {
+    try {
+      await dio.post('/adoption-form/send', data: {'userId': idUser, 'petId': idPet});
+    } on DioException catch (error) {
+      throw Exception(_extractApiErrorMessage(error));
+    }
+  }
+  //método para cuando estamos en esa página que nos ha enviado el back por email pues le damos a confirmar y esto haria un nuevor egistro en adoption requet
+  //luego nosotros como admin tenemos que hacer un get de toidas las adopotion request y cuando cambiemos una a estado aceptado, se hara un nuevo registro en user pet relationshjip
+  Future <void> submitAdoptionForm(Adoptionform formData, String token) async {
+    try {
+      await dio.post('/adoption-form/submit/$token', data: formData);
+    } on DioException catch (error) {
+      throw Exception(_extractApiErrorMessage(error));
+    }
+  }
+  //get para ver todas las adopciones
+  Future <List<AdoptionRequest>> getAdoptionRequest() async {
+    final Response<dynamic> response = await dio.get('/adoption-requests');
+    final List<dynamic> items = _extractList(response.data);
+    return items
+        .whereType<Map<String, dynamic>>()
+        .map(AdoptionRequest.fromJson)
+        .toList();
+  }
+  //get para ver mis adopciones
+  Future <List<AdoptionRequest>> getMeAdoptionRequest() async {
+    final Response<dynamic> response = await dio.get('/adoption-requests/me');
+    final List<dynamic> items = _extractList(response.data);
+    return items
+        .whereType<Map<String, dynamic>>()
+        .map(AdoptionRequest.fromJson)
+        .toList();
+  }
+//put para editar el status de la relación
 
-  
-
-
-
+//patch para editar el status de la adopcion
 }

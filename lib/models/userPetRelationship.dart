@@ -31,17 +31,17 @@ class Userpetrelationship {
     );
   }
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{
-      'userId': userId,
-      'petId': petId,
-      'relationshipType': relationshipType,
-      'startDate': startDate.toIso8601String(),
-      'endDate': endDate?.toIso8601String(),
-      'active': active,
-    };
-    if (id != 0) map['id'] = id;
-    return map;
-  }
+  final map = <String, dynamic>{
+    'userId': userId,
+    'petId': petId,
+    'relationshipType': relationshipType,
+    'startDate': startDate.toIso8601String().split('T')[0],
+    'endDate': endDate?.toIso8601String().split('T')[0],
+    'active': active,
+  };
+  if (id != 0) map['id'] = id;
+  return map;
+}
 
 
 }

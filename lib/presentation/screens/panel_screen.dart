@@ -51,7 +51,7 @@ class PanelScreen extends StatelessWidget {
                   subtitle: isAdmin
                       ? 'Gestionar solicitudes de adopción'
                       : 'Ver mis solicitudes de adopción',
-                  onTap: () {}, 
+                  onTap: () => context.go('/panel/relationships'), 
                 ),
               ],
             ),

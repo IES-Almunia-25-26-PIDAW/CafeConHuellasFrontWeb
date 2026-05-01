@@ -1,5 +1,7 @@
+import 'package:cafeconhuellas_front/models/adoptionForm.dart';
 import 'package:cafeconhuellas_front/models/event.dart';
 import 'package:cafeconhuellas_front/models/pet.dart';
+import 'package:cafeconhuellas_front/models/userPetRelationship.dart';
 
 abstract class PetsEvent {}
 
@@ -48,4 +50,32 @@ class UpdateEvent extends PetsEvent {
 class DeleteEvent extends PetsEvent {
   final int eventId;
   DeleteEvent(this.eventId);
+}
+
+//AÑÑADIR UNA RELACIÓN 
+class AddPetUserRelation extends PetsEvent {
+ final Userpetrelationship relation;
+  AddPetUserRelation(this.relation);
+}
+
+//CARGAR RELACIONES
+class LoadPetUserRelations extends PetsEvent {
+}
+//AÑADIR UNA ADOPCIÓN
+class SubmitAdoptionRequest extends PetsEvent {
+  final Adoptionform request;
+  final String token;
+  SubmitAdoptionRequest(this.request, this.token);  
+  }
+
+//CARGAR UNA ADOPCION
+class LoadAdoptionRequests extends PetsEvent {}
+//cargar mis adopciones
+class LoadMyAdoptionRequests extends PetsEvent {
+  LoadMyAdoptionRequests();
+}
+//cargar mis relaciones
+class LoadMyPetUserRelations extends PetsEvent {
+  final int userId;
+  LoadMyPetUserRelations(this.userId);
 }

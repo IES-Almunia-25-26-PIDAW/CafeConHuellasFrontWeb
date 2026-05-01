@@ -1,11 +1,14 @@
 import 'package:bloc/bloc.dart';
+import 'package:cafeconhuellas_front/models/adoptionForm.dart';
 import 'package:cafeconhuellas_front/models/event.dart';
 import 'package:cafeconhuellas_front/models/pet.dart';
+import 'package:cafeconhuellas_front/models/userPetRelationship.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/pet_event.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/pet_state.dart';
 import 'package:cafeconhuellas_front/utils/api_conector.dart';
 
 class PetsBloc extends Bloc<PetsEvent, PetsState> {
+  final List<Userpetrelationship> _userPetRelations = <Userpetrelationship>[];
   final List<Pet> _allPets = <Pet>[];
   final List<Event> _allEvents = <Event>[];
   final ApiConector api;
@@ -17,7 +20,9 @@ class PetsBloc extends Bloc<PetsEvent, PetsState> {
           selectedSpecies: '',
           isEmergencyActive: false,
           isLoading: false,
-          events: const <Event>[],
+          events: const <Event>[], 
+          relations: const <Userpetrelationship>[], 
+          adoptionRequests: const <AdoptionRequest>[],
         ),
       ) {
     on<LoadPets>(_onLoadPets);
@@ -30,7 +35,90 @@ class PetsBloc extends Bloc<PetsEvent, PetsState> {
     on<AddEvent>(_onAddEvent);
     on<UpdateEvent>(_onUpdateEvent);
     on<DeleteEvent>(_onDeleteEvent);
+    on<AddPetUserRelation>(_onAddPetUserRelation);
+    on<LoadPetUserRelations>(_onLoadPetUserRelations);
+    on<SubmitAdoptionRequest>(_onSubmitAdoptionRequest);
+    on<LoadAdoptionRequests>(_onLoadAdoptionRequests);
+    on<LoadMyAdoptionRequests>(_onLoadMyAdoptionRequests);
+    on<LoadMyPetUserRelations>(_onLoadMyPetUserRelations);
   }
+  //cargar mis relaciones
+  Future<void> _onLoadMyPetUserRelations(LoadMyPetUserRelations event, Emitter<PetsState> emit) async {
+    emit(state.copyWith(isLoading: true));
+  try {
+    final relations = await api.getMyRelationships(event.userId); // Debes tener este endpoint en tu API
+    emit(state.copyWith(relations: relations, isLoading: false));
+  } catch (e) {
+    emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+  }
+
+  }
+  //cargar mis adopciones
+  Future<void> _onLoadMyAdoptionRequests(LoadMyAdoptionRequests event, Emitter<PetsState> emit) async {
+    emit(state.copyWith(isLoading: true));
+  try {
+    final myRequests = await api.getMeAdoptionRequest(); // Endpoint /me
+    emit(state.copyWith(adoptionRequests: myRequests, isLoading: false));
+  } catch (e) {
+    emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+  }
+  }
+  //cargar adopciones
+  Future<void> _onLoadAdoptionRequests(LoadAdoptionRequests event, Emitter<PetsState> emit) async {
+  emit(state.copyWith(isLoading: true));
+  try {
+    // Necesitas crear este método en tu ApiConector (visto en mensajes anteriores)
+    final requests = await api.getAdoptionRequest(); 
+    emit(state.copyWith(adoptionRequests: requests, isLoading: false));
+  } catch (e) {
+    emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+  }
+}
+//añadir adopciones
+Future<void> _onSubmitAdoptionRequest(SubmitAdoptionRequest event, Emitter<PetsState> emit) async {
+  emit(state.copyWith(isLoading: true));
+  try {
+    // Llamada al endpoint de submit con el token
+    await api.submitAdoptionForm(event.request, event.token);
+    emit(state.copyWith(isLoading: false));
+    // Aquí podrías lanzar un mensaje de éxito
+  } catch (e) {
+    emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+  }
+}
+  //Cargar relaciones
+  Future<void> _onLoadPetUserRelations(LoadPetUserRelations event, Emitter<PetsState> emit) async {
+    emit(state.copyWith(isLoading: true, clearErrorMessage: true));
+
+    try {
+      final List<Userpetrelationship> relations = await api.getUserPetRelationShip();
+      _userPetRelations
+        ..clear()
+        ..addAll(relations);
+      emit(state.copyWith(relations: relations, isLoading: false, clearErrorMessage: true));
+    } catch (_) {
+      _userPetRelations.clear();
+      emit(
+        state.copyWith(
+          events: const <Event>[],
+          isLoading: false,
+          errorMessage: 'No se pudieron cargar los eventos desde la API.',
+        ),
+      );
+    }
+  }
+
+  //añadir relaciones 
+  Future<void> _onAddPetUserRelation(AddPetUserRelation event, Emitter<PetsState> emit) async {
+    emit(state.copyWith(isLoading: true, clearErrorMessage: true));
+    try {
+      await api.addUserPetRelationship(event.relation);
+      emit(state.copyWith(isLoading: false, clearErrorMessage: true));
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+    }
+   }
+
   //AÑADIR MASCOTA SOLO ADMIN
    Future<void> _onAddPet(AddPet event, Emitter<PetsState> emit) async {
     emit(state.copyWith(isLoading: true, clearErrorMessage: true));
@@ -168,6 +256,7 @@ class PetsBloc extends Bloc<PetsEvent, PetsState> {
     );
     emit(_applyFilters(newState));
   }
+
 
   PetsState _applyFilters(PetsState state) {
     final filtered = _allPets.where((pet) {
