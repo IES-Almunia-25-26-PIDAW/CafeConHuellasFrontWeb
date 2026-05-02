@@ -439,13 +439,16 @@ Future<void> register(Map<String, dynamic> user) async {
         .toList();
   }
   //método para hacer la llamada a la api y que mande por email el enlace al formulario de adopción, 
-  Future<void> requestAdoptionForm(int idUser, int idPet) async {
-    try {
-      await dio.post('/adoption-form/send', data: {'userId': idUser, 'petId': idPet});
-    } on DioException catch (error) {
-      throw Exception(_extractApiErrorMessage(error));
-    }
+ Future<void> requestAdoptionForm(int idUser, int idPet) async {
+  print('ENVIANDO ADOPTION FORM: userId=$idUser, petId=$idPet');
+  try {
+    final response = await dio.post('/adoption-form/send', data: {'userId': idUser, 'petId': idPet});
+    print('RESPUESTA: ${response.data}');
+  } on DioException catch (error) {
+    print('ERROR: ${error.response?.data}');
+    throw Exception(_extractApiErrorMessage(error));
   }
+}
   //método para cuando estamos en esa página que nos ha enviado el back por email pues le damos a confirmar y esto haria un nuevor egistro en adoption requet
   //luego nosotros como admin tenemos que hacer un get de toidas las adopotion request y cuando cambiemos una a estado aceptado, se hara un nuevo registro en user pet relationshjip
   Future <void> submitAdoptionForm(Adoptionform formData, String token) async {
@@ -474,6 +477,20 @@ Future<void> register(Map<String, dynamic> user) async {
         .toList();
   }
 //put para editar el status de la relación
+Future<void> updateRelationshipStatus(int relationshipId, Userpetrelationship relationship) async {
+  try {
+    await dio.put('/relationships/$relationshipId', data: relationship.toJson());
+  } on DioException catch (error) {
+    throw Exception(_extractApiErrorMessage(error));
+  }
+}
 
 //patch para editar el status de la adopcion
+Future<void> updateAdoptionStatus(int requestId, String newStatus) async {
+  try {
+    await dio.patch('/adoption-requests/$requestId/status', data: {'id': requestId, 'status': newStatus}); //Solo se puede pendiente aprobada o denegada
+  } on DioException catch (error) {
+    throw Exception(_extractApiErrorMessage(error));
+  }
+}
 }

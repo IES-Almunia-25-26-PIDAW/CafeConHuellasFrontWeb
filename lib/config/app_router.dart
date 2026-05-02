@@ -1,4 +1,5 @@
 
+import 'package:cafeconhuellas_front/presentation/screens/donationFormScreen.dart';
 import 'package:cafeconhuellas_front/presentation/screens/donatios_screen.dart';
 import 'package:cafeconhuellas_front/presentation/screens/panel_screen.dart';
 import 'package:cafeconhuellas_front/presentation/screens/contactus.dart';
@@ -68,5 +69,6 @@ final GoRouter appRouter = GoRouter(
     GoRoute (path: '/panel', builder: (context, state) => const PanelScreen()),
     GoRoute (path: '/panel/donations', builder: (context, state) => const MyDonationsScreen()),
     GoRoute(path: '/panel/relationships', builder: (context, state) => const RelationshipsScreen()),
+    GoRoute(path: '/adopcion/formulario', builder: (context, state) => const DonationFormScreen())
   ],
 );

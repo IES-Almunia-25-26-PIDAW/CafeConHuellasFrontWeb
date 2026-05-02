@@ -1,5 +1,3 @@
-import 'package:cafeconhuellas_front/models/user.dart';
-
 class Userpetrelationship {
   int id;
   int userId;

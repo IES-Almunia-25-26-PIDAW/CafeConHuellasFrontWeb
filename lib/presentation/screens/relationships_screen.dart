@@ -5,6 +5,7 @@ import 'package:cafeconhuellas_front/presentation/bloc/pet_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/pet_event.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/pet_state.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_header.dart';
+import 'package:cafeconhuellas_front/utils/api_conector.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -150,7 +151,7 @@ class _RelacionesTab extends StatelessWidget {
                   active: !r.active,
                 );
                 try {
-                  //hacer e,l put de relaciones `puajajja
+                  await ApiConector().updateRelationshipStatus(r.id, updated);
                   context.read<PetsBloc>().add(LoadPetUserRelations());
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(

@@ -1,5 +1,7 @@
 import 'package:cafeconhuellas_front/models/donation.dart';
+import 'package:cafeconhuellas_front/models/pet.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart' show AuthBloc;
+import 'package:cafeconhuellas_front/presentation/bloc/pet_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_footer.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_header.dart';
 import 'package:cafeconhuellas_front/theme/AppColors.dart';
@@ -188,7 +190,7 @@ class DonationsScreen extends StatelessWidget {
                     title: "¡Adopta!",
                     text: "Anímate a darle un hogar a uno de nuestros peludos. La adopción es la forma más directa de ayudar, y cada mascota adoptada es una vida salvada.",
                     buttonText: "Adoptar",
-                    onPressed: () => Navigator.pushNamed(context, '/formulario-adopta'),
+                    onPressed: () => _showAdoptionDialog(context),
                   ),
                   _donationColumn(
                     context,
@@ -250,6 +252,92 @@ class DonationsScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+  Future<void> _showAdoptionDialog(BuildContext context) async {
+    final authState = context.read<AuthBloc>().state;
+    if (!authState.isAuthenticated || authState.user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Inicia sesión primero'), backgroundColor: Colors.red),
+      );
+      return;
+    }
+
+    final pets = context.read<PetsBloc>().state.pets
+        .where((p) => p.adoptionStatus == 'NO_ADOPTADO')
+        .toList();
+
+    if (pets.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No hay mascotas disponibles para adopción'), backgroundColor: Colors.orange),
+      );
+      return;
+    }
+
+    Pet? selectedPet = pets.first;
+
+    // ← guardamos el messenger ANTES del await
+    final messenger = ScaffoldMessenger.of(context);
+
+    await showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setState) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Text('¿Qué mascota quieres adoptar?',
+              style: TextStyle(fontFamily: 'MilkyVintage', fontSize: 20, color: Color(0xFF7B3FE4))),
+          content: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.purple[50],
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.purple.shade200),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<Pet>(
+                value: selectedPet,
+                isExpanded: true,
+                icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF7B3FE4)),
+                items: pets.map((p) => DropdownMenuItem(
+                  value: p,
+                  child: Text(p.name),
+                )).toList(),
+                onChanged: (v) => setState(() => selectedPet = v),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF7B3FE4),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              onPressed: selectedPet == null ? null : () async {
+                try {
+                  await ApiConector().requestAdoptionForm(authState.user!.id, selectedPet!.id);
+                  Navigator.pop(ctx);
+                  messenger.showSnackBar(
+                    const SnackBar(
+                      content: Text('¡Solicitud enviada! Revisa tu email ❤️'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                } catch (e) {
+                  messenger.showSnackBar(
+                    SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+                  );
+                }
+              },
+              child: const Text('Solicitar adopción'),
+            ),
+          ],
+        ),
       ),
     );
   }

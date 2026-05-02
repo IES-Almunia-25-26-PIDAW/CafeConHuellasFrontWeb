@@ -182,9 +182,9 @@ class HelpScreen extends StatelessWidget {
     }
     // si está logueado cargamos las mascotas y mostramos el diálogo
     List<Pet> pets = [];
-    try {
-      pets = await ApiConector().getPets();
-    } catch (_) {}
+    context.read<PetsBloc>().state.pets
+    .where((p) => p.adoptionStatus == 'NO_ADOPTADO')
+    .toList();
     if (!context.mounted) return;
     DateTime startDate = DateTime.now();
     DateTime? endDate;
@@ -246,12 +246,13 @@ class HelpScreen extends StatelessWidget {
                 // fecha fin (opcional)
                 _dateSelector(
                   label: 'Fecha de fin',
-                  date: endDate ?? startDate,
+                  date: endDate ?? DateTime.now().add(const Duration(days: 1)),
                   onTap: () async {
+                    final manana = DateTime.now().add(const Duration(days: 1));
                     final picked = await showDatePicker(
                       context: ctx,
-                      initialDate: endDate ?? startDate,
-                      firstDate: startDate,
+                      initialDate: endDate ?? manana,
+                      firstDate: manana,
                       lastDate: DateTime(2100),
                     );
                     if (picked != null) setState(() => endDate = picked);
