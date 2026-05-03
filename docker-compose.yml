@@ -1,16 +1,30 @@
+# ══════════════════════════════════════════════════════════════════
+# DOCKER COMPOSE - FRONTEND
+# Café con Huellas — Servicio: Flutter Web con Nginx
+# Se conecta a la red externa creada por el compose del backend
+# ══════════════════════════════════════════════════════════════════
+
 services:
+
+  #  FRONTEND Flutter Web 
   frontend:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: .                            # Usa el directorio actual como contexto de build
+      dockerfile: Dockerfile                # Dockerfile específico del frontend
       args:
+        # Inyecta la URL del backend en tiempo de compilación de Flutter.
+        # Si la variable BACKEND_URL no está definida en .env, usa localhost:8087 por defecto.
+        # Esta URL se embebe en el código Dart compilado mediante --dart-define.
         BACKEND_URL: ${BACKEND_URL:-http://localhost:8087}
     container_name: cafe_con_huellas_frontend
     ports:
-      - "4200:80"
-    restart: unless-stopped
+      - "4200:80"                           # Mapea el puerto 80 de Nginx al 4200 del host
+                                            # Accesible en: http://localhost:4200
+    restart: unless-stopped                 # Se reinicia automáticamente salvo parada manual
 
+#  REDES
 networks:
   default:
-    name: cafe_con_huellas_network
-    external: true
+    name: cafe_con_huellas_network          # Se une a la red ya existente creada por el backend
+    external: true                          # "external: true" indica que la red NO la crea este compose
+                                            # sino que debe existir previamente (la crea el backend compose)
