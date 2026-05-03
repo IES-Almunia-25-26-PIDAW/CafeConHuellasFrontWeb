@@ -295,6 +295,130 @@ Servicios disponibles tras levantar ambos:
 | 📧 Mailpit (emails) | http://localhost:8025 |
 
 ---
+## 🐳 Dockerización del Frontend
+
+### 📦 Dockerfile
+
+El archivo `Dockerfile` define el proceso de construcción de la imagen Docker del frontend. En este proyecto se utiliza una estrategia **multi-stage**, que permite separar la fase de compilación de la fase de ejecución, generando una imagen final más ligera y optimizada.
+
+El proceso consta de dos fases:
+
+#### 🔹 Stage 1: Build (Flutter)
+
+En esta fase se utiliza una imagen de Flutter para compilar la aplicación web:
+
+* `FROM ghcr.io/cirruslabs/flutter:stable AS builder`
+  Define la imagen base con Flutter para realizar la compilación.
+
+* `WORKDIR /app`
+  Establece el directorio de trabajo dentro del contenedor.
+
+* `COPY pubspec.yaml pubspec.lock ./` + `RUN flutter pub get`
+  Copia las dependencias y las instala. Esto permite aprovechar la caché de Docker.
+
+* `COPY . .`
+  Copia el resto del código fuente.
+
+* `ARG BACKEND_URL`
+  Permite inyectar la URL del backend en tiempo de compilación.
+
+* `RUN flutter build web --release`
+  Compila la aplicación en modo producción, generando archivos estáticos optimizados.
+
+#### 🔹 Stage 2: Serve (Nginx)
+
+En esta fase se utiliza Nginx para servir la aplicación:
+
+* `FROM nginx:alpine`
+  Imagen ligera para servir contenido estático.
+
+* `COPY --from=builder /app/build/web /usr/share/nginx/html`
+  Copia los archivos generados en la fase anterior.
+
+* `COPY nginx.conf`
+  Configuración personalizada para permitir el enrutamiento SPA de Flutter.
+
+* `EXPOSE 80`
+  Expone el puerto donde Nginx sirve la aplicación.
+
+Este enfoque mejora el rendimiento y reduce el tamaño final de la imagen.
+
+---
+
+## ⚙️ docker-compose.yml
+
+El archivo `docker-compose.yml` permite definir y ejecutar el contenedor del frontend de forma automatizada.
+
+### 📄 Configuración
+
+```yaml
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BACKEND_URL: ${BACKEND_URL:-http://localhost:8087}
+    container_name: cafe_con_huellas_frontend
+    ports:
+      - "4200:80"
+    restart: unless-stopped
+
+networks:
+  default:
+    name: cafe_con_huellas_network
+    external: true
+```
+
+### 🔹 Explicación
+
+#### Servicio frontend
+
+* `build`: construye la imagen a partir del Dockerfile.
+* `args`: permite pasar variables al proceso de build.
+
+  * `BACKEND_URL`: URL del backend que se inyecta en la aplicación Flutter.
+* `container_name`: nombre del contenedor.
+* `ports`: mapea el puerto 80 del contenedor al 4200 del host.
+* `restart: unless-stopped`: reinicia automáticamente el contenedor salvo parada manual.
+
+#### Redes
+
+* Se utiliza una red externa (`cafe_con_huellas_network`) creada previamente por el backend.
+* Esto permite la comunicación entre frontend y backend dentro del entorno Docker.
+
+---
+
+## 🔄 Funcionamiento del despliegue
+
+Al ejecutar:
+
+```bash
+docker compose up -d --build
+```
+
+Docker realiza los siguientes pasos:
+
+1. Construye la imagen del frontend a partir del Dockerfile.
+2. Inyecta la variable `BACKEND_URL` en tiempo de compilación.
+3. Crea el contenedor.
+4. Inicia el servidor Nginx.
+5. Expone la aplicación en `http://localhost:4200`.
+
+---
+
+## ⚠️ Consideraciones importantes
+
+* Si se modifica la variable `BACKEND_URL`, es necesario reconstruir la imagen:
+
+```bash
+docker compose up -d --build
+```
+
+* El frontend depende del backend, por lo que este debe estar previamente en ejecución.
+
+* La red Docker debe existir previamente, ya que se define como externa.
+---
 
 ## ❓ Problemas frecuentes
 
