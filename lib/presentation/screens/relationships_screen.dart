@@ -191,7 +191,7 @@ class _RelationCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.purple.shade100),
         boxShadow: [
-          BoxShadow(color: Colors.purple.withOpacity(0.05),
+          BoxShadow(color: Colors.purple.withValues(),
               blurRadius: 8, offset: const Offset(0, 3)),
         ],
       ),
@@ -216,12 +216,17 @@ class _RelationCard extends StatelessWidget {
                   style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 4),
+                if (isAdmin)
+                Text(
+                  'Usuario ID: ${relation.userId}',
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: color.withOpacity(0.4)),
+                    border: Border.all(color: color.withValues(alpha: 0.4)),
                   ),
                   child: Text(label,
                       style: TextStyle(color: color, fontSize: 11,
@@ -233,7 +238,7 @@ class _RelationCard extends StatelessWidget {
           if (isAdmin)
             Switch(
               value: relation.active,
-              activeColor: _purple,
+              activeThumbColor: _purple,
               onChanged: onToggleActive != null ? (_) => onToggleActive!() : null,
             ),
         ],
@@ -280,6 +285,19 @@ class _AdopcionesTab extends StatelessWidget {
 // CARD ADOPCIÓn
 
 class _AdoptionCard extends StatelessWidget {
+  //helper para evitar q me salga el aviso ese 
+    Future<void> _cambiarStatus(BuildContext context, String nuevoStatus) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final bloc = context.read<PetsBloc>();
+    try {
+      await ApiConector().updateAdoptionStatus(request.id, nuevoStatus);
+      bloc.add(LoadAdoptionRequests());
+    } catch (e) {
+      messenger.showSnackBar(
+        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+      );
+    }
+  }
   final AdoptionRequest request;
   final bool isAdmin;
   const _AdoptionCard({required this.request, required this.isAdmin});
@@ -300,7 +318,7 @@ class _AdoptionCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.purple.shade100),
         boxShadow: [
-          BoxShadow(color: Colors.purple.withOpacity(0.05),
+          BoxShadow(color: Colors.purple.withValues(),
               blurRadius: 8, offset: const Offset(0, 3)),
         ],
       ),
@@ -329,9 +347,9 @@ class _AdoptionCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.1),
+                  color: statusColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: statusColor.withOpacity(0.4)),
+                  border: Border.all(color: statusColor.withValues(alpha: 0.4)),
                 ),
                 child: Text(request.status,
                     style: TextStyle(color: statusColor, fontSize: 11,
@@ -360,6 +378,48 @@ class _AdoptionCard extends StatelessWidget {
             '${request.submittedAt.year}',
             style: TextStyle(fontSize: 11, color: Colors.grey[500]),
           ),
+          if (isAdmin)...[
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                //si no es pendiente aparece
+                if (request.status != 'PENDIENTE')
+                TextButton(
+                  onPressed: () => _cambiarStatus(context, 'PENDIENTE'),
+                  child: const Text('Pendiente', style: TextStyle(color: Colors.orange)),
+                ),
+                //si no es aprobado aparece 
+                if (request.status != 'APROBADA')
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  onPressed: () async {
+                      _cambiarStatus(context, 'APROBADA');
+                  },
+                  child: const Text('Aprobar'),
+                ),
+                const SizedBox(width: 8),
+                //si no es rechazado aparece
+                if (request.status != 'DENEGADA')
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  onPressed: () async { _cambiarStatus(context, 'DENEGADA');
+                  },
+                  child: const Text('Rechazar'),
+                ),
+              ],
+            )
+          ]
         ],
       ),
     );
@@ -386,9 +446,9 @@ class _AdoptionCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.4)),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
       ),
       child: Text(
         '${value ? '✓' : '✗'} $label',

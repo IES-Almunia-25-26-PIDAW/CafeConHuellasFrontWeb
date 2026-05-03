@@ -5,11 +5,13 @@ import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
 import 'package:cafeconhuellas_front/utils/api_conector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 import 'config/app_router.dart';
 import 'config/app_theme.dart';
 
 void main() {
+  usePathUrlStrategy();
   runApp(const MyApp());
 }
 

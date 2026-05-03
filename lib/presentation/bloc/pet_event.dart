@@ -63,7 +63,7 @@ class LoadPetUserRelations extends PetsEvent {
 }
 //AÑADIR UNA ADOPCIÓN
 class SubmitAdoptionRequest extends PetsEvent {
-  final Adoptionform request;
+  final Map<String, dynamic> request;
   final String token;
   SubmitAdoptionRequest(this.request, this.token);  
   }

@@ -69,6 +69,9 @@ final GoRouter appRouter = GoRouter(
     GoRoute (path: '/panel', builder: (context, state) => const PanelScreen()),
     GoRoute (path: '/panel/donations', builder: (context, state) => const MyDonationsScreen()),
     GoRoute(path: '/panel/relationships', builder: (context, state) => const RelationshipsScreen()),
-    GoRoute(path: '/adopcion/formulario', builder: (context, state) => const DonationFormScreen())
+    GoRoute(path: '/adopcion/formulario/:token', builder: (context, state) { 
+      final token= state.pathParameters['token'] ?? '';
+      return DonationFormScreen(token: token);
+    })
   ],
 );

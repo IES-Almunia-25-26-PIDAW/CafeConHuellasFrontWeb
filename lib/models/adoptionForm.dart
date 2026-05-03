@@ -102,29 +102,31 @@ class AdoptionRequest {
   });
 
   // Para convertir de JSON (Map) a Objeto Dart
-  factory AdoptionRequest.fromJson(Map<String, dynamic> json) {
-    return AdoptionRequest(
-      id: json['id'],
-      formTokenId: json['formTokenId'],
-      userName: json['userName'] ?? '',
-      userEmail: json['userEmail'] ?? '',
-      petName: json['petName'] ?? '',
-      address: json['address'] ?? '',
-      city: json['city'] ?? '',
-      housingType: json['housingType'] ?? '',
-      hasGarden: json['hasGarden'] ?? false,
-      hasOtherPets: json['hasOtherPets'] ?? false,
-      hasChildren: json['hasChildren'] ?? false,
-      hoursAlonePerDay: json['hoursAlonePerDay'] ?? 0,
-      experienceWithPets: json['experienceWithPets'] ?? false,
-      reasonForAdoption: json['reasonForAdoption'] ?? '',
-      agreesToFollowUp: json['agreesToFollowUp'] ?? false,
-      additionalInfo: json['additionalInfo'] ?? '',
-      relationshipId: json['relationshipId'],
-      status: json['status'] ?? 'PENDIENTE',
-      submittedAt: DateTime.parse(json['submittedAt']),
-    );
-  }
+factory AdoptionRequest.fromJson(Map<String, dynamic> json) {
+  return AdoptionRequest(
+    id: (json['id'] as num?)?.toInt() ?? 0,
+    formTokenId: (json['formTokenId'] as num?)?.toInt() ?? 0,
+    userName: (json['userName'] ?? '').toString(),
+    userEmail: (json['userEmail'] ?? '').toString(),
+    petName: (json['petName'] ?? '').toString(),
+    address: (json['address'] ?? '').toString(),
+    city: (json['city'] ?? '').toString(),
+    housingType: (json['housingType'] ?? '').toString(),
+    hasGarden: json['hasGarden'] == true || json['hasGarden'] == 'true',
+    hasOtherPets: json['hasOtherPets'] == true || json['hasOtherPets'] == 'true',
+    hasChildren: json['hasChildren'] == true || json['hasChildren'] == 'true',
+    hoursAlonePerDay: (json['hoursAlonePerDay'] as num?)?.toInt() ?? 0,
+    experienceWithPets: json['experienceWithPets'] == true || json['experienceWithPets'] == 'true',
+    reasonForAdoption: (json['reasonForAdoption'] ?? '').toString(),
+    agreesToFollowUp: json['agreesToFollowUp'] == true || json['agreesToFollowUp'] == 'true',
+    additionalInfo: (json['additionalInfo'] ?? '').toString(),
+    relationshipId: (json['relationshipId'] as num?)?.toInt() ?? 0,
+    status: (json['status'] ?? 'PENDIENTE').toString(),
+    submittedAt: json['submittedAt'] != null 
+        ? DateTime.parse(json['submittedAt'].toString()) 
+        : DateTime.now(),
+  );
+}
 
   // Para convertir de Objeto Dart a JSON (para enviar a la API)
   Map<String, dynamic> toJson() {

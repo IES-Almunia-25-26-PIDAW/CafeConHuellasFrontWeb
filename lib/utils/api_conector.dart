@@ -440,18 +440,18 @@ Future<void> register(Map<String, dynamic> user) async {
   }
   //método para hacer la llamada a la api y que mande por email el enlace al formulario de adopción, 
  Future<void> requestAdoptionForm(int idUser, int idPet) async {
-  print('ENVIANDO ADOPTION FORM: userId=$idUser, petId=$idPet');
   try {
-    final response = await dio.post('/adoption-form/send', data: {'userId': idUser, 'petId': idPet});
-    print('RESPUESTA: ${response.data}');
+     await dio.post(
+      '/adoption-form/send',
+      queryParameters: {'userId': idUser, 'petId': idPet}, // ← queryParameters, no data
+    );
   } on DioException catch (error) {
-    print('ERROR: ${error.response?.data}');
     throw Exception(_extractApiErrorMessage(error));
   }
 }
   //método para cuando estamos en esa página que nos ha enviado el back por email pues le damos a confirmar y esto haria un nuevor egistro en adoption requet
   //luego nosotros como admin tenemos que hacer un get de toidas las adopotion request y cuando cambiemos una a estado aceptado, se hara un nuevo registro en user pet relationshjip
-  Future <void> submitAdoptionForm(Adoptionform formData, String token) async {
+  Future <void> submitAdoptionForm(Map<String, dynamic> formData, String token) async {
     try {
       await dio.post('/adoption-form/submit/$token', data: formData);
     } on DioException catch (error) {
@@ -488,7 +488,7 @@ Future<void> updateRelationshipStatus(int relationshipId, Userpetrelationship re
 //patch para editar el status de la adopcion
 Future<void> updateAdoptionStatus(int requestId, String newStatus) async {
   try {
-    await dio.patch('/adoption-requests/$requestId/status', data: {'id': requestId, 'status': newStatus}); //Solo se puede pendiente aprobada o denegada
+    await dio.patch('/adoption-requests/$requestId/status', queryParameters: {'status': newStatus}); //Solo se puede pendiente aprobada o denegada
   } on DioException catch (error) {
     throw Exception(_extractApiErrorMessage(error));
   }
