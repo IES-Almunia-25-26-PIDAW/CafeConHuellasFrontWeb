@@ -52,12 +52,16 @@ class DeleteEvent extends PetsEvent {
   DeleteEvent(this.eventId);
 }
 
-//AÑÑADIR UNA RELACIÓN 
+//AÑÑADIR UNA RELACIÓN SOLO ADMIN
 class AddPetUserRelation extends PetsEvent {
  final Userpetrelationship relation;
   AddPetUserRelation(this.relation);
 }
-
+//AÑADIR UNMA RELACION USUARIO NORMAL
+class AddMyPetUserRelation extends PetsEvent {
+ final Userpetrelationship relation;
+  AddMyPetUserRelation(this.relation);
+}
 //CARGAR RELACIONES
 class LoadPetUserRelations extends PetsEvent {
 }

@@ -6,13 +6,12 @@ import 'package:cafeconhuellas_front/presentation/bloc/pet_event.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_footer.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_header.dart';
 import 'package:cafeconhuellas_front/theme/AppColors.dart';
-import 'package:cafeconhuellas_front/utils/api_conector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class HelpScreen extends StatelessWidget {
-
+  
   const HelpScreen({super.key});
     Widget _dateSelector({
       required String label,
@@ -55,6 +54,7 @@ class HelpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       body: SingleChildScrollView(
         child: Column (
@@ -147,6 +147,7 @@ class HelpScreen extends StatelessWidget {
     Future<void> _showRelationshipDialog(BuildContext context, String tipoRelacion) async {
     // comprobamos si el usuario está logueado
     final authState = context.read<AuthBloc>().state;
+    bool isAdmin= authState.user?.role == 'ADMIN';
     if (!authState.isAuthenticated || authState.user == null) {
       showDialog(
         context: context,
@@ -181,8 +182,7 @@ class HelpScreen extends StatelessWidget {
       return;
     }
     // si está logueado cargamos las mascotas y mostramos el diálogo
-    List<Pet> pets = [];
-    context.read<PetsBloc>().state.pets
+    final List<Pet> pets = context.read<PetsBloc>().state.pets
     .where((p) => p.adoptionStatus == 'NO_ADOPTADO')
     .toList();
     if (!context.mounted) return;
@@ -290,7 +290,12 @@ class HelpScreen extends StatelessWidget {
                   active: false, // el admin la activará cuando la acepte
                 );
                 try {
-                  context.read<PetsBloc>().add(AddPetUserRelation(relation));
+                  if (isAdmin){
+                    context.read<PetsBloc>().add(AddPetUserRelation(relation));
+                  }
+                  else {
+                    context.read<PetsBloc>().add(AddMyPetUserRelation(relation));
+                  }
                   Navigator.pop(ctx);
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(

@@ -41,6 +41,8 @@ class PetsBloc extends Bloc<PetsEvent, PetsState> {
     on<LoadAdoptionRequests>(_onLoadAdoptionRequests);
     on<LoadMyAdoptionRequests>(_onLoadMyAdoptionRequests);
     on<LoadMyPetUserRelations>(_onLoadMyPetUserRelations);
+    on<AddMyPetUserRelation>(_onAddMyPetUserRelation);
+  
   }
   //cargar mis relaciones
   Future<void> _onLoadMyPetUserRelations(LoadMyPetUserRelations event, Emitter<PetsState> emit) async {
@@ -113,6 +115,16 @@ Future<void> _onSubmitAdoptionRequest(SubmitAdoptionRequest event, Emitter<PetsS
     emit(state.copyWith(isLoading: true, clearErrorMessage: true));
     try {
       await api.addUserPetRelationship(event.relation);
+      emit(state.copyWith(isLoading: false, clearErrorMessage: true));
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+    }
+   }
+   //añadir mis relaciones
+    Future<void> _onAddMyPetUserRelation(AddMyPetUserRelation event, Emitter<PetsState> emit) async {
+    emit(state.copyWith(isLoading: true, clearErrorMessage: true));
+    try {
+      await api.postMyRelationships(event.relation);
       emit(state.copyWith(isLoading: false, clearErrorMessage: true));
     } catch (e) {
       emit(state.copyWith(isLoading: false, errorMessage: e.toString()));

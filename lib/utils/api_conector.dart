@@ -493,4 +493,17 @@ Future<void> updateAdoptionStatus(int requestId, String newStatus) async {
     throw Exception(_extractApiErrorMessage(error));
   }
 }
+//post de relaciones de usuario normal 
+Future <void> postMyRelationships(Userpetrelationship relationship) async {
+  final Map<String, dynamic> relationshipData = relationship.toJson();
+    try {
+      await dio.post(
+        '/relationships/me',
+        data: relationshipData,
+      );
+    } on DioException catch (error) {
+      throw Exception(_extractApiErrorMessage(error));
+    }
+
+  }
 }
