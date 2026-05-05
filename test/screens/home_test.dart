@@ -30,7 +30,7 @@ void main() {
     events: const [],
     selectedSpecies: '',
     isEmergencyActive: false,
-    isLoading: false,
+    isLoading: false, relations: [], adoptionRequests: [],
   );
 
   // Mascotas de ejemplo

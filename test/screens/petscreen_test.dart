@@ -20,7 +20,7 @@ void main() {
   // así evitamos que haga llamadas reales a la API
   Widget buildWidget() {
     final petsBloc = PetsBloc(api: ApiConector());
-    petsBloc.emit( PetsState(pets: [], events: [], selectedSpecies: '', isEmergencyActive: true)); // estado vacío, sin llamada a API
+    petsBloc.emit( PetsState(pets: [], events: [], selectedSpecies: '', isEmergencyActive: true, relations: [], adoptionRequests: [])); // estado vacío, sin llamada a API
 
     final authBloc = AuthBloc(ApiConector());
 

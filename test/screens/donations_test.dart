@@ -22,26 +22,26 @@ void main() {
   }
 
   group('DonationsScreen', () {
-    testWidgets('muestra título principal y secciones', (tester) async {
+      testWidgets('muestra título principal y secciones', (tester) async {
       await pumpBig(tester);
 
-      expect(find.text('¿Quieres ayudarnos económicamente?'), findsOneWidget);
-      expect(find.text('¡Hazte socio!'), findsOneWidget);
-      expect(find.text('¡Haznos una donación!'), findsOneWidget);
+      expect(find.text('¿Quieres ayudarnos?'), findsOneWidget);         // ← texto real
+      expect(find.text('¡Adopta!'), findsOneWidget);                    // ← texto real
+      expect(find.text('¡Haznos una donación!'), findsOneWidget);       // ← texto real
     });
 
     testWidgets('muestra textos de información de donación', (tester) async {
       await pumpBig(tester);
 
-      expect(find.textContaining('aportación mensual'), findsOneWidget);
-      expect(find.textContaining('donación puntual'), findsOneWidget);
+      expect(find.textContaining('rescatando y cuidando'), findsOneWidget);  // ← texto real
+      expect(find.textContaining('vida salvada'), findsOneWidget);           // ← texto real
     });
 
     testWidgets('muestra botones de acción', (tester) async {
       await pumpBig(tester);
 
-      expect(find.text('Hacerme socio'), findsOneWidget);
-      expect(find.text('Donar'), findsOneWidget);
+      expect(find.text('Adoptar'), findsOneWidget);   // ← texto real
+      expect(find.text('Donar'), findsOneWidget);     // ← texto real
     });
   });
 }
