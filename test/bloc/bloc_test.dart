@@ -26,6 +26,18 @@ void main() {
     registerFallbackValue(AdoptionRequest(
         id: 1,status: 'PENDIENTE', userName: '', userEmail: '', petName: '', address: '', city: '', housingType: '', hasGarden: false, hasOtherPets: false, hasChildren: false, hoursAlonePerDay: 5, experienceWithPets: true, reasonForAdoption: '', agreesToFollowUp: false, additionalInfo: '', relationshipId: 0, submittedAt: DateTime.now(), formTokenId: 2,
     ));
+   registerFallbackValue(User(
+    id: 0,
+    firstName: '',
+    lastName1: '',
+    lastName2: '',
+    email: '',
+    phone: '',
+    role: '',
+    imageUrl: '',
+    password: '',
+  ));
+  
   });
 
   // ── AuthBloc básico ──────────────────────────────────────────────
@@ -465,5 +477,113 @@ void main() {
       await future;
     });
   });
+  group('AuthBloc — UpdateAvatarRequested', () {
+  late MockApi mockApi;
+  late AuthBloc bloc;
 
-} // ← único cierre de main()
+  final user = UserWithoutPassword(
+    id: 1,
+    firstName: 'Andrea',
+    lastName1: 'Lopez',
+    lastName2: 'Garcia',
+    email: 'andrea@test.com',
+    phone: '123456789',
+    role: 'USER',
+    imageUrl: 'old.png',
+  );
+
+  setUp(() {
+    mockApi = MockApi();
+    bloc = AuthBloc(mockApi);
+  });
+
+  tearDown(() => bloc.close());
+
+  test('UpdateAvatarRequested actualiza el avatar en el estado', () async {
+    // Simulamos usuario logueado
+    bloc.emit(
+      bloc.state.copyWith(
+        token: 'token123',
+        user: user,
+      ),
+    );
+
+    when(() => mockApi.updateAvatar(any(), any()))
+        .thenAnswer((_) async {});
+
+    final future = expectLater(
+      bloc.stream,
+      emits(
+        isA<AuthState>().having(
+          (s) => s.user?.imageUrl,
+          'updated avatar',
+          'new_avatar.png',
+        ),
+      ),
+    );
+
+    bloc.add(UpdateAvatarRequested('new_avatar.png'));
+
+    await future;
+  });
+
+  test('UpdateAvatarRequested llama a updateAvatar del API', () async {
+    bloc.emit(
+      bloc.state.copyWith(
+        token: 'token123',
+        user: user,
+      ),
+    );
+
+    when(() => mockApi.updateAvatar(any(), any()))
+        .thenAnswer((_) async {});
+
+    bloc.add(UpdateAvatarRequested('avatar_updated.png'));
+
+    await Future.delayed(const Duration(milliseconds: 10));
+
+    verify(
+      () => mockApi.updateAvatar(
+        any(),
+        1,
+      ),
+    ).called(1);
+  });
+
+  test('UpdateAvatarRequested no hace nada si no hay usuario', () async {
+    when(() => mockApi.updateAvatar(any(), any()))
+        .thenAnswer((_) async {});
+
+    bloc.add(UpdateAvatarRequested('avatar.png'));
+
+    await Future.delayed(const Duration(milliseconds: 10));
+
+    verifyNever(() => mockApi.updateAvatar(any(), any()));
+
+    expect(bloc.state.user, isNull);
+  });
+
+  test('UpdateAvatarRequested mantiene el resto de datos del usuario', () async {
+    bloc.emit(
+      bloc.state.copyWith(
+        token: 'abc',
+        user: user,
+      ),
+    );
+
+    when(() => mockApi.updateAvatar(any(), any()))
+        .thenAnswer((_) async {});
+
+    bloc.add(UpdateAvatarRequested('newpic.jpg'));
+
+    final state = await bloc.stream.first;
+
+    expect(state.user?.firstName, 'Andrea');
+    expect(state.user?.email, 'andrea@test.com');
+    expect(state.user?.role, 'USER');
+    expect(state.user?.imageUrl, 'newpic.jpg');
+  });
+
+
+
+});} // ← único cierre de main()

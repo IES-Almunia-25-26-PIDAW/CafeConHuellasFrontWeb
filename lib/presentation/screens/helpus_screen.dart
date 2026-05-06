@@ -1,439 +1,291 @@
-import 'package:cafeconhuellas_front/models/pet.dart';
-import 'package:cafeconhuellas_front/models/userPetRelationship.dart';
+// test/screens/help_screen_test.dart
+import 'package:cafeconhuellas_front/models/user.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
+import 'package:cafeconhuellas_front/presentation/bloc/auth_state.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/pet_bloc.dart';
-import 'package:cafeconhuellas_front/presentation/bloc/pet_event.dart';
-import 'package:cafeconhuellas_front/presentation/widgets/app_footer.dart';
-import 'package:cafeconhuellas_front/presentation/widgets/app_header.dart';
-import 'package:cafeconhuellas_front/theme/AppColors.dart';
+import 'package:cafeconhuellas_front/presentation/bloc/pet_state.dart';
+import 'package:cafeconhuellas_front/utils/api_conector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocktail/mocktail.dart';
 
-class HelpScreen extends StatelessWidget {
-  
-  const HelpScreen({super.key});
-    Widget _dateSelector({
-      required String label,
-      required DateTime date,
-      required VoidCallback onTap,
-      bool isOptional = false,
-      VoidCallback? onClear,
-    }) {
-      return InkWell(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-          decoration: BoxDecoration(
-            color: Colors.purple[50],
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.purple.shade200),
-          ),
-          child: Row(children: [
-            const Icon(Icons.calendar_today, color: Color(0xFF7B3FE4), size: 18),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                isOptional && onClear == null
-                    ? label
-                    : '${label}: ${date.day.toString().padLeft(2,'0')}/${date.month.toString().padLeft(2,'0')}/${date.year}',
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
-            ),
-            if (onClear != null)
-              GestureDetector(
-                onTap: onClear,
-                child: const Icon(Icons.close, size: 16, color: Colors.grey),
-              )
-            else
-              const Text('Cambiar', style: TextStyle(color: Color(0xFF7B3FE4), fontSize: 12)),
-          ]),
-        ),
-      );
-    }
+class MockApi extends Mock implements ApiConector {}
 
-  @override
-  Widget build(BuildContext context) {
-    
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Column (
-          children: [
-            AppHeader(userImageUrl: "assets/user.png"),
-            //banner
-            Image.asset("assets/images/banners/banner-inicio.png", width: double.infinity, height: 400, fit:BoxFit.cover),
-            const SizedBox(height: 60),
-            //TITULO
-            _title("¿Cómo puedes ayudar?"),
-            //INTRO
-            Padding(padding: const EdgeInsets.symmetric(horizontal: 60.0),
-                    child:Wrap(
-                      spacing: 40,
-                      runSpacing: 40,
-                      alignment: WrapAlignment.center,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                         /// CARD TEXTO
-                        _card(
-                            child: const Text(
-                            "Hay muchas formas de colaborar con nuestra protectora, "
-                           "cada pequeña acción ayuda a cambiar la vida de nuestros animales.",
-                            textAlign: TextAlign.center,
-                            ),
-                          ),
-                        //CARD LINKS
-                        _card(
-                          child: Column(
-                          children: [
-                          _link(context, "Voluntariado"),
-                          _link(context, "Casa de acogida"),
-                          _link(context, "Paseos"),
-                          _link(context, "Apadrinamiento"),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 80),
-                        //VOLUNTARIADO
-                        _helpSection(
-                          context,
-                          title: "Voluntariado",
-                          image: "assets/images/help_section/volunteering.jpg",
-                          text: "Colabora con nosotros ayudando en el cuidado diario.",
-                          button: "Quiero ser voluntario",
-                          reverse: false,
-                          relation: "VOLUNTARIADO",
-                        ),
-                        //CASA DE ACOGIDA
-                        _helpSection(
-                          context,
-                          title: "Casa de acogida",
-                          image: "assets/images/help_section/petfoster.jpg",
-                          text: "Ofrece tu hogar temporalmente a un animal.",
-                          button: "Ofrecer acogida",
-                          reverse: true,
-                          relation: "CASA_DE_ACOGIDA",
-                        ),  
-                        //PASEOS
-                        _helpSection(
-                          context,
-                          title: "Paseos",
-                          image: "assets/images/help_section/walks.jpg",
-                          text: "Ayuda a nuestros perros saliendo a pasear.",
-                          button: "Apuntarme a paseos",
-                          reverse: false,
-                          relation: "PASEO",
-                        ),
-                        //APADRINAMIENTO
-                        _helpSection(
-                          context,
-                          title: "Apadrinamiento",
-                          image: "assets/images/help_section/sponsorship.jpg",
-                          text: "Contribuye económicamente al cuidado de un animal.",
-                          button: "Apadrinar",
-                          reverse: true,
-                          relation: "APADRINAMIENTO",
-                        ),
-                        const SizedBox(height: 100),
-                        
-                        ]
-                      )
-                    ),
-                    AppFooter()
-                  ],
-                )
-      ),
-    );
-  }
-    Future<void> _showRelationshipDialog(BuildContext context, String tipoRelacion) async {
-    // comprobamos si el usuario está logueado
-    final authState = context.read<AuthBloc>().state;
-    bool isAdmin= authState.user?.role == 'ADMIN';
-    if (!authState.isAuthenticated || authState.user == null) {
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Text('¡Necesitas una cuenta!',
-              style: TextStyle(fontFamily: 'MilkyVintage', fontSize: 22)),
-          content: const Text(
-            'Para poder ayudarnos necesitas estar registrado e iniciar sesión primero.',
-            textAlign: TextAlign.center,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancelar'),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF7B3FE4),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              ),
-              onPressed: () {
-                Navigator.pop(ctx);
-                context.go('/login');
-              },
-              child: const Text('Iniciar sesión / Registrarse'),
-            ),
-          ],
-        ),
-      );
-      return;
-    }
-    // si está logueado cargamos las mascotas y mostramos el diálogo
-    final List<Pet> pets = context.read<PetsBloc>().state.pets
-    .where((p) => p.adoptionStatus == 'NO_ADOPTADO')
-    .toList();
-    if (!context.mounted) return;
-    DateTime startDate = DateTime.now();
-    DateTime? endDate;
-    Pet? selectedPet = pets.isNotEmpty ? pets.first : null;
-    await showDialog(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: Text(tipoRelacion,
-              style: const TextStyle(fontFamily: 'MilkyVintage', fontSize: 22,
-                  color: Color(0xFF7B3FE4))),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // mascota
-                if (pets.isEmpty)
-                  const Text('No hay mascotas disponibles.')
-                else
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.purple[50],
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.purple.shade200),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<Pet>(
-                        value: selectedPet,
-                        isExpanded: true,
-                        icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF7B3FE4)),
-                        items: pets.map((p) => DropdownMenuItem(
-                          value: p,
-                          child: Text(p.name),
-                        )).toList(),
-                        onChanged: (v) => setState(() => selectedPet = v),
-                      ),
-                    ),
-                  ),
-                const SizedBox(height: 12),
-
-                // fecha inicio
-                _dateSelector(
-                  label: 'Fecha de inicio',
-                  date: startDate,
-                  onTap: () async {
-                    final picked = await showDatePicker(
-                      context: ctx,
-                      initialDate: DateTime.now().subtract(const Duration(days: 1)),
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime.now().subtract(const Duration(days: 1)),
-                    );
-                    if (picked != null) setState(() => startDate = picked);
-                  },
-                ),
-                const SizedBox(height: 12),
-
-                // fecha fin (opcional)
-                _dateSelector(
-                  label: 'Fecha de fin',
-                  date: endDate ?? DateTime.now().add(const Duration(days: 1)),
-                  onTap: () async {
-                    final manana = DateTime.now().add(const Duration(days: 1));
-                    final picked = await showDatePicker(
-                      context: ctx,
-                      initialDate: endDate ?? manana,
-                      firstDate: manana,
-                      lastDate: DateTime(2100),
-                    );
-                    if (picked != null) setState(() => endDate = picked);
-                  },
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancelar'),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF7B3FE4),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              ),
-              onPressed: selectedPet == null ? null : () async {
-                if (endDate == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('La fecha de fin es obligatoria'),
-                          backgroundColor: Colors.orange),
-                    );
-                    return;
-                  }
-                final relation = Userpetrelationship(
-                  id: 0,
-                  userId: authState.user!.id,
-                  petId: selectedPet!.id,
-                  relationshipType: tipoRelacion.toUpperCase().replaceAll(' ', '_'),
-                  startDate: startDate,
-                  endDate: endDate,
-                  active: false, // el admin la activará cuando la acepte
-                );
-                try {
-                  if (isAdmin){
-                    context.read<PetsBloc>().add(AddPetUserRelation(relation));
-                  }
-                  else {
-                    context.read<PetsBloc>().add(AddMyPetUserRelation(relation));
-                  }
-                  Navigator.pop(ctx);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('¡Solicitud enviada! Te avisaremos pronto ❤️'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-                  );
-                }
-              },
-              child: const Text('Enviar solicitud'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
- /// TITULO
-  Widget _title(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 40),
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontSize: 38,
-          fontFamily: "WinkyMilky",
-          color: AppColors.darkViolet,
-        ),
-      ),
-    );
-  }
-  
-  /// CARD
-  Widget _card({required Widget child}) {
-    return Container(
-      width: 400,
-      padding: const EdgeInsets.all(35),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.cream),
-        color: Colors.white,
-      ),
-      child: child,
-    );
-  }
-
-  /// LINK CARD
-  Widget _link(BuildContext context, String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: TextButton(
-        onPressed: () {},
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontSize: 28,
-            fontFamily: "MilkyVintage",
-            color: AppColors.green,
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// SECCIÓN DE AYUDA
-  Widget _helpSection(
-    BuildContext context, {
-    required String title,
-    required String image,
-    required String text,
-    required String relation,
-    required bool reverse,
-    required String button,
-  }) {
-    final content = [
-      /// IMAGEN
-      ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Image.asset(
-          image,
-          width: 380,
-          height: 260,
-          fit: BoxFit.cover,
-        ),
-      ),
-      /// CARD INFO
-      Container(
-        width: 450,
-        padding: const EdgeInsets.all(30),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: AppColors.cream),
-          color: Colors.white,
-        ),
-        child: Column(
-          children: [
-            Text(
-              text,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 18,
-                color: AppColors.brown,
-              ),
-            ),
-            const SizedBox(height: 30),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.green,
-                foregroundColor: Colors.white,
-              ),
-              onPressed: () {
-                _showRelationshipDialog(context, relation);
-              },
-              child: Text(button),
-            ),
-          ],
-        ),
-      ),
-    ];
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 60),
-      child: Column(
-        children: [
-          _title(title),
-          Wrap(
-            spacing: 60,
-            runSpacing: 40,
-            alignment: WrapAlignment.center,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: reverse ? content.reversed.toList() : content,
-          ),
-        ],
-      ),
-    );
-  }
+class FakeAuthBloc extends AuthBloc {
+  final AuthState _s;
+  FakeAuthBloc(this._s) : super(MockApi());
+  @override AuthState get state => _s;
 }
- 
+
+class FakePetsBloc extends PetsBloc {
+  final PetsState _s;
+  FakePetsBloc(this._s) : super(api: MockApi());
+  @override PetsState get state => _s;
+}
+
+// estado sin login
+AuthState get _unauthState => AuthState(isLoading: false);
+
+// estado con usuario normal
+AuthState get _userState => AuthState(
+  token: 'tok', isLoading: false,
+  user: UserWithoutPassword(
+    id: 1, firstName: 'Ana', lastName1: '', lastName2: '',
+    email: '', phone: '', role: 'USER', imageUrl: '',
+  ),
+);
+
+PetsState get _emptyPets => PetsState(
+  pets: const [], selectedSpecies: '', isEmergencyActive: false,
+  isLoading: false, events: const [],
+  relations: const [], adoptionRequests: const [],
+);
+
+// buildWidget con GoRouter porque HelpScreen usa context.go('/login')
+Widget buildWidget(AuthState authState) => MaterialApp.router(
+  routerConfig: GoRouter(routes: [
+    GoRoute(
+      path: '/',
+      builder: (_, __) => MultiBlocProvider(
+        providers: [
+          BlocProvider<AuthBloc>(create: (_) => FakeAuthBloc(authState)),
+          BlocProvider<PetsBloc>(create: (_) => FakePetsBloc(_emptyPets)),
+        ],
+        child: HelpusScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/login',
+      builder: (_, __) => const Scaffold(body: Text('login')),
+    ),
+  ]),
+);
+
+Future<void> pumpBig(WidgetTester tester, Widget widget) async {
+  tester.view.physicalSize = const Size(1400, 2400); // alto para ver todo
+  tester.view.devicePixelRatio = 1.0;
+  addTearDown(tester.view.resetPhysicalSize);
+  await tester.pumpWidget(widget);
+  await tester.pumpAndSettle();
+}
+
+void main() {
+  group('HelpScreen — contenido básico', () {
+    testWidgets('muestra título principal', (tester) async {
+      await pumpBig(tester, buildWidget(_unauthState));
+      expect(find.text('¿Cómo puedes ayudar?'), findsOneWidget);
+    });
+
+    testWidgets('muestra links de navegación', (tester) async {
+      await pumpBig(tester, buildWidget(_unauthState));
+      expect(find.text('Voluntariado'), findsWidgets);
+      expect(find.text('Casa de acogida'), findsWidgets);
+      expect(find.text('Paseos'), findsWidgets);
+      expect(find.text('Apadrinamiento'), findsWidgets);
+    });
+
+    testWidgets('muestra texto introductorio', (tester) async {
+      await pumpBig(tester, buildWidget(_unauthState));
+      expect(find.textContaining('formas de colaborar'), findsOneWidget);
+    });
+
+    testWidgets('muestra los 4 botones de acción', (tester) async {
+      await pumpBig(tester, buildWidget(_unauthState));
+      expect(find.text('Quiero ser voluntario'), findsOneWidget);
+      expect(find.text('Ofrecer acogida'), findsOneWidget);
+      expect(find.text('Apuntarme a paseos'), findsOneWidget);
+      expect(find.text('Apadrinar'), findsOneWidget);
+    });
+
+    testWidgets('muestra títulos de las secciones', (tester) async {
+      await pumpBig(tester, buildWidget(_unauthState));
+      expect(find.text('Voluntariado'), findsWidgets);
+      expect(find.text('Casa de acogida'), findsWidgets);
+      expect(find.text('Paseos'), findsWidgets);
+      expect(find.text('Apadrinamiento'), findsWidgets);
+    });
+
+    testWidgets('muestra textos descriptivos de cada sección', (tester) async {
+      await pumpBig(tester, buildWidget(_unauthState));
+      expect(find.textContaining('cuidado diario'), findsOneWidget);
+      expect(find.textContaining('hogar temporalmente'), findsOneWidget);
+      expect(find.textContaining('saliendo a pasear'), findsOneWidget);
+      expect(find.textContaining('económicamente'), findsOneWidget);
+    });
+  });
+
+  group('HelpScreen — sin autenticar', () {
+    testWidgets('botón voluntariado abre dialog de login', (tester) async {
+      await pumpBig(tester, buildWidget(_unauthState));
+
+      await tester.ensureVisible(find.text('Quiero ser voluntario'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Quiero ser voluntario'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AlertDialog), findsOneWidget);
+      expect(find.text('¡Necesitas una cuenta!'), findsOneWidget);
+    });
+
+    testWidgets('dialog sin login muestra botón iniciar sesión', (tester) async {
+      await pumpBig(tester, buildWidget(_unauthState));
+
+      await tester.ensureVisible(find.text('Quiero ser voluntario'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Quiero ser voluntario'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Iniciar sesión / Registrarse'), findsOneWidget);
+    });
+
+    testWidgets('dialog sin login muestra botón cancelar', (tester) async {
+      await pumpBig(tester, buildWidget(_unauthState));
+
+      await tester.ensureVisible(find.text('Quiero ser voluntario'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Quiero ser voluntario'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Cancelar'), findsOneWidget);
+    });
+
+    testWidgets('cancelar en dialog sin login cierra el dialog', (tester) async {
+      await pumpBig(tester, buildWidget(_unauthState));
+
+      await tester.ensureVisible(find.text('Quiero ser voluntario'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Quiero ser voluntario'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Cancelar'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AlertDialog), findsNothing);
+    });
+
+    testWidgets('botón iniciar sesión navega a /login', (tester) async {
+      await pumpBig(tester, buildWidget(_unauthState));
+
+      await tester.ensureVisible(find.text('Quiero ser voluntario'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Quiero ser voluntario'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Iniciar sesión / Registrarse'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('login'), findsOneWidget);
+    });
+
+    testWidgets('botón casa de acogida abre dialog sin login', (tester) async {
+      await pumpBig(tester, buildWidget(_unauthState));
+
+      await tester.ensureVisible(find.text('Ofrecer acogida'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Ofrecer acogida'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('¡Necesitas una cuenta!'), findsOneWidget);
+    });
+
+    testWidgets('botón paseos abre dialog sin login', (tester) async {
+      await pumpBig(tester, buildWidget(_unauthState));
+
+      await tester.ensureVisible(find.text('Apuntarme a paseos'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Apuntarme a paseos'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('¡Necesitas una cuenta!'), findsOneWidget);
+    });
+
+    testWidgets('botón apadrinar abre dialog sin login', (tester) async {
+      await pumpBig(tester, buildWidget(_unauthState));
+
+      await tester.ensureVisible(find.text('Apadrinar'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Apadrinar'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('¡Necesitas una cuenta!'), findsOneWidget);
+    });
+  });
+
+  group('HelpScreen — usuario autenticado sin mascotas', () {
+    testWidgets('botón voluntariado abre dialog de relación', (tester) async {
+      await pumpBig(tester, buildWidget(_userState));
+
+      await tester.ensureVisible(find.text('Quiero ser voluntario'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Quiero ser voluntario'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AlertDialog), findsOneWidget);
+      // sin mascotas muestra mensaje
+      expect(find.text('No hay mascotas disponibles.'), findsOneWidget);
+    });
+
+    testWidgets('dialog de relación muestra selector de fecha inicio', (tester) async {
+      await pumpBig(tester, buildWidget(_userState));
+
+      await tester.ensureVisible(find.text('Quiero ser voluntario'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Quiero ser voluntario'));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('Fecha de inicio'), findsOneWidget);
+    });
+
+    testWidgets('dialog de relación muestra selector de fecha fin', (tester) async {
+      await pumpBig(tester, buildWidget(_userState));
+
+      await tester.ensureVisible(find.text('Quiero ser voluntario'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Quiero ser voluntario'));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('Fecha de fin'), findsOneWidget);
+    });
+
+    testWidgets('dialog de relación muestra botón Enviar solicitud', (tester) async {
+      await pumpBig(tester, buildWidget(_userState));
+
+      await tester.ensureVisible(find.text('Quiero ser voluntario'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Quiero ser voluntario'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Enviar solicitud'), findsOneWidget);
+    });
+
+    testWidgets('cancelar en dialog de relación cierra el dialog', (tester) async {
+      await pumpBig(tester, buildWidget(_userState));
+
+      await tester.ensureVisible(find.text('Quiero ser voluntario'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Quiero ser voluntario'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Cancelar'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AlertDialog), findsNothing);
+    });
+  });
+
+  group('HelpScreen — scroll', () {
+    testWidgets('se puede hacer scroll sin errores', (tester) async {
+      await pumpBig(tester, buildWidget(_unauthState));
+
+      await tester.drag(
+        find.byType(SingleChildScrollView),
+        const Offset(0, -500),
+      );
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+    });
+  });
+}

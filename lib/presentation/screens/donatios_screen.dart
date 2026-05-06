@@ -7,12 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MyDonationsScreen extends StatelessWidget {
-  const MyDonationsScreen({super.key});
+  final ApiConector? api; // ← nuevo parámetro opcional
+  const MyDonationsScreen({super.key, this.api});
 
   @override
   Widget build(BuildContext context) {
     final authState = context.watch<AuthBloc>().state;
     final bool isAdmin = authState.user?.role.toUpperCase() == 'ADMIN';
+     final _api = api ?? ApiConector();
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -33,8 +35,8 @@ class MyDonationsScreen extends StatelessWidget {
             const SizedBox(height: 24),
             FutureBuilder<List<Donation>>(
               future: isAdmin
-                  ? ApiConector().getDonations()
-                  : ApiConector(). getMeDonation(),
+                  ? _api.getDonations()
+                  : _api.getMeDonation(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Padding(

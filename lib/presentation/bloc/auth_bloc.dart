@@ -15,7 +15,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // Construimos el UserWithoutPassword con la nueva imagen,cogemos el usuario que ya habia
      final updatedUser = state.user!.copyWith(imageUrl: event.imageUrl);
       // PUT al backend — creamos un User temporal solo para la llamada a la API
-       await ApiConector().updateAvatar(
+       await api.updateAvatar(
         User(
           id: updatedUser.id,
           firstName: updatedUser.firstName,

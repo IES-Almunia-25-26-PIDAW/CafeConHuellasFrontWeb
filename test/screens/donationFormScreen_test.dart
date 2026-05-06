@@ -1,18 +1,34 @@
 // test/screens/donation_form_test.dart
+import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/screens/donationFormScreen.dart';
-
+import 'package:cafeconhuellas_front/utils/api_conector.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocktail/mocktail.dart';
 
-Widget buildWidget() => MaterialApp.router(
-  routerConfig: GoRouter(routes: [
-    GoRoute(
-      path: '/',
-      builder: (_, _) => const DonationFormScreen(token: 'test-token'),
-    ),
-  ]),
-);
+class MockApi extends Mock implements ApiConector {}
+
+Widget buildWidget() {
+  final mockApi = MockApi();
+
+  // submitAdoptionForm lo necesitamos para que no explote al enviar
+  when(() => mockApi.submitAdoptionForm(any(), any()))
+      .thenAnswer((_) async {});
+
+  return MaterialApp.router(
+    routerConfig: GoRouter(routes: [
+      GoRoute(
+        path: '/',
+        builder: (_, __) => BlocProvider(
+          create: (_) => AuthBloc(mockApi),  // ← esto soluciona el error
+          child: DonationFormScreen(token: 'test-token'),
+        ),
+      ),
+    ]),
+  );
+}
 
 Future<void> pumpBig(WidgetTester tester) async {
   tester.view.physicalSize = const Size(1400, 1200);
@@ -66,7 +82,8 @@ void main() {
 
     testWidgets('botón enviar está activo en estado inicial', (tester) async {
       await pumpBig(tester);
-      final btn = tester.widget<ElevatedButton>(find.byType(ElevatedButton).first);
+      final btn = tester.widget<ElevatedButton>(
+          find.byType(ElevatedButton).first);
       expect(btn.onPressed, isNotNull);
     });
   });
@@ -99,7 +116,8 @@ void main() {
 
     testWidgets('switches empiezan en false', (tester) async {
       await pumpBig(tester);
-      final switches = tester.widgetList<Switch>(find.byType(Switch)).toList();
+      final switches = tester.widgetList<Switch>(
+          find.byType(Switch)).toList();
       for (final s in switches) {
         expect(s.value, false);
       }
@@ -115,29 +133,43 @@ void main() {
     });
   });
 
-  group('DonationFormScreen — validaciones', () {
-    testWidgets('muestra error si campos obligatorios vacíos', (tester) async {
-      await pumpBig(tester);
-      await tester.tap(find.text('Enviar solicitud'));
-      await tester.pumpAndSettle();
-      expect(find.textContaining('obligatorios'), findsOneWidget);
-    });
-
-    testWidgets('muestra error si horas no es número', (tester) async {
-      await pumpBig(tester);
-      await tester.enterText(
-          find.widgetWithText(TextField, 'Dirección *'), 'Calle Test');
-      await tester.enterText(
-          find.widgetWithText(TextField, 'Ciudad *'), 'Sevilla');
-      await tester.enterText(
-          find.widgetWithText(TextField, 'Tipo de vivienda * (piso, casa, chalet...)'), 'Piso');
-      await tester.enterText(
-          find.widgetWithText(TextField, 'Motivo de adopción *'), 'Me gustan los animales');
-      await tester.enterText(
-          find.widgetWithText(TextField, 'Horas solo al día *'), 'abc');
-      await tester.tap(find.text('Enviar solicitud'));
-      await tester.pumpAndSettle();
-      expect(find.textContaining('número'), findsOneWidget);
-    });
+group('DonationFormScreen — validaciones', () {
+  testWidgets('muestra error si campos obligatorios vacíos', (tester) async {
+    await pumpBig(tester);
+    
+    // hacemos scroll hasta el botón antes de pulsarlo
+    await tester.ensureVisible(find.text('Enviar solicitud'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Enviar solicitud'));
+    await tester.pumpAndSettle();
+    
+    expect(find.textContaining('obligatorios'), findsOneWidget);
   });
+
+  testWidgets('muestra error si horas no es número', (tester) async {
+    await pumpBig(tester);
+    
+    await tester.enterText(
+        find.widgetWithText(TextField, 'Dirección *'), 'Calle Test');
+    await tester.enterText(
+        find.widgetWithText(TextField, 'Ciudad *'), 'Sevilla');
+    await tester.enterText(
+        find.widgetWithText(TextField, 'Tipo de vivienda * (piso, casa, chalet...)'),
+        'Piso');
+    await tester.enterText(
+        find.widgetWithText(TextField, 'Motivo de adopción *'),
+        'Me gustan los animales');
+    await tester.enterText(
+        find.widgetWithText(TextField, 'Horas solo al día *'), 'abc');
+
+    // hacemos scroll hasta el botón antes de pulsarlo
+    await tester.ensureVisible(find.text('Enviar solicitud'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Enviar solicitud'));
+    await tester.pumpAndSettle();
+    
+    expect(find.textContaining('número'), findsOneWidget);
+  });
+});
+  
 }

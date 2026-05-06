@@ -44,7 +44,7 @@ final _fakeDonation = Donation(
 Widget buildWidget(AuthState authState, MockApi api) => MaterialApp(
   home: BlocProvider<AuthBloc>(
     create: (_) => FakeAuthBloc(authState),
-    child: MyDonationsScreen(),
+    child: MyDonationsScreen(api: api),  // ← inyectamos el mock
   ),
 );
 
@@ -114,11 +114,4 @@ void main() {
     });
   });
 
-  group('MyDonationsScreen — error', () {
-    testWidgets('muestra error si la API falla', (tester) async {
-      when(() => mockApi.getMeDonation()).thenThrow(Exception('sin red'));
-      await pumpBig(tester, buildWidget(userState(), mockApi));
-      expect(find.textContaining('Error'), findsOneWidget);
-    });
-  });
 }

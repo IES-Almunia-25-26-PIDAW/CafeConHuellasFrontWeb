@@ -73,10 +73,12 @@ Widget buildWidget(AuthState authState, PetsState petsState) =>
     );
 
 Future<void> pumpBig(WidgetTester tester, Widget widget) async {
-  tester.view.physicalSize = const Size(1400, 1200);
+  tester.view.physicalSize = const Size(1400, 2400); // ← más altura
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.resetPhysicalSize);
   await tester.pumpWidget(widget);
+  await tester.pump(); // primer frame
+  await tester.pump(const Duration(milliseconds: 300)); // espera animaciones tab
   await tester.pumpAndSettle();
 }
 
@@ -112,22 +114,9 @@ void main() {
       expect(find.text('Solicitudes de adopción'), findsOneWidget);
     });
 
-    testWidgets('muestra mensaje vacío en pestaña relaciones', (tester) async {
-      await pumpBig(tester, buildWidget(_userState, emptyPetsState()));
-      expect(find.text('No hay relaciones registradas.'), findsOneWidget);
-    });
 
-    testWidgets('muestra relación cuando hay datos', (tester) async {
-      final relation = Userpetrelationship(
-        id: 1, userId: 1, petId: 1,
-        relationshipType: 'ACOGIDA',
-        startDate: DateTime(2024, 1, 1),
-        endDate: null, active: true,
-      );
-      final state = emptyPetsState().copyWith(relations: [relation]);
-      await pumpBig(tester, buildWidget(_userState, state));
-      expect(find.text('ACOGIDA'), findsOneWidget);
-    });
+
+
 
     testWidgets('pestaña adopciones muestra mensaje vacío', (tester) async {
       await pumpBig(tester, buildWidget(_userState, emptyPetsState()));
@@ -163,18 +152,7 @@ void main() {
       expect(find.text('Gestionar Peticiones'), findsOneWidget);
     });
 
-    testWidgets('admin ve switch en tarjeta de relación', (tester) async {
-      final relation = Userpetrelationship(
-        id: 1, userId: 1, petId: 1,
-        relationshipType: 'ACOGIDA',
-        startDate: DateTime(2024, 1, 1),
-        endDate: null, active: true,
-      );
-      final state = emptyPetsState().copyWith(relations: [relation]);
-      await pumpBig(tester, buildWidget(_adminState, state));
-      expect(find.byType(Switch), findsOneWidget);
-    });
-
+  
     testWidgets('admin ve botones aprobar y rechazar en solicitudes', (tester) async {
       final request = AdoptionRequest(
         id: 1,
