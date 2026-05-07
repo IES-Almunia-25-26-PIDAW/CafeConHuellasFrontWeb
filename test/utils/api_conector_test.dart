@@ -1,124 +1,15 @@
-// test/utils/api_conector_test.dart
+// test/utils/api_conector_extra_test.dart
+import 'package:cafeconhuellas_front/models/donation.dart';
+import 'package:cafeconhuellas_front/models/event.dart';
+import 'package:cafeconhuellas_front/models/pet.dart';
+import 'package:cafeconhuellas_front/models/userPetRelationship.dart';
 import 'package:cafeconhuellas_front/utils/api_conector.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http_mock_adapter/http_mock_adapter.dart';
 
-void main() {
-  late ApiConector api;
-  late DioAdapter dioAdapter;
+// helpers 
 
-  setUp(() {
-    // ApiConector es singleton, así que reutilizamos la instancia
-    // pero reemplazamos su Dio interno con uno interceptable
-    api = ApiConector();
-    dioAdapter = DioAdapter(dio: api.dio);
-  });
-
-  // LOGIN 
-  group('login', () {
-    test('devuelve token cuando la respuesta tiene campo "token"', () async {
-      dioAdapter.onPost(
-        '/auth/login',
-        (server) => server.reply(200, {'token': 'abc123'}),
-        data: {'email': 'a@a.com', 'password': '1234'},
-      );
-
-      final result = await api.login('a@a.com', '1234');
-      expect(result['token'], 'abc123');
-    });
-
-    test('devuelve token cuando la respuesta usa "accessToken"', () async {
-      dioAdapter.onPost(
-        '/auth/login',
-        (server) => server.reply(200, {'accessToken': 'tokenB'}),
-        data: {'email': 'a@a.com', 'password': '1234'},
-      );
-
-      final result = await api.login('a@a.com', '1234');
-      expect(result['token'], 'tokenB');
-    });
-
-    test('devuelve token cuando está anidado en data.token', () async {
-      dioAdapter.onPost(
-        '/auth/login',
-        (server) => server.reply(200, {
-          'data': {'token': 'tokenAnidado'},
-        }),
-        data: {'email': 'a@a.com', 'password': '1234'},
-      );
-
-      final result = await api.login('a@a.com', '1234');
-      expect(result['token'], 'tokenAnidado');
-    });
-
-    test('devuelve token cuando la respuesta es un String directo', () async {
-      dioAdapter.onPost(
-        '/auth/login',
-        (server) => server.reply(200, 'tokenString'),
-        data: {'email': 'a@a.com', 'password': '1234'},
-      );
-
-      final result = await api.login('a@a.com', '1234');
-      expect(result['token'], 'tokenString');
-    });
-
-    test('lanza excepción cuando no hay token en la respuesta', () async {
-      dioAdapter.onPost(
-        '/auth/login',
-        (server) => server.reply(200, {'message': 'ok pero sin token'}),
-        data: {'email': 'a@a.com', 'password': '1234'},
-      );
-
-      expect(() => api.login('a@a.com', '1234'), throwsException);
-    });
-
-    test('lanza excepción en error 401', () async {
-      dioAdapter.onPost(
-        '/auth/login',
-        (server) => server.reply(401, {'message': 'Credenciales incorrectas'}),
-        data: {'email': 'mal@a.com', 'password': 'wrong'},
-      );
-
-      expect(() => api.login('mal@a.com', 'wrong'), throwsException);
-    });
-  });
-
-  // GET ME 
-  group('getMe', () {
-    test('devuelve UserWithoutPassword cuando la respuesta es correcta', () async {
-      dioAdapter.onGet(
-        '/users/me',
-        (server) => server.reply(200, {
-          'id': 1,
-          'firstName': 'Juan',
-          'lastName1': 'García',
-          'lastName2': '',
-          'email': 'juan@test.com',
-          'phone': '600000000',
-          'role': 'USER',
-          'imageUrl': '',
-        }),
-      );
-
-      final user = await api.getMe();
-      expect(user.firstName, 'Juan');
-      expect(user.email, 'juan@test.com');
-    });
-
-    test('lanza excepción cuando la respuesta no es un Map', () async {
-      dioAdapter.onGet(
-        '/users/me',
-        (server) => server.reply(200, 'respuesta inesperada'),
-      );
-
-      expect(() => api.getMe(), throwsException);
-    });
-  });
-
-  //  GET PETS
-
-  group('getPets', () {
-    final petJson = {
+Map<String, dynamic> get _petJson => {
       'id': 1,
       'name': 'Rex',
       'species': 'perro',
@@ -130,246 +21,537 @@ void main() {
       'emergency': false,
     };
 
-    test('devuelve lista de mascotas cuando la respuesta es una lista directa', () async {
-      dioAdapter.onGet(
-        '/pets',
-        (server) => server.reply(200, [petJson]),
-      );
-
-      final pets = await api.getPets();
-      expect(pets.length, 1);
-      expect(pets.first.name, 'Rex');
-    });
-
-    test('devuelve lista cuando los datos están bajo clave "data"', () async {
-      dioAdapter.onGet(
-        '/pets',
-        (server) => server.reply(200, {'data': [petJson]}),
-      );
-
-      final pets = await api.getPets();
-      expect(pets.length, 1);
-    });
-
-    test('devuelve lista cuando los datos están bajo clave "pets"', () async {
-      dioAdapter.onGet(
-        '/pets',
-        (server) => server.reply(200, {'pets': [petJson]}),
-      );
-
-      final pets = await api.getPets();
-      expect(pets.length, 1);
-    });
-
-    test('lanza excepción cuando la respuesta no tiene lista válida', () async {
-      dioAdapter.onGet(
-        '/pets',
-        (server) => server.reply(200, {'unexpected': 'value'}),
-      );
-
-      expect(() => api.getPets(), throwsException);
-    });
-  });
-
-  // GET EVENTS 
-
-  group('getEvents', () {
-    final eventJson = {
-      'id': 1,
-      'name': 'Adopción',
+Map<String, dynamic> get _eventJson => {
+      'id': 10,
+      'name': 'Adopción masiva',
       'description': 'Gran evento',
       'imageUrl': '',
       'eventdate': '2025-12-01T10:00:00',
     };
 
-    test('devuelve lista de eventos cuando la respuesta es lista directa', () async {
-      dioAdapter.onGet(
-        '/events',
-        (server) => server.reply(200, [eventJson]),
-      );
+Map<String, dynamic> get _donationJson => {
+  'id': 5,
+  'amount': 20,           // ← cámbialo aquí
+  'userId': 1,
+  'date': '2025-01-01T00:00:00',
+  'category': 'MONETARIA', // ← añádelo aquí
+  'method': 'TARJETA',     // ← añádelo aquí
+  'notes': '',             // ← añádelo aquí
+};
 
-      final events = await api.getEvents();
-      expect(events.length, 1);
-      expect(events.first.name, 'Adopción');
-    });
-
-    test('devuelve lista cuando los datos están bajo clave "events"', () async {
-      dioAdapter.onGet(
-        '/events',
-        (server) => server.reply(200, {'events': [eventJson]}),
-      );
-
-      final events = await api.getEvents();
-      expect(events.length, 1);
-    });
-
-    test('lanza excepción cuando la respuesta no tiene lista válida', () async {
-      dioAdapter.onGet(
-        '/events',
-        (server) => server.reply(200, {'unexpected': 'value'}),
-      );
-
-      expect(() => api.getEvents(), throwsException);
-    });
-  });
-
-  //  GET PET BY ID 
-
-  group('getPetById', () {
-    final petJson = {
-      'id': 42,
-      'name': 'Luna',
-      'species': 'gato',
-      'breed': 'Siamés',
-      'age': 2,
-      'adopted': false,
-      'imageUrl': '',
-      'description': '',
-      'emergency': false,
+Map<String, dynamic> get _relationshipJson => {
+      'id': 7,
+      'userId': 1,
+      'petId': 1,
+      'relationshipType': 'VOLUNTARIADO',
+      'startDate': '2025-01-01T00:00:00',
+      'endDate': '2025-06-01T00:00:00',
+      'active': false,
     };
 
-    test('devuelve mascota cuando /pets/:id responde con un Map', () async {
-      dioAdapter.onGet(
-        '/pets/42',
-        (server) => server.reply(200, petJson),
-      );
+Map<String, dynamic> get _adoptionRequestJson => {
+      'id': 3,
+      'userId': 1,
+      'petId': 1,
+      'status': 'PENDIENTE',
+      'requestDate': '2025-01-01T00:00:00',
+    };
 
-      final pet = await api.getPetById(42);
-      expect(pet?.name, 'Luna');
-    });
+Pet get _pet => Pet.fromJson(_petJson);
+Event get _event => Event.fromJson(_eventJson);
+Donation get _donation => Donation.fromJson(_donationJson);
+Userpetrelationship get _relationship => Userpetrelationship.fromJson(_relationshipJson);
 
-    test('devuelve mascota cuando /pets/:id responde con una lista', () async {
-      dioAdapter.onGet(
-        '/pets/42',
-        (server) => server.reply(200, [petJson]),
-      );
+//  tests
 
-      final pet = await api.getPetById(42);
-      expect(pet?.name, 'Luna');
-    });
+void main() {
+  late ApiConector api;
+  late DioAdapter dioAdapter;
 
-    test('busca en getPets como fallback si /pets/:id falla', () async {
-      // El endpoint específico falla
-      dioAdapter.onGet(
-        '/pets/42',
-        (server) => server.reply(404, 'not found'),
-      );
-      // El fallback lista todas
-      dioAdapter.onGet(
+  setUp(() {
+    api = ApiConector();
+    dioAdapter = DioAdapter(dio: api.dio);
+  });
+
+  //  PETS CRUD 
+
+  group('addPet', () {
+    test('completa sin error cuando el backend responde 201', () async {
+      dioAdapter.onPost(
         '/pets',
-        (server) => server.reply(200, [petJson]),
+        (server) => server.reply(201, _petJson),
+        data: _pet.toJson(),
       );
 
-      final pet = await api.getPetById(42);
-      expect(pet?.name, 'Luna');
+      await expectLater(api.addPet(_pet), completes);
     });
 
-    test('devuelve null si la mascota no existe en ningún endpoint', () async {
-      dioAdapter.onGet(
-        '/pets/99',
-        (server) => server.reply(404, 'not found'),
-      );
-      dioAdapter.onGet(
+    test('lanza excepción cuando el backend responde 400', () async {
+      dioAdapter.onPost(
         '/pets',
-        (server) => server.reply(200, [petJson]), // tiene id 42, no 99
+        (server) => server.reply(400, {'message': 'Datos inválidos'}),
+        data: _pet.toJson(),
       );
 
-      final pet = await api.getPetById(99);
-      expect(pet, isNull);
+      expect(() => api.addPet(_pet), throwsException);
     });
   });
 
-  //REGISTER 
-  group('register', () {
-    test('completa sin error cuando el backend responde 201', () async {
-      dioAdapter.onPost(
-        '/auth/register',
-        (server) => server.reply(201, {'message': 'created'}),
-        data: {'firstName': 'Ana', 'email': 'ana@test.com'},
+  group('updatePet', () {
+    test('completa sin error cuando el backend responde 200', () async {
+      dioAdapter.onPut(
+        '/pets/${_pet.id}',
+        (server) => server.reply(200, _petJson),
+        data: _pet.toJson(),
       );
 
-      await expectLater(
-        api.register({'firstName': 'Ana', 'email': 'ana@test.com'}),
-        completes,
-      );
+      await expectLater(api.updatePet(_pet), completes);
     });
 
-    test('elimina imageUrl vacío antes de enviar', () async {
-      // Si imageUrl llega vacío, no debe estar en el body enviado.
-      // El adapter acepta cualquier data que no incluya imageUrl.
-      dioAdapter.onPost(
-        '/auth/register',
-        (server) => server.reply(201, {}),
-        data: {'firstName': 'Andrea'}, // sin imageUrl
+    test('lanza excepción cuando el backend responde 404', () async {
+      dioAdapter.onPut(
+        '/pets/${_pet.id}',
+        (server) => server.reply(404, {'message': 'Mascota no encontrada'}),
+        data: _pet.toJson(),
       );
 
-      await expectLater(
-        api.register({'firstName': 'Andrea', 'imageUrl': ''}),
-        completes,
-      );
+      expect(() => api.updatePet(_pet), throwsException);
     });
 
-    test('lanza excepción con mensaje de la API en error 400', () async {
-      dioAdapter.onPost(
-        '/auth/register',
-        (server) => server.reply(400, {'message': 'El email ya existe'}),
-        data: {'email': 'duplicado@test.com'},
+    test('el mensaje de error viene del campo "message" de la respuesta', () async {
+      dioAdapter.onPut(
+        '/pets/${_pet.id}',
+        (server) => server.reply(422, {'message': 'La especie no es válida'}),
+        data: _pet.toJson(),
       );
 
       expect(
-        () => api.register({'email': 'duplicado@test.com'}),
+        () => api.updatePet(_pet),
         throwsA(
           isA<Exception>().having(
             (e) => e.toString(),
             'message',
-            contains('El email ya existe'),
-          ),
-        ),
-      );
-    });
-
-    test('lanza excepción con lista de errores cuando la API devuelve errors[]', () async {
-      dioAdapter.onPost(
-        '/auth/register',
-        (server) => server.reply(422, {
-          'errors': ['El email es inválido', 'El teléfono es obligatorio'],
-        }),
-        data: {'email': 'bad'},
-      );
-
-      expect(
-        () => api.register({'email': 'bad'}),
-        throwsA(
-          isA<Exception>().having(
-            (e) => e.toString(),
-            'errors',
-            contains('El email es inválido'),
+            contains('La especie no es válida'),
           ),
         ),
       );
     });
   });
 
-  // SET TOKEN / INTERCEPTOR
-  group('setToken', () {
-    test('el interceptor añade Authorization header tras setToken', () async {
-      api.setToken('miTokenSecreto');
-
-      // Verificamos que el token se añade haciendo una petición y
-      // comprobando que el interceptor no lanza error (si el header
-      // faltara, un backend real devolvería 401, pero aquí solo
-      // comprobamos que setToken no rompe nada y la petición va)
-      dioAdapter.onGet(
-        '/users/me',
-        (server) => server.reply(200, {
-          'id': 1, 'firstName': 'Test', 'lastName1': '',
-          'lastName2': '', 'email': '', 'phone': '',
-          'role': '', 'imageUrl': '',
-        }),
+  group('deletePet', () {
+    test('completa sin error cuando el backend responde 204', () async {
+      dioAdapter.onDelete(
+        '/pets/1',
+        (server) => server.reply(204, null),
       );
 
-      final user = await api.getMe();
-      expect(user.firstName, 'Test');
+      await expectLater(api.deletePet(1), completes);
+    });
+
+    test('lanza excepción cuando el backend responde 404', () async {
+      dioAdapter.onDelete(
+        '/pets/99',
+        (server) => server.reply(404, {'message': 'No encontrado'}),
+      );
+
+      expect(() => api.deletePet(99), throwsException);
+    });
+  });
+
+  // EVENTS CRUD
+
+  group('addEvent', () {
+
+
+    test('lanza excepción cuando el backend responde 400', () async {
+      dioAdapter.onPost(
+        '/events',
+        (server) => server.reply(400, {'message': 'Fecha inválida'}),
+        data: _event.toJson(),
+      );
+
+      expect(() => api.addEvent(_event), throwsException);
+    });
+  });
+
+  group('updateEvent', () {
+
+
+    test('lanza excepción en error 500', () async {
+      dioAdapter.onPut(
+        '/events/${_event.id}',
+        (server) => server.reply(500, {'message': 'Error interno'}),
+        data: _event.toJson(),
+      );
+
+      expect(() => api.updateEvent(_event), throwsException);
+    });
+  });
+
+  group('deleteEvent', () {
+    test('completa sin error cuando el backend responde 204', () async {
+      dioAdapter.onDelete(
+        '/events/10',
+        (server) => server.reply(204, null),
+      );
+
+      await expectLater(api.deleteEvent(10), completes);
+    });
+
+    test('lanza excepción cuando el backend responde 404', () async {
+      dioAdapter.onDelete(
+        '/events/99',
+        (server) => server.reply(404, {'message': 'Evento no encontrado'}),
+      );
+
+      expect(() => api.deleteEvent(99), throwsException);
+    });
+  });
+
+  //  DONATIONS 
+
+  group('getDonations', () {
+    test('devuelve lista de donaciones con respuesta directa', () async {
+      dioAdapter.onGet(
+        '/donations',
+        (server) => server.reply(200, [_donationJson]),
+      );
+
+      final donations = await api.getDonations();
+      expect(donations.length, 1);
+    });
+
+    test('devuelve lista cuando los datos están bajo clave "data"', () async {
+      dioAdapter.onGet(
+        '/donations',
+        (server) => server.reply(200, {'data': [_donationJson]}),
+      );
+
+      final donations = await api.getDonations();
+      expect(donations.length, 1);
+    });
+
+    test('lanza excepción cuando la respuesta no tiene lista válida', () async {
+      dioAdapter.onGet(
+        '/donations',
+        (server) => server.reply(200, {'unexpected': 'value'}),
+      );
+
+      expect(() => api.getDonations(), throwsException);
+    });
+  });
+
+  group('addDonation', () {
+    test('completa sin error cuando el backend responde 201', () async {
+      dioAdapter.onPost(
+        '/donations',
+        (server) => server.reply(201, _donationJson),
+        data: _donation.toJson(),
+      );
+
+      await expectLater(api.addDonation(_donation), completes);
+    });
+
+    test('lanza excepción cuando el backend responde 400', () async {
+      dioAdapter.onPost(
+        '/donations',
+        (server) => server.reply(400, {'message': 'Importe inválido'}),
+        data: _donation.toJson(),
+      );
+
+      expect(() => api.addDonation(_donation), throwsException);
+    });
+  });
+
+  group('getMeDonation', () {
+    test('devuelve mis donaciones correctamente', () async {
+      dioAdapter.onGet(
+        '/donations/me',
+        (server) => server.reply(200, [_donationJson]),
+      );
+
+      final donations = await api.getMeDonation();
+      expect(donations.length, 1);
+    });
+
+    test('devuelve lista vacía si no hay donaciones', () async {
+      dioAdapter.onGet(
+        '/donations/me',
+        (server) => server.reply(200, []),
+      );
+
+      final donations = await api.getMeDonation();
+      expect(donations, isEmpty);
+    });
+  });
+
+  // RELATIONSHIPS 
+
+  group('getUserPetRelationShip', () {
+    test('devuelve lista de relaciones correctamente', () async {
+      dioAdapter.onGet(
+        '/relationships',
+        (server) => server.reply(200, [_relationshipJson]),
+      );
+
+      final relations = await api.getUserPetRelationShip();
+      expect(relations.length, 1);
+      expect(relations.first.relationshipType, 'VOLUNTARIADO');
+    });
+
+    test('lanza excepción cuando la respuesta no tiene lista válida', () async {
+      dioAdapter.onGet(
+        '/relationships',
+        (server) => server.reply(200, {'unexpected': 'value'}),
+      );
+
+      expect(() => api.getUserPetRelationShip(), throwsException);
+    });
+  });
+
+  group('addUserPetRelationship', () {
+    test('completa sin error cuando el backend responde 201', () async {
+      dioAdapter.onPost(
+        '/relationships',
+        (server) => server.reply(201, _relationshipJson),
+        data: _relationship.toJson(),
+      );
+
+      await expectLater(api.addUserPetRelationship(_relationship), completes);
+    });
+
+    test('lanza excepción cuando el backend responde 400', () async {
+      dioAdapter.onPost(
+        '/relationships',
+        (server) => server.reply(400, {'message': 'Tipo de relación inválido'}),
+        data: _relationship.toJson(),
+      );
+
+      expect(() => api.addUserPetRelationship(_relationship), throwsException);
+    });
+  });
+
+  group('getMyRelationships', () {
+    test('devuelve relaciones del usuario por id', () async {
+      dioAdapter.onGet(
+        '/relationships/user/1',
+        (server) => server.reply(200, [_relationshipJson]),
+      );
+
+      final relations = await api.getMyRelationships(1);
+      expect(relations.length, 1);
+    });
+
+    test('devuelve lista vacía si el usuario no tiene relaciones', () async {
+      dioAdapter.onGet(
+        '/relationships/user/99',
+        (server) => server.reply(200, []),
+      );
+
+      final relations = await api.getMyRelationships(99);
+      expect(relations, isEmpty);
+    });
+  });
+
+  group('postMyRelationships', () {
+    test('completa sin error cuando el backend responde 201', () async {
+      dioAdapter.onPost(
+        '/relationships/me',
+        (server) => server.reply(201, _relationshipJson),
+        data: _relationship.toJson(),
+      );
+
+      await expectLater(api.postMyRelationships(_relationship), completes);
+    });
+
+    test('lanza excepción en error 401 (no autenticado)', () async {
+      dioAdapter.onPost(
+        '/relationships/me',
+        (server) => server.reply(401, {'message': 'No autorizado'}),
+        data: _relationship.toJson(),
+      );
+
+      expect(() => api.postMyRelationships(_relationship), throwsException);
+    });
+  });
+
+  group('updateRelationshipStatus', () {
+    test('completa sin error cuando el backend responde 200', () async {
+      dioAdapter.onPut(
+        '/relationships/7',
+        (server) => server.reply(200, _relationshipJson),
+        data: _relationship.toJson(),
+      );
+
+      await expectLater(
+        api.updateRelationshipStatus(7, _relationship),
+        completes,
+      );
+    });
+
+    test('lanza excepción cuando el backend responde 404', () async {
+      dioAdapter.onPut(
+        '/relationships/99',
+        (server) => server.reply(404, {'message': 'Relación no encontrada'}),
+        data: _relationship.toJson(),
+      );
+
+      expect(() => api.updateRelationshipStatus(99, _relationship), throwsException);
+    });
+  });
+
+  //  ADOPTION 
+
+  group('getAdoptionRequest', () {
+    test('devuelve lista de solicitudes de adopción', () async {
+      dioAdapter.onGet(
+        '/adoption-requests',
+        (server) => server.reply(200, [_adoptionRequestJson]),
+      );
+
+      final requests = await api.getAdoptionRequest();
+      expect(requests.length, 1);
+    });
+
+    test('devuelve lista vacía si no hay solicitudes', () async {
+      dioAdapter.onGet(
+        '/adoption-requests',
+        (server) => server.reply(200, []),
+      );
+
+      final requests = await api.getAdoptionRequest();
+      expect(requests, isEmpty);
+    });
+  });
+
+  group('getMeAdoptionRequest', () {
+    test('devuelve mis solicitudes de adopción', () async {
+      dioAdapter.onGet(
+        '/adoption-requests/me',
+        (server) => server.reply(200, [_adoptionRequestJson]),
+      );
+
+      final requests = await api.getMeAdoptionRequest();
+      expect(requests.length, 1);
+    });
+
+    test('devuelve lista vacía si no tengo solicitudes', () async {
+      dioAdapter.onGet(
+        '/adoption-requests/me',
+        (server) => server.reply(200, []),
+      );
+
+      final requests = await api.getMeAdoptionRequest();
+      expect(requests, isEmpty);
+    });
+  });
+
+  group('updateAdoptionStatus', () {
+    test('completa sin error cuando el backend responde 200', () async {
+      dioAdapter.onPatch(
+        '/adoption-requests/3/status',
+        (server) => server.reply(200, {}),
+        queryParameters: {'status': 'APROBADA'},
+      );
+
+      await expectLater(
+        api.updateAdoptionStatus(3, 'APROBADA'),
+        completes,
+      );
+    });
+
+    test('lanza excepción cuando el backend responde 400', () async {
+      dioAdapter.onPatch(
+        '/adoption-requests/3/status',
+        (server) => server.reply(400, {'message': 'Estado inválido'}),
+        queryParameters: {'status': 'INVALIDO'},
+      );
+
+      expect(() => api.updateAdoptionStatus(3, 'INVALIDO'), throwsException);
+    });
+  });
+
+  group('requestAdoptionForm', () {
+    test('completa sin error cuando el backend responde 200', () async {
+      dioAdapter.onPost(
+        '/adoption-form/send',
+        (server) => server.reply(200, {}),
+        queryParameters: {'userId': 1, 'petId': 1},
+      );
+
+      await expectLater(api.requestAdoptionForm(1, 1), completes);
+    });
+
+    test('lanza excepción cuando el backend responde 404', () async {
+      dioAdapter.onPost(
+        '/adoption-form/send',
+        (server) => server.reply(404, {'message': 'Usuario o mascota no encontrados'}),
+        queryParameters: {'userId': 99, 'petId': 99},
+      );
+
+      expect(() => api.requestAdoptionForm(99, 99), throwsException);
+    });
+  });
+
+  group('submitAdoptionForm', () {
+    final formData = {'name': 'Ana', 'address': 'Calle Mayor 1'};
+    const token = 'abc-token-xyz';
+
+    test('completa sin error cuando el backend responde 200', () async {
+      dioAdapter.onPost(
+        '/adoption-form/submit/$token',
+        (server) => server.reply(200, {}),
+        data: formData,
+      );
+
+      await expectLater(api.submitAdoptionForm(formData, token), completes);
+    });
+
+    test('lanza excepción cuando el token es inválido (401)', () async {
+      dioAdapter.onPost(
+        '/adoption-form/submit/token-malo',
+        (server) => server.reply(401, {'message': 'Token expirado'}),
+        data: formData,
+      );
+
+      expect(
+        () => api.submitAdoptionForm(formData, 'token-malo'),
+        throwsA(
+          isA<Exception>().having(
+            (e) => e.toString(),
+            'message',
+            contains('Token expirado'),
+          ),
+        ),
+      );
+    });
+  });
+
+  //  _extractApiErrorMessage con errors[] 
+
+  group('_extractApiErrorMessage — lista de errores', () {
+    test('muestra todos los errores concatenados en el mensaje de la excepción', () async {
+      dioAdapter.onPost(
+        '/pets',
+        (server) => server.reply(422, {
+          'errors': ['El nombre es obligatorio', 'La especie no es válida'],
+        }),
+        data: _pet.toJson(),
+      );
+
+      expect(
+        () => api.addPet(_pet),
+        throwsA(
+          isA<Exception>().having(
+            (e) => e.toString(),
+            'errors',
+            allOf(
+              contains('El nombre es obligatorio'),
+              contains('La especie no es válida'),
+            ),
+          ),
+        ),
+      );
     });
   });
 }
