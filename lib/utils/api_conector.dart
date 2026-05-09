@@ -365,7 +365,7 @@ Future<void> register(Map<String, dynamic> user) async {
       }
     }
 
-    return error.message ?? 'No se pudo completar el registro.';
+    return 'No se pudo completar el registro por un error del servidor.';
   }
   //método para cargar donaciones
   Future<List<Donation>> getDonations() async {

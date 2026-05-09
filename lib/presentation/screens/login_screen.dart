@@ -38,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
               builder: (context) {
                 return AlertDialog(
                   title: const Text("Error"),
-                  content: Text(state.errorMessage!),
+                  content: Text("Ha habido algun error con el incio de sesión o la contraseña o usuario no es correcto, prueba de nuevo o regístrate."),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),

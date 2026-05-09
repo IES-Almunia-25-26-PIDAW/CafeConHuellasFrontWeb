@@ -6,10 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker_for_web/image_picker_for_web.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 
-// Diálogo reutilizable para añadir o editar una mascota, esto es para ayudarnos a no repetir código en el AdminScreen, donde se pueden añadir y editar mascotas. El diálogo se encarga de toda la lógica de formulario, validación y subida de imagen, y devuelve el Pet resultante al padre para que lo procese (lo añada o lo actualice según corresponda).
-// Si [petToEdit] es null → modo AÑADIR.
-// Si [petToEdit] tiene valor  → modo EDITAR (los campos se prerellenan).
-// Devuelve el [Pet] resultante o null si el usuario cancela.
 class PetFormDialog extends StatefulWidget {
   final Pet? pet;
 
@@ -20,24 +16,23 @@ class PetFormDialog extends StatefulWidget {
 }
 
 class _PetFormDialogState extends State<PetFormDialog> {
-  //  Controladores de texto
+  final _formKey = GlobalKey<FormState>();
+
   late final TextEditingController _nameCtrl;
   late final TextEditingController _breedCtrl;
   late final TextEditingController _descriptionCtrl;
   late final TextEditingController _ageCtrl;
   late final TextEditingController _weightCtrl;
-  late final TextEditingController _categoryCtrl;
+
   static const List<String> _adoptionStatusOptions = ['NO_ADOPTADO', 'EN_PROCESO', 'ADOPTADO'];
 
-  //  Estado de los campos que no son texto 
   late String _adoptionStatus;
   late String _category;
   late bool _neutered;
   late bool _isPpp;
   late bool _urgentAdoption;
-  late String _imageUrl; // URL ya guardada (de edición o nueva subida)
+  late String _imageUrl;
 
-  // ── Estado de la imagen seleccionada localmente 
   Uint8List? _imageBytes;
   String? _imageFileName;
   bool _uploadingImage = false;
@@ -49,19 +44,17 @@ class _PetFormDialogState extends State<PetFormDialog> {
   void initState() {
     super.initState();
     final p = widget.pet;
-    // Prerrellenamos con los datos actuales si estamos editando
     _nameCtrl        = TextEditingController(text: p?.name ?? '');
     _breedCtrl       = TextEditingController(text: p?.breed ?? '');
     _descriptionCtrl = TextEditingController(text: p?.description ?? '');
     _ageCtrl         = TextEditingController(text: p != null ? p.age.toString() : '');
     _weightCtrl      = TextEditingController(text: p != null ? p.weight.toString() : '');
-    _categoryCtrl    = TextEditingController(text: p?.category ?? '');
     _category        = p?.category ?? 'Perro';
     _neutered        = p?.neutered ?? false;
     _isPpp           = p?.isPpp ?? false;
     _urgentAdoption  = p?.urgentAdoption ?? false;
     _imageUrl        = p?.imageUrl ?? '';
-    _adoptionStatus = p?.adoptionStatus ?? 'NO_ADOPTADO';
+    _adoptionStatus  = p?.adoptionStatus ?? 'NO_ADOPTADO';
   }
 
   @override
@@ -71,11 +64,44 @@ class _PetFormDialogState extends State<PetFormDialog> {
     _descriptionCtrl.dispose();
     _ageCtrl.dispose();
     _weightCtrl.dispose();
-    _categoryCtrl.dispose();
     super.dispose();
   }
 
-  //  Selección y subida de imagen 
+  //  Validadores
+
+  String? _validateOnlyLetters(String? value, String fieldName) {
+    if (value == null || value.trim().isEmpty) return '$fieldName es obligatorio';
+    final soloLetras = RegExp(r"^[a-záéíóúäëïöüàèìòùñA-ZÁÉÍÓÚÄËÏÖÜÀÈÌÒÙÑ\s'-]+$", unicode: true);
+    if (!soloLetras.hasMatch(value.trim())) return 'Solo se permiten letras en $fieldName';
+    if (value.trim().length < 2) return '$fieldName debe tener al menos 2 caracteres';
+    return null;
+  }
+
+  String? _validateDescription(String? value) {
+    if (value == null || value.trim().isEmpty) return 'La descripción es obligatoria';
+    if (value.trim().length < 10) return 'Mínimo 10 caracteres';
+    return null;
+  }
+
+  String? _validateAge(String? value) {
+    if (value == null || value.trim().isEmpty) return 'La edad es obligatoria';
+    final age = int.tryParse(value.trim());
+    if (age == null) return 'Introduce un número entero';
+    if (age < 0 || age > 20) return 'Edad no válida (0-20)';
+    return null;
+  }
+
+  String? _validateWeight(String? value) {
+    if (value == null || value.trim().isEmpty) return 'El peso es obligatorio';
+    final weight = double.tryParse(value.trim().replaceAll(',', '.'));
+    if (weight == null) return 'Introduce un número válido';
+    if (weight < 0.1) return 'El peso mínimo es 0.1 kg';
+    if (weight > 200) return 'El peso no puede superar 200 kg';
+    return null;
+  }
+
+  //  Imagen 
+
   Future<void> _pickAndUploadImage() async {
     final plugin = ImagePickerPlugin();
     final XFile? picked = await plugin.getImageFromSource(
@@ -86,52 +112,65 @@ class _PetFormDialogState extends State<PetFormDialog> {
 
     final bytes = await picked.readAsBytes();
     setState(() {
-      _imageBytes   = bytes;
+      _imageBytes    = bytes;
       _imageFileName = picked.name;
       _uploadingImage = true;
     });
 
+    String? uploadError;
+    String? uploadedUrl;
+
     try {
-      final url = await ApiConector().uploadPetsImage(bytes, picked.name);
-      setState(() => _imageUrl = url);
+      uploadedUrl = await ApiConector().uploadPetsImage(bytes, picked.name);
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al subir imagen: $e'), backgroundColor: Colors.red),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _uploadingImage = false);
+      uploadError = e.toString();
+    }
+
+    if (!mounted) return;
+    setState(() {
+      _uploadingImage = false;
+      if (uploadedUrl != null) _imageUrl = uploadedUrl;
+    });
+
+    if (uploadError != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al subir imagen: $uploadError'), backgroundColor: Colors.red),
+      );
     }
   }
 
-  //Guardar: valida y devuelve el Pet al padre 
+  //  Submit 
   void _submit() {
-    if (_nameCtrl.text.trim().isEmpty) {
+    if (!_formKey.currentState!.validate()) return;
+
+    if (_imageUrl.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('El nombre es obligatorio'), backgroundColor: Colors.orange),
+        const SnackBar(content: Text('Añade una foto a la mascota'), backgroundColor: Colors.orange),
       );
       return;
     }
+
     final pet = Pet(
-      id:          widget.pet?.id ?? 0, // el backend asigna id en POST
-      name:        _nameCtrl.text.trim(),
-      breed:       _breedCtrl.text.trim(),
-      age:         int.tryParse(_ageCtrl.text) ?? 0,
-      weight:      double.tryParse(_weightCtrl.text) ?? 0.0,
-      neutered:    _neutered,
-      isPpp:       _isPpp,
-      urgentAdoption:   _urgentAdoption,
-      description: _descriptionCtrl.text.trim(),
-      category:    _category,
+      id:             widget.pet?.id ?? 0,
+      name:           _nameCtrl.text.trim(),
+      breed:          _breedCtrl.text.trim(),
+      age:            int.parse(_ageCtrl.text.trim()),
+      weight:         double.parse(_weightCtrl.text.trim().replaceAll(',', '.')),
+      neutered:       _neutered,
+      isPpp:          _isPpp,
+      urgentAdoption: _urgentAdoption,
+      description:    _descriptionCtrl.text.trim(),
+      category:       _category,
       adoptionStatus: _adoptionStatus,
-      imageUrl:    _imageUrl,
-      imageUrls: [_imageUrl]
-      
+      imageUrl:       _imageUrl,
+      imageUrls:      [_imageUrl],
     );
+
     Navigator.of(context).pop(pet);
   }
-  //  UI
+
+  //  Build
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -141,160 +180,174 @@ class _PetFormDialogState extends State<PetFormDialog> {
         constraints: const BoxConstraints(maxWidth: 560),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(28),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              //  Título
-              Text(
-                //Si se está editando ponemos "Editar mascota", si se está añadiendo ponemos "Añadir mascota"
-                _isEditing ? 'Editar mascota' : 'Añadir mascota',
-                style: const TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'MilkyVintage',
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _isEditing ? 'Editar mascota' : 'Añadir mascota',
+                  style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, fontFamily: 'MilkyVintage'),
                 ),
-              ),
-              const SizedBox(height: 20),
-              // Selector de imagen 
-              Center(
-                child: GestureDetector(
-                  onTap: _uploadingImage ? null : _pickAndUploadImage,
-                  child: Stack(
-                    alignment: Alignment.bottomRight,
-                    children: [
-                      CircleAvatar(
-                        radius: 52,
-                        backgroundColor: Colors.purple[50],
-                        backgroundImage: _imageBytes != null
-                            ? MemoryImage(_imageBytes!)
-                            : (_imageUrl.isNotEmpty ? NetworkImage(_imageUrl) as ImageProvider : null),
-                        child: (_imageBytes == null && _imageUrl.isEmpty)
-                            ? const Icon(Icons.pets, size: 40, color: Colors.purple)
-                            : null,
-                      ),
-                      if (_uploadingImage)
-                        const CircleAvatar(
+                const SizedBox(height: 20),
+
+                // Selector de imagen
+                Center(
+                  child: GestureDetector(
+                    onTap: _uploadingImage ? null : _pickAndUploadImage,
+                    child: Stack(
+                      alignment: Alignment.bottomRight,
+                      children: [
+                        CircleAvatar(
                           radius: 52,
-                          backgroundColor: Colors.black26,
-                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                          backgroundColor: Colors.purple[50],
+                          backgroundImage: _imageBytes != null
+                              ? MemoryImage(_imageBytes!)
+                              : (_imageUrl.isNotEmpty ? NetworkImage(_imageUrl) as ImageProvider : null),
+                          child: (_imageBytes == null && _imageUrl.isEmpty)
+                              ? const Icon(Icons.pets, size: 40, color: Colors.purple)
+                              : null,
                         ),
-                      CircleAvatar(
-                        radius: 15,
-                        backgroundColor: Colors.purple,
-                        child: Icon(
-                          _imageUrl.isNotEmpty ? Icons.check : Icons.camera_alt,
-                          size: 15,
-                          color: Colors.white,
+                        if (_uploadingImage)
+                          const CircleAvatar(
+                            radius: 52,
+                            backgroundColor: Colors.black26,
+                            child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                          ),
+                        CircleAvatar(
+                          radius: 15,
+                          backgroundColor: Colors.purple,
+                          child: Icon(
+                            _imageUrl.isNotEmpty ? Icons.check : Icons.camera_alt,
+                            size: 15,
+                            color: Colors.white,
+                          ),
                         ),
+                      ],
+                    ),
+                  ),
+                ),
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 6, bottom: 18),
+                    child: Text(
+                      _imageUrl.isNotEmpty ? 'Imagen lista ✓' : 'Toca para añadir foto',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: _imageUrl.isNotEmpty ? Colors.green[700] : Colors.grey[600],
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 6, bottom: 18),
-                  child: Text(
-                    _imageUrl.isNotEmpty ? 'Imagen lista ✓' : 'Toca para añadir foto',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: _imageUrl.isNotEmpty ? Colors.green[700] : Colors.grey[600],
                     ),
                   ),
                 ),
-              ),
 
-              // Campos de texto para añadir o editar la mascota
-              _field('Nombre *', _nameCtrl),
-              _field('Raza', _breedCtrl),
-              _field('Categoría', _categoryCtrl),
-              _field('Descripción', _descriptionCtrl, maxLines: 3),
-              Row(
-                children: [
-                  Expanded(child: _field('Edad (años)', _ageCtrl, keyboardType: TextInputType.number)),
-                  const SizedBox(width: 12),
-                  Expanded(child: _field('Peso (kg)', _weightCtrl, keyboardType: TextInputType.numberWithOptions(decimal: true))),
-                ],
-              ),
+                // Campos
+                _field('Nombre *', _nameCtrl,
+                    validator: (v) => _validateOnlyLetters(v, 'el nombre')),
+                _field('Raza *', _breedCtrl,
+                    validator: (v) => _validateOnlyLetters(v, 'la raza')),
+                _field('Descripción *', _descriptionCtrl,
+                    maxLines: 3, validator: _validateDescription),
+                Row(
+                  children: [
+                    Expanded(child: _field('Edad (años) *', _ageCtrl,
+                        keyboardType: TextInputType.number, validator: _validateAge)),
+                    const SizedBox(width: 12),
+                    Expanded(child: _field('Peso (kg) *', _weightCtrl,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        validator: _validateWeight)),
+                  ],
+                ),
 
-              // Especie, elegir especie entre 2 opciones (perro o gato)
-              const SizedBox(height: 8),
-              const Text('Especie', style: TextStyle(fontSize: 13, color: Colors.grey)),
-              const SizedBox(height: 6),
-              Row(
-                children: [
-                  _categoryChip('Perro', 'Perro', Icons.pets),
-                  const SizedBox(width: 10),
-                  _categoryChip('Gato', 'Gato', Icons.catching_pokemon),
-                ],
-              ),
-              const SizedBox(height: 16),
-              const Text('Estado de adopción', style: TextStyle(fontSize: 13, color: Colors.grey)),
-              const SizedBox(height: 6),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.purple[50],
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.purple[200]!),
+                // Especie
+                const SizedBox(height: 8),
+                const Text('Especie', style: TextStyle(fontSize: 13, color: Colors.grey)),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    _categoryChip('Perro', 'Perro', Icons.pets),
+                    const SizedBox(width: 10),
+                    _categoryChip('Gato', 'Gato', Icons.catching_pokemon),
+                  ],
                 ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: _adoptionStatus,
-                    isExpanded: true,
-                    icon: const Icon(Icons.arrow_drop_down, color: Colors.purple),
-                    items: _adoptionStatusOptions
-                        .map((o) => DropdownMenuItem(value: o, child: Text(o)))
-                        .toList(),
-                    onChanged: (v) => setState(() => _adoptionStatus = v!),
+                const SizedBox(height: 16),
+
+                // Estado adopción
+                const Text('Estado de adopción', style: TextStyle(fontSize: 13, color: Colors.grey)),
+                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.purple[50],
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.purple[200]!),
                   ),
-                ),
-              ),
-              // Switches
-              const SizedBox(height: 12),
-    
-              _switch('Castrado / Esterilizado', _neutered, (v) => setState(() => _neutered = v)),
-              _switch('Es PPP (Potencialmente Peligroso)', _isPpp, (v) => setState(() => _isPpp = v)),
-              _switch('Emergencia', _urgentAdoption, (v) => setState(() => _urgentAdoption = v)),
-              const SizedBox(height: 24),
-              //  Botones
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Cancelar'),
-                  ),
-                  const SizedBox(width: 10),
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.purple,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: _adoptionStatus,
+                      isExpanded: true,
+                      icon: const Icon(Icons.arrow_drop_down, color: Colors.purple),
+                      items: _adoptionStatusOptions
+                          .map((o) => DropdownMenuItem(value: o, child: Text(o)))
+                          .toList(),
+                      onChanged: (v) => setState(() => _adoptionStatus = v!),
                     ),
-                    onPressed: (_saving || _uploadingImage) ? null : _submit,
-                    icon: const Icon(Icons.save),
-                    label: Text(_isEditing ? 'Guardar cambios' : 'Añadir mascota'),
                   ),
-                ],
-              ),
-            ],
+                ),
+
+                // Switches
+                const SizedBox(height: 12),
+                _switch('Castrado / Esterilizado', _neutered, (v) => setState(() => _neutered = v)),
+                _switch('Es PPP (Potencialmente Peligroso)', _isPpp, (v) => setState(() => _isPpp = v)),
+                _switch('Emergencia', _urgentAdoption, (v) => setState(() => _urgentAdoption = v)),
+                const SizedBox(height: 24),
+
+                // Botones
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Cancelar'),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.purple,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      onPressed: (_saving || _uploadingImage) ? null : _submit,
+                      icon: const Icon(Icons.save),
+                      label: Text(_isEditing ? 'Guardar cambios' : 'Añadir mascota'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  //  Helpers de UI 
+  // Helpers UI 
 
-  Widget _field(String label, TextEditingController ctrl, {int maxLines = 1, TextInputType? keyboardType}) {
+  Widget _field(
+    String label,
+    TextEditingController ctrl, {
+    int maxLines = 1,
+    TextInputType? keyboardType,
+    String? Function(String?)? validator,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: TextField(
+      child: TextFormField(
         controller: ctrl,
         maxLines: maxLines,
         keyboardType: keyboardType,
+        validator: validator,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: InputDecoration(
           labelText: label,
           filled: true,
@@ -325,7 +378,7 @@ class _PetFormDialogState extends State<PetFormDialog> {
       dense: true,
       title: Text(label, style: const TextStyle(fontSize: 14)),
       value: value,
-      activeColor: Colors.purple,
+      activeThumbColor: Colors.purple,
       onChanged: onChanged,
     );
   }

@@ -150,6 +150,25 @@ Future<void> _submit() async {
     );
     return;
   }
+  if (name.length < 5) {
+    await _showError('El nombre del evento debe tener al menos 5 caracteres.');
+    return;
+  }
+  if (_imageUrl.isEmpty) {
+    await _showError('La imagen del evento es obligatoria. Por favor, añádele una imagen representativa.');
+    return;
+  }
+   if (loc.length < 2) {
+    await _showError('La ubicación del evento debe tener al menos 2 caracteres.');
+    return;
+  }
+   if (_capacityCtrl.text.trim().isNotEmpty) {
+    final capacity = int.tryParse(_capacityCtrl.text.trim());
+    if (capacity == null || capacity <= 0) {
+      await _showError('La capacidad máxima debe ser un número entero positivo.');
+      return;
+    }
+  }
   if (loc.isEmpty) {
     await _showError('La ubicación es obligatoria.');
     return;

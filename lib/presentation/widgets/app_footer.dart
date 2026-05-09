@@ -13,10 +13,10 @@ class AppFooter extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 50),
       decoration: const BoxDecoration(
-        color: AppColors.purple,
+        color: Color(0xFFB39DDB),
         border: Border(
           top: BorderSide(
-            color: AppColors.darkPurple,
+            color: Color(0xFF7E57C2),
           ),
         ),
       ),

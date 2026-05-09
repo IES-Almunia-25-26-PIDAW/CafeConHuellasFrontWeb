@@ -31,7 +31,7 @@ class HomeScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 40),
               child: Text(
-                "¡Bienvenid@ a 'Nombre de protectora'! Somos una protectora dedicada al rescate, cuidado y adopción responsable de animales que necesitan una segunda oportunidad.",
+                "¡Bienvenid@ a 'Patitas Unidas'! Somos una protectora dedicada al rescate, cuidado y adopción responsable de animales que necesitan una segunda oportunidad.",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25,

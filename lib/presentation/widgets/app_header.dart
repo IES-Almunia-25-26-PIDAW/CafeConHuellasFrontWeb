@@ -58,6 +58,7 @@ class AppHeader extends StatelessWidget {
                               _navItem(context, 'Mascotas', '/pets', navFontSize),
                               SizedBox(width: itemSpacing),
                               PopupMenuButton<String>(
+                                tooltip: '',
                                 child: Text(
                                   'La protectora ▾',
                                   style: TextStyle(fontSize: menuFontSize, fontFamily: 'WinkyMilky'),
@@ -91,6 +92,7 @@ class AppHeader extends StatelessWidget {
                               ),
                               SizedBox(width: itemSpacing),
                               PopupMenuButton<String>(
+                                tooltip: '',
                                 child: Text(
                                   'Actividades ▾',
                                   style: TextStyle(fontSize: menuFontSize, fontFamily: 'WinkyMilky'),
@@ -130,6 +132,7 @@ class AppHeader extends StatelessWidget {
                         _navItem(context, 'Mascotas', '/pets', navFontSize),
                         SizedBox(width: itemSpacing),
                         PopupMenuButton<String>(
+                          tooltip: '',
                           child: Text(
                             'La protectora ▾',
                             style: TextStyle(fontSize: menuFontSize, fontFamily: 'WinkyMilky'),
@@ -163,6 +166,7 @@ class AppHeader extends StatelessWidget {
                         ),
                         SizedBox(width: itemSpacing),
                         PopupMenuButton<String>(
+                          tooltip: '',
                           child: Text(
                             'Actividades ▾',
                             style: TextStyle(fontSize: menuFontSize, fontFamily: 'WinkyMilky'),

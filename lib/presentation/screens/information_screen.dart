@@ -35,7 +35,7 @@ class InformationScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: AppColors.cream),
                   ),
-                child: const Text ("Hola! Nosotras somos patitas unidas, una protectora que nace del del amor profundo por los animales"
+                child: const Text ("¡Hola! Nosotras somos Patitas Unidas, una protectora que nace del amor profundo por los animales "
                       "y de la unión de tres amigas con el mismo sueño: darles una segunda oportunidad.",
                 style: TextStyle(
                         fontFamily: "MilkyVintage",
@@ -63,7 +63,7 @@ class InformationScreen extends StatelessWidget {
               _infoSection(
               image: "assets/images/information_section/proposito.jpg",
               text:
-                  "Nuestra misión es clara: salvar, proteger y encontrar un hogar lleno de amor para todos los animales que lo necesiten"
+                  "Nuestra misión es clara: salvar, proteger y encontrar un hogar lleno de amor para todos los animales que lo necesiten. "
                   "En Patitas Unidas luchamos por un mundo donde ningún animal tenga que vivir en el abandono.",
               reverse: false,
             ),
@@ -77,9 +77,9 @@ class InformationScreen extends StatelessWidget {
               _infoSection(
               image: "assets/images/information_section/historia.jpg",
               text:
-                  "Patitas unidas nace en 2023, cuando tres chicas tras finalizar sus estudios dedicieron plasmar la energía y amor por los animales"
-                  "Durante ese momento de cambio en nuestras vidas, fuimos más conscientes que nunca de la realidad que viven muchos de los animales sin hogar"
-                  "Así lo que comenzó como una idea se convirtío en un proyecto, trabajando ahora día a día para rescatar cuidary acompañar a cada animal que llega a nosotras"
+                  "Patitas unidas nace en 2023, cuando tres chicas tras finalizar sus estudios dedicieron plasmar la energía y amor por los animales. "
+                  "Durante ese momento de cambio en nuestras vidas, fuimos más conscientes que nunca de la realidad que viven muchos de los animales sin hogar. "
+                  "Así lo que comenzó como una idea se convirtío en un proyecto, trabajando ahora día a día para rescatar cuidar y acompañar a cada animal que llega a nosotras."
                   ,
               reverse: false,
               imageTopPadding: 40,

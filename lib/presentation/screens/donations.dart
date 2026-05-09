@@ -18,7 +18,7 @@ class DonationsScreen extends StatelessWidget {
   Future<void> _showDonationDialog(BuildContext context) async {
     final amountCtrl = TextEditingController();
     final notesCtrl  = TextEditingController();
-    DateTime selectedDate = DateTime.now();
+    DateTime selectedDate = DateTime.now().subtract(  const Duration(days: 1)); // por defecto, ayer
     String category = 'MONETARIA';
     String method   = 'TARJETA';
 
@@ -40,7 +40,7 @@ class DonationsScreen extends StatelessWidget {
                       context: ctx,
                       initialDate: selectedDate,
                       firstDate: DateTime(2000),
-                      lastDate: DateTime.now(),
+                      lastDate: DateTime.now().subtract(const Duration(days: 1)),
                     );
                     if (picked != null) setState(() => selectedDate = picked);
                   },
