@@ -4,8 +4,13 @@ import 'package:universal_html/html.dart' as html;
 
 const String _mapViewType = 'mapa-google';
 
+// Registered once at startup to avoid duplicate view type errors.
 final bool _mapViewRegistered = _registerMapView();
 
+/// Registers the Google Maps iframe as a platform view.
+///
+/// Called once via [_mapViewRegistered] to ensure
+/// it is never registered more than once.
 bool _registerMapView() {
   ui_web.platformViewRegistry.registerViewFactory(_mapViewType, (int viewId) {
     final iframe = html.IFrameElement()
@@ -18,11 +23,16 @@ bool _registerMapView() {
   return true;
 }
 
+/// A widget that renders an embedded Google Maps iframe.
+///
+/// Uses a platform view to display the map inside
+/// a rounded, shadowed container.
 class MapWidget extends StatelessWidget {
   const MapWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Ensures the view factory is registered before building.
     _mapViewRegistered;
 
     return Center(

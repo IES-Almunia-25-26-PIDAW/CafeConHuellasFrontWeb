@@ -4,14 +4,20 @@ import 'package:go_router/go_router.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_state.dart';
 
+/// Responsive top navigation bar displayed across all pages.
+///
+/// Shows the app logo, navigation links, dropdown menus,
+/// and the user avatar. Adapts its layout based on screen width:
+/// - Below 1100px: horizontally scrollable compact nav.
+/// - Above 1100px: centered full nav row.
 class AppHeader extends StatelessWidget {
+  /// Fallback avatar image path used when no user is logged in.
   final String userImageUrl;
   const AppHeader({super.key, this.userImageUrl = "assets/user.png"});
 
-
   @override
   Widget build(BuildContext context) {
-    //lo hacemos para el diferente tamaño de pantallas
+    // Responsive sizing based on screen width.
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isCompactHeader = screenWidth < 1100;
     final logoHeight = screenWidth < 900 ? 50.0 : screenWidth < 1200 ? 58.0 : 66.0;
@@ -33,7 +39,7 @@ class AppHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          //Logo
+          // Logo — tapping navigates to home.
           GestureDetector(
             onTap: () {
               context.go('/');
@@ -41,7 +47,7 @@ class AppHeader extends StatelessWidget {
             child: Image.asset('assets/logo.png', height: logoHeight),
           ),
           SizedBox(width: itemSpacing),
-          //Navegation
+          // Navigation — compact (scrollable) or full row depending on width.
           Expanded(
             child: isCompactHeader
                 ? LayoutBuilder(
@@ -57,6 +63,7 @@ class AppHeader extends StatelessWidget {
                               SizedBox(width: itemSpacing),
                               _navItem(context, 'Mascotas', '/pets', navFontSize),
                               SizedBox(width: itemSpacing),
+                              // Dropdown: shelter info section.
                               PopupMenuButton<String>(
                                 tooltip: '',
                                 child: Text(
@@ -91,6 +98,7 @@ class AppHeader extends StatelessWidget {
                                 ],
                               ),
                               SizedBox(width: itemSpacing),
+                              // Dropdown: activities section.
                               PopupMenuButton<String>(
                                 tooltip: '',
                                 child: Text(
@@ -131,6 +139,7 @@ class AppHeader extends StatelessWidget {
                         SizedBox(width: itemSpacing),
                         _navItem(context, 'Mascotas', '/pets', navFontSize),
                         SizedBox(width: itemSpacing),
+                        // Dropdown: shelter info section.
                         PopupMenuButton<String>(
                           tooltip: '',
                           child: Text(
@@ -165,6 +174,7 @@ class AppHeader extends StatelessWidget {
                           ],
                         ),
                         SizedBox(width: itemSpacing),
+                        // Dropdown: activities section.
                         PopupMenuButton<String>(
                           tooltip: '',
                           child: Text(
@@ -196,19 +206,19 @@ class AppHeader extends StatelessWidget {
                   ),
           ),
           SizedBox(width: itemSpacing),
+          // Avatar — navigates to profile if logged in, otherwise to login.
           GestureDetector(
             onTap: () {
               final authState = context.read<AuthBloc>().state;
-              //si esta logeado nos lleva a perfil
               if (authState.isAuthenticated) {
-                context.go('/profile'); 
-                //si no está logeado nos lleva a login
+                context.go('/profile');
               } else {
                 context.go('/login');
               }
             },
             child: BlocBuilder<AuthBloc, AuthState>(
               builder: (context, state) {
+                // Resolves the avatar image: network if available, asset otherwise.
                 final String resolvedImage =
                     (state.user?.imageUrl.isNotEmpty ?? false) ? state.user!.imageUrl : userImageUrl;
                 final ImageProvider imageProvider = resolvedImage.startsWith('http')
@@ -227,7 +237,7 @@ class AppHeader extends StatelessWidget {
     );
   }
 }
-
+/// Helper that builds a tappable text navigation item.
 Widget _navItem(BuildContext context, String title, String route, double fontSize) {
   return GestureDetector(
     onTap: () {

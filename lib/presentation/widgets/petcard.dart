@@ -2,8 +2,14 @@ import 'package:cafeconhuellas_front/models/pet.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+/// A card widget that displays a summary of a pet.
+///
+/// Tapping the card navigates to the pet detail page.
+/// Supports an optional [fixedWidth] for grid layouts.
 class PetCard extends StatelessWidget {
+  /// The pet data to display.
   final Pet pet;
+  /// Optional fixed width. Useful when used inside a grid or horizontal list.
   final double? fixedWidth;
 
   const PetCard(this.pet, {super.key, this.fixedWidth});
@@ -24,6 +30,7 @@ class PetCard extends StatelessWidget {
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
+              // Compact mode activates below 220px width.
               final compact = constraints.maxWidth < 220;
               final nameStyle = TextStyle(
                 fontSize: compact ? 17 : 20,
@@ -34,6 +41,7 @@ class PetCard extends StatelessWidget {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Pet image with rounded corners and aspect ratio lock.
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: AspectRatio(
@@ -79,7 +87,7 @@ class PetCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    pet.urgentAdoption? 'Estado: Emergencia' : 'Estado: Normal',
+                    pet.urgentAdoption ? 'Estado: Emergencia' : 'Estado: Normal',
                     style: bodyStyle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -95,6 +103,8 @@ class PetCard extends StatelessWidget {
     );
   }
 }
+
+// Helper that builds a colored badge showing the pet's adoption status.
 Widget _adoptionBadge(String status, bool compact) {
   final color = status == 'ADOPTADO'
       ? Colors.green

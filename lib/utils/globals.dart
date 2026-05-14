@@ -1,6 +1,7 @@
 import 'package:cafeconhuellas_front/models/event.dart';
 import 'package:cafeconhuellas_front/models/pet.dart';
 
+///class with examples, for the first testing without the backend
 class Globals {
   static final List<Pet> _fallbackPets = [
     Pet(id: 1, name: 'Fido', category: 'Perro', breed: 'Labrador', age: 3,  imageUrl: 'assets/images/perrito.jpg', description: 'Friendly dog', urgentAdoption: false, adoptionStatus: ''),

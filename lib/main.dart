@@ -1,4 +1,3 @@
-
 import 'package:cafeconhuellas_front/presentation/bloc/pet_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/pet_event.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
@@ -11,14 +10,20 @@ import 'config/app_router.dart';
 import 'config/app_theme.dart';
 
 void main() {
+  // Enables clean URLs (no hash) for web routing.
   usePathUrlStrategy();
   runApp(const MyApp());
 }
 
+/// Root widget of the application.
+///
+/// Initializes global BlocProviders so that
+/// AuthBloc and PetsBloc are available throughout
+/// the entire widget tree without being recreated
+/// on every navigation.
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -26,10 +31,10 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => AuthBloc(ApiConector()),
         ),
-       BlocProvider(
-          // Anteriormente lo hacíamos en el router pero nos dimos cuenta que cada vez que entrábamos a la página  se creaba un nuevo bloc
-          //así que inicializamos el bloc aquí para que esté disponible en toda la app y no se reinicie cada vez que entramos a la página de mascotas
-           create: (context) => PetsBloc(api: ApiConector())..add(LoadPets())..add(LoadEvents()),     
+        BlocProvider(
+          // Initialized here instead of in the router to avoid
+          // creating a new bloc instance every time the pets page is visited.
+          create: (context) => PetsBloc(api: ApiConector())..add(LoadPets())..add(LoadEvents()),
         ),
       ],
       child: MaterialApp.router(

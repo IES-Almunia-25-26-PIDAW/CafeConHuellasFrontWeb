@@ -6,7 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:image_picker_for_web/image_picker_for_web.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 
+/// Dialog form used to create or edit a pet.
+///
+/// If [pet] is provided the form opens in edit mode,
+/// otherwise it opens in create mode.
+/// On success it pops returning the resulting [Pet]
+/// to the caller, which is responsible for calling the Bloc.
 class PetFormDialog extends StatefulWidget {
+  /// The pet to edit. Null when creating a new one.
   final Pet? pet;
 
   const PetFormDialog({super.key, this.pet});
@@ -24,6 +31,7 @@ class _PetFormDialogState extends State<PetFormDialog> {
   late final TextEditingController _ageCtrl;
   late final TextEditingController _weightCtrl;
 
+  // Exact values accepted by the backend.
   static const List<String> _adoptionStatusOptions = ['NO_ADOPTADO', 'EN_PROCESO', 'ADOPTADO'];
 
   late String _adoptionStatus;
@@ -38,6 +46,7 @@ class _PetFormDialogState extends State<PetFormDialog> {
   bool _uploadingImage = false;
   bool _saving = false;
 
+  /// True when editing an existing pet, false when creating a new one.
   bool get _isEditing => widget.pet != null;
 
   @override
@@ -67,8 +76,9 @@ class _PetFormDialogState extends State<PetFormDialog> {
     super.dispose();
   }
 
-  //  Validadores
+  // Validators
 
+  // Validates that the field contains only letters and meets the minimum length.
   String? _validateOnlyLetters(String? value, String fieldName) {
     if (value == null || value.trim().isEmpty) return '$fieldName es obligatorio';
     final soloLetras = RegExp(r"^[a-záéíóúäëïöüàèìòùñA-ZÁÉÍÓÚÄËÏÖÜÀÈÌÒÙÑ\s'-]+$", unicode: true);
@@ -77,12 +87,14 @@ class _PetFormDialogState extends State<PetFormDialog> {
     return null;
   }
 
+  // Validates that the description is not empty and has at least 10 characters.
   String? _validateDescription(String? value) {
     if (value == null || value.trim().isEmpty) return 'La descripción es obligatoria';
     if (value.trim().length < 10) return 'Mínimo 10 caracteres';
     return null;
   }
 
+  // Validates that the age is an integer between 0 and 20.
   String? _validateAge(String? value) {
     if (value == null || value.trim().isEmpty) return 'La edad es obligatoria';
     final age = int.tryParse(value.trim());
@@ -91,6 +103,7 @@ class _PetFormDialogState extends State<PetFormDialog> {
     return null;
   }
 
+  // Validates that the weight is a positive number between 0.1 and 200 kg.
   String? _validateWeight(String? value) {
     if (value == null || value.trim().isEmpty) return 'El peso es obligatorio';
     final weight = double.tryParse(value.trim().replaceAll(',', '.'));
@@ -100,8 +113,7 @@ class _PetFormDialogState extends State<PetFormDialog> {
     return null;
   }
 
-  //  Imagen 
-
+  // Method used to pick an image from the gallery and upload it to the server.
   Future<void> _pickAndUploadImage() async {
     final plugin = ImagePickerPlugin();
     final XFile? picked = await plugin.getImageFromSource(
@@ -139,7 +151,7 @@ class _PetFormDialogState extends State<PetFormDialog> {
     }
   }
 
-  //  Submit 
+  // Method used to validate the form and pop the dialog with the resulting Pet.
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
 
@@ -169,8 +181,6 @@ class _PetFormDialogState extends State<PetFormDialog> {
     Navigator.of(context).pop(pet);
   }
 
-  //  Build
-
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -191,7 +201,7 @@ class _PetFormDialogState extends State<PetFormDialog> {
                 ),
                 const SizedBox(height: 20),
 
-                // Selector de imagen
+                // Image picker — circular avatar with upload overlay.
                 Center(
                   child: GestureDetector(
                     onTap: _uploadingImage ? null : _pickAndUploadImage,
@@ -214,6 +224,7 @@ class _PetFormDialogState extends State<PetFormDialog> {
                             backgroundColor: Colors.black26,
                             child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                           ),
+                        // Badge showing camera icon or checkmark depending on upload state.
                         CircleAvatar(
                           radius: 15,
                           backgroundColor: Colors.purple,
@@ -240,7 +251,7 @@ class _PetFormDialogState extends State<PetFormDialog> {
                   ),
                 ),
 
-                // Campos
+                // Form fields
                 _field('Nombre *', _nameCtrl,
                     validator: (v) => _validateOnlyLetters(v, 'el nombre')),
                 _field('Raza *', _breedCtrl,
@@ -258,7 +269,7 @@ class _PetFormDialogState extends State<PetFormDialog> {
                   ],
                 ),
 
-                // Especie
+                // Species selector
                 const SizedBox(height: 8),
                 const Text('Especie', style: TextStyle(fontSize: 13, color: Colors.grey)),
                 const SizedBox(height: 6),
@@ -271,7 +282,7 @@ class _PetFormDialogState extends State<PetFormDialog> {
                 ),
                 const SizedBox(height: 16),
 
-                // Estado adopción
+                // Adoption status dropdown
                 const Text('Estado de adopción', style: TextStyle(fontSize: 13, color: Colors.grey)),
                 const SizedBox(height: 6),
                 Container(
@@ -294,14 +305,14 @@ class _PetFormDialogState extends State<PetFormDialog> {
                   ),
                 ),
 
-                // Switches
+                // Boolean toggles
                 const SizedBox(height: 12),
                 _switch('Castrado / Esterilizado', _neutered, (v) => setState(() => _neutered = v)),
                 _switch('Es PPP (Potencialmente Peligroso)', _isPpp, (v) => setState(() => _isPpp = v)),
                 _switch('Emergencia', _urgentAdoption, (v) => setState(() => _urgentAdoption = v)),
                 const SizedBox(height: 24),
 
-                // Botones
+                // Action buttons
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -331,8 +342,9 @@ class _PetFormDialogState extends State<PetFormDialog> {
     );
   }
 
-  // Helpers UI 
+  // UI helpers
 
+  // Helper that builds a styled text form field.
   Widget _field(
     String label,
     TextEditingController ctrl, {
@@ -358,6 +370,7 @@ class _PetFormDialogState extends State<PetFormDialog> {
     );
   }
 
+  // Helper that builds a selectable species chip.
   Widget _categoryChip(String label, String value, IconData icon) {
     final selected = _category == value;
     return ChoiceChip(
@@ -372,6 +385,7 @@ class _PetFormDialogState extends State<PetFormDialog> {
     );
   }
 
+  // Helper that builds a labeled switch tile.
   Widget _switch(String label, bool value, ValueChanged<bool> onChanged) {
     return SwitchListTile(
       contentPadding: EdgeInsets.zero,

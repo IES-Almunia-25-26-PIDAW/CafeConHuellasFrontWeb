@@ -1,15 +1,23 @@
 import 'package:cafeconhuellas_front/theme/AppColors.dart';
 import 'package:flutter/material.dart';
 
+/// A card widget that displays an event with
+/// its image, title, and a short description.
+///
+/// Supports both network and asset images.
 class EventCard extends StatelessWidget {
+  /// URL or asset path of the event image.
   final String image;
+  /// Title of the event.
   final String title;
+  /// Short description of the event.
   final String description;
 
   const EventCard(this.image, this.title, this.description);
 
   @override
   Widget build(BuildContext context) {
+    // Determines whether to load the image from network or assets.
     final bool isNetworkImage =
         image.startsWith('http://') || image.startsWith('https://');
 

@@ -5,7 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:image_picker_for_web/image_picker_for_web.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 
+/// Dialog form used to create or edit an event.
+///
+/// If [event] is provided the form opens in edit mode,
+/// otherwise it opens in create mode.
+/// On success it pops returning the resulting [Event]
+/// to the caller, which is responsible for calling the Bloc.
 class EventFormDialog extends StatefulWidget {
+  /// The event to edit. Null when creating a new one.
   final Event? event;
   const EventFormDialog({super.key, this.event});
 
@@ -22,8 +29,8 @@ class _EventFormDialogState extends State<EventFormDialog> {
   late DateTime _eventDate;
   late String _imageUrl;
 
-  // valores exactos que acepta el backend — usamos dropdowns para evitar typos
-  static const List<String> _eventTypes    = ['RECAUDACION', 'ADOPCION', 'MERCADILLO', 'EDUCACIÓN','OTRO'];
+  // Exact values accepted by the backend — dropdowns prevent typos.
+  static const List<String> _eventTypes    = ['RECAUDACION', 'ADOPCION', 'MERCADILLO', 'EDUCACIÓN', 'OTRO'];
   static const List<String> _statusOptions = ['PROGRAMADO', 'EN_CURSO', 'FINALIZADO', 'CANCELADO'];
   late String _selectedType;
   late String _selectedStatus;
@@ -31,6 +38,7 @@ class _EventFormDialogState extends State<EventFormDialog> {
   Uint8List? _imageBytes;
   bool _uploadingImage = false;
 
+  /// True when editing an existing event, false when creating a new one.
   bool get _isEditing => widget.event != null;
 
   @override
@@ -41,11 +49,11 @@ class _EventFormDialogState extends State<EventFormDialog> {
     _descCtrl     = TextEditingController(text: e?.description ?? '');
     _locCtrl      = TextEditingController(text: e?.location ?? '');
     _capacityCtrl = TextEditingController(text: (e?.maxCapacity ?? 100).toString());
-    // si no hay evento (modo añadir) ponemos mañana como fecha por defecto
+    // Default date is tomorrow when creating a new event.
     _eventDate = e?.eventdate ?? DateTime.now().add(const Duration(days: 1));
     _imageUrl  = e?.imageUrl ?? '';
 
-    // normalizamos tipo y estado para que coincidan con las opciones
+    // Normalize type and status to match the dropdown options.
     final t = (e?.eventType ?? '').toUpperCase();
     final s = (e?.status ?? '').toUpperCase();
     _selectedType   = _eventTypes.contains(t)    ? t : _eventTypes.first;
@@ -61,7 +69,7 @@ class _EventFormDialogState extends State<EventFormDialog> {
     super.dispose();
   }
 
-  // Imagen
+  // Method used to pick and upload an event image from the gallery.
   Future<void> _pickImage() async {
     final plugin = ImagePickerPlugin();
     final XFile? picked = await plugin.getImageFromSource(
@@ -75,13 +83,14 @@ class _EventFormDialogState extends State<EventFormDialog> {
       final url = await ApiConector().uploadEventsImages(bytes, picked.name);
       setState(() => _imageUrl = url);
     } catch (e) {
-      if (mounted) _showError('Error al subir imagen: $e');
+      if (mounted) _showError('Error uploading image: $e');
     } finally {
       if (mounted) setState(() => _uploadingImage = false);
     }
   }
 
-  //  Selector de fecha 
+  // Method used to open the date and time pickers sequentially.
+  // If the user cancels the time picker, defaults to 00:00.
   Future<void> _selectDate() async {
     final pickedDate = await showDatePicker(
       context: context,
@@ -95,7 +104,7 @@ class _EventFormDialogState extends State<EventFormDialog> {
       context: context,
       initialTime: TimeOfDay.fromDateTime(_eventDate),
     );
-    // si cancela el timepicker usamos 00:00, nunca bloqueamos
+    // Falls back to 00:00 if the time picker is dismissed.
     final t = pickedTime ?? const TimeOfDay(hour: 0, minute: 0);
     setState(() {
       _eventDate = DateTime(
@@ -104,7 +113,7 @@ class _EventFormDialogState extends State<EventFormDialog> {
     });
   }
 
-  //Diálogo de error con mensaje del backend
+  // Method used to show a styled error dialog with a backend message.
   Future<void> _showError(String message) async {
     if (!mounted) return;
     await showDialog(
@@ -131,66 +140,64 @@ class _EventFormDialogState extends State<EventFormDialog> {
     );
   }
 
-  // Submit
-  // Llama directamente a la API para poder capturar errores del backend y
-  // mostrarlos en un diálogo. Si tiene éxito cierra el dialog devolviendo el Event.
-Future<void> _submit() async {
-  final name = _nameCtrl.text.trim();
-  final desc = _descCtrl.text.trim();
-  final loc  = _locCtrl.text.trim();
+  // Method used to validate fields and pop the dialog with the resulting Event.
+  // The caller (Bloc) is responsible for the actual API call.
+  Future<void> _submit() async {
+    final name = _nameCtrl.text.trim();
+    final desc = _descCtrl.text.trim();
+    final loc  = _locCtrl.text.trim();
 
-  if (name.isEmpty) {
-    await _showError('El nombre del evento es obligatorio.');
-    return;
-  }
-  if (desc.length < 20) {
-    await _showError(
-      'La descripción debe tener al menos 20 caracteres.\n'
-      'Actualmente tiene ${desc.length} caractere${desc.length == 1 ? '' : 's'}.',
-    );
-    return;
-  }
-  if (name.length < 5) {
-    await _showError('El nombre del evento debe tener al menos 5 caracteres.');
-    return;
-  }
-  if (_imageUrl.isEmpty) {
-    await _showError('La imagen del evento es obligatoria. Por favor, añádele una imagen representativa.');
-    return;
-  }
-   if (loc.length < 2) {
-    await _showError('La ubicación del evento debe tener al menos 2 caracteres.');
-    return;
-  }
-   if (_capacityCtrl.text.trim().isNotEmpty) {
-    final capacity = int.tryParse(_capacityCtrl.text.trim());
-    if (capacity == null || capacity <= 0) {
-      await _showError('La capacidad máxima debe ser un número entero positivo.');
+    if (name.isEmpty) {
+      await _showError('El nombre del evento es obligatorio.');
       return;
     }
+    if (desc.length < 20) {
+      await _showError(
+        'La descripción debe tener al menos 20 caracteres.\n'
+        'Actualmente tiene ${desc.length} caractere${desc.length == 1 ? '' : 's'}.',
+      );
+      return;
+    }
+    if (name.length < 5) {
+      await _showError('El nombre del evento debe tener al menos 5 caracteres.');
+      return;
+    }
+    if (_imageUrl.isEmpty) {
+      await _showError('La imagen del evento es obligatoria. Por favor, añádele una imagen representativa.');
+      return;
+    }
+    if (loc.length < 2) {
+      await _showError('La ubicación del evento debe tener al menos 2 caracteres.');
+      return;
+    }
+    if (_capacityCtrl.text.trim().isNotEmpty) {
+      final capacity = int.tryParse(_capacityCtrl.text.trim());
+      if (capacity == null || capacity <= 0) {
+        await _showError('La capacidad máxima debe ser un número entero positivo.');
+        return;
+      }
+    }
+    if (loc.isEmpty) {
+      await _showError('La ubicación es obligatoria.');
+      return;
+    }
+
+    final event = Event(
+      id:          _isEditing ? widget.event!.id : 0,
+      name:        name,
+      description: desc,
+      eventdate:   _eventDate,
+      location:    loc,
+      imageUrl:    _imageUrl,
+      eventType:   _selectedType,
+      status:      _selectedStatus,
+      maxCapacity: int.tryParse(_capacityCtrl.text) ?? 100,
+    );
+
+    // Returns the event to the parent — it calls the Bloc, the Bloc calls the API.
+    if (mounted) Navigator.pop(context, event);
   }
-  if (loc.isEmpty) {
-    await _showError('La ubicación es obligatoria.');
-    return;
-  }
 
-  final event = Event(
-    id:          _isEditing ? widget.event!.id : 0,
-    name:        name,
-    description: desc,
-    eventdate:   _eventDate,
-    location:    loc,
-    imageUrl:    _imageUrl,
-    eventType:   _selectedType,
-    status:      _selectedStatus,
-    maxCapacity: int.tryParse(_capacityCtrl.text) ?? 100,
-  );
-
-  // simplemente devolvemos el evento al padre — él llama al Bloc, el Bloc llama a la API
-  if (mounted) Navigator.pop(context, event);
-}
-
-  // Build 
   @override
   Widget build(BuildContext context) {
     const Color purple = Color(0xFF7B3FE4);
@@ -206,7 +213,7 @@ Future<void> _submit() async {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-              // título
+              // Title
               Text(
                 _isEditing ? 'Editar Evento' : 'Nuevo Evento',
                 style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold,
@@ -214,7 +221,7 @@ Future<void> _submit() async {
               ),
               const SizedBox(height: 20),
 
-              // imagen
+              // Image picker — shows preview or upload indicator.
               GestureDetector(
                 onTap: _uploadingImage ? null : _pickImage,
                 child: Container(
@@ -251,13 +258,13 @@ Future<void> _submit() async {
                 ),
               ),
 
-              // campos texto
+              // Text fields
               _field('Nombre del evento *', _nameCtrl),
               _field('Descripción * (mín. 20 caracteres)', _descCtrl, maxLines: 4),
               _field('Ubicación *', _locCtrl),
               _field('Capacidad máxima', _capacityCtrl, keyboardType: TextInputType.number),
 
-              // selector de fecha — visual claro con la fecha siempre visible
+              // Date picker — always shows the selected date.
               const SizedBox(height: 4),
               InkWell(
                 onTap: _selectDate,
@@ -295,17 +302,17 @@ Future<void> _submit() async {
               ),
               const SizedBox(height: 16),
 
-              // dropdown tipo de evento
+              // Event type dropdown
               _dropdown('Tipo de evento', _selectedType, _eventTypes, purple,
                   (v) => setState(() => _selectedType = v!)),
               const SizedBox(height: 12),
 
-              // dropdown estado
+              // Status dropdown
               _dropdown('Estado', _selectedStatus, _statusOptions, purple,
                   (v) => setState(() => _selectedStatus = v!)),
               const SizedBox(height: 28),
 
-              // botones
+              // Action buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -334,6 +341,7 @@ Future<void> _submit() async {
     );
   }
 
+  // Helper that builds a styled text field.
   Widget _field(String label, TextEditingController ctrl,
       {int maxLines = 1, TextInputType? keyboardType}) {
     return Padding(
@@ -356,6 +364,7 @@ Future<void> _submit() async {
     );
   }
 
+  // Helper that builds a styled dropdown.
   Widget _dropdown(String label, String value, List<String> options,
       Color purple, ValueChanged<String?> onChanged) {
     return Container(
