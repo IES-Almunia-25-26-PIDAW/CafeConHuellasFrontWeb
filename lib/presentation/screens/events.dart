@@ -10,13 +10,30 @@ import 'package:cafeconhuellas_front/theme/AppColors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+/// Screen that displays active and past events.
+///
+/// Admin users can:
+/// - Add new events.
+/// - Edit existing events.
+/// - Delete events.
+///
+/// It also includes the application's shared
+/// header and footer components.
 class EventsScreen extends StatelessWidget {
   const EventsScreen({super.key});
 
+  /// Fixed width used for event cards.
   static const double _cardWidth = 300;
+
+  /// Fixed height used for event card images.
   static const double _cardHeight = 200;
+
+  /// Maximum width for past event info cards.
   static const double _pastInfoCardWidth = 460;
 
+  /// Opens a dialog to create a new event.
+  ///
+  /// Dispatches [AddEvent] to [PetsBloc] on confirmation.
   Future<void> _openAddEventDialog(BuildContext context) async {
     final Event? result = await showDialog<Event>(
       context: context,
@@ -27,6 +44,12 @@ class EventsScreen extends StatelessWidget {
     }
   }
 
+  /// Opens a dialog to edit an existing event.
+  ///
+  /// Dispatches [UpdateEvent] to [PetsBloc] on confirmation.
+  ///
+  /// Parameters:
+  /// - [event]: The event to be edited.
   Future<void> _openEditEventDialog(BuildContext context, Event event) async {
     final Event? result = await showDialog<Event>(
       context: context,
@@ -37,6 +60,12 @@ class EventsScreen extends StatelessWidget {
     }
   }
 
+  /// Shows a confirmation dialog before deleting an event.
+  ///
+  /// Dispatches [DeleteEvent] to [PetsBloc] on confirmation.
+  ///
+  /// Parameters:
+  /// - [event]: The event to be deleted.
   Future<void> _confirmDelete(BuildContext context, Event event) async {
     final bool? confirmed = await showDialog<bool>(
       context: context,
@@ -59,6 +88,9 @@ class EventsScreen extends StatelessWidget {
     }
   }
 
+  /// Renders an event image from either a network URL or a local asset.
+  ///
+  /// Falls back to a placeholder icon if the image fails to load.
   Widget _eventImage(String imagePath, {double? width, double? height}) {
     final isNetwork = imagePath.startsWith('http://') || imagePath.startsWith('https://');
     final placeholder = Container(
@@ -75,6 +107,16 @@ class EventsScreen extends StatelessWidget {
         errorBuilder: (_, _, _) => placeholder);
   }
 
+  /// Builds the events screen UI.
+  ///
+  /// Layout structure:
+  /// - Application header.
+  /// - Banner image.
+  /// - Loading indicator or error message.
+  /// - Add event button (admin only).
+  /// - Active events section.
+  /// - Past events section.
+  /// - Application footer.
   @override
   Widget build(BuildContext context) {
     final authState = context.watch<AuthBloc>().state;
@@ -83,8 +125,10 @@ class EventsScreen extends StatelessWidget {
     return BlocBuilder<PetsBloc, PetsState>(
       builder: (context, state) {
         final DateTime now = DateTime.now();
+        /// Events with a future date.
         final List<Event> activeEvents =
             state.events.where((e) => e.eventdate.isAfter(now)).toList();
+        /// Events with a past date.
         final List<Event> pastEvents =
             state.events.where((e) => e.eventdate.isBefore(now)).toList();
 
@@ -92,24 +136,28 @@ class EventsScreen extends StatelessWidget {
           body: SingleChildScrollView(
             child: Column(
               children: [
+                /// Shared application header.
                 AppHeader(userImageUrl: "assets/user.png"),
+                /// Main banner image.
                 Image.asset("assets/images/banners/banner-inicio.png",
                     width: double.infinity, height: 400, fit: BoxFit.cover),
                 const SizedBox(height: 40),
 
+                /// Loading indicator.
                 if (state.isLoading)
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 24),
                     child: CircularProgressIndicator(color: Color(0xFF7B3FE4)),
                   ),
 
+                /// Error message.
                 if (!state.isLoading && state.errorMessage != null)
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                     child: Text(state.errorMessage!, style: const TextStyle(color: Colors.red)),
                   ),
 
-                // botón añadir evento — solo admin
+                /// Add event button, visible to admin users only.
                 if (isAdmin)
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
@@ -128,7 +176,7 @@ class EventsScreen extends StatelessWidget {
 
                 const SizedBox(height: 40),
 
-                // ── EVENTOS ACTIVOS ────────────────────────────────────────
+                /// Active events section.
                 _title("Eventos Activos"),
                 if (activeEvents.isEmpty)
                   const Padding(
@@ -147,7 +195,7 @@ class EventsScreen extends StatelessWidget {
 
                 const SizedBox(height: 80),
 
-                // ── EVENTOS PASADOS ────────────────────────────────────────
+                /// Past events section.
                 _title("Eventos Pasados"),
                 if (pastEvents.isEmpty)
                   const Padding(
@@ -162,6 +210,7 @@ class EventsScreen extends StatelessWidget {
                   ),
 
                 const SizedBox(height: 80),
+                /// Shared application footer.
                 AppFooter(),
               ],
             ),
@@ -171,6 +220,7 @@ class EventsScreen extends StatelessWidget {
     );
   }
 
+  /// Creates a styled section title.
   Widget _title(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 40),
@@ -185,15 +235,20 @@ class EventsScreen extends StatelessWidget {
     );
   }
 
-  /// EVENTO ACTIVO — altura dinámica, descripción completa
+  /// Creates a card for an active event with full description.
+  ///
+  /// Admin users see edit and delete icon buttons overlaid on the image.
+  ///
+  /// Parameters:
+  /// - [event]: The event to display.
+  /// - [isAdmin]: Whether the current user has admin privileges.
   Widget _activeEventCard(BuildContext context, Event event, bool isAdmin) {
     return SizedBox(
       width: _cardWidth,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
-          // imagen con botones admin encima
+          /// Event image with optional admin action buttons.
           Stack(
             children: [
               ClipRRect(
@@ -205,24 +260,22 @@ class EventsScreen extends StatelessWidget {
                   top: 6, right: 6,
                   child: Row(
                     children: [
+                      /// Edit button.
                       _iconBtn(Icons.edit, const Color(0xFF7B3FE4), () => _openEditEventDialog(context, event)),
                       const SizedBox(width: 4),
+                      /// Delete button.
                       _iconBtn(Icons.delete, Colors.redAccent, () => _confirmDelete(context, event)),
                     ],
                   ),
                 ),
             ],
           ),
-
           const SizedBox(height: 10),
-
-          // nombre
+          /// Event name.
           Text(event.name,
               style: const TextStyle(fontSize: 22, fontFamily: "MilkyVintage")),
-
           const SizedBox(height: 6),
-
-          // fecha y ubicación
+          /// Event date and time.
           Row(children: [
             const Icon(Icons.calendar_today, size: 14, color: Color(0xFF7B3FE4)),
             const SizedBox(width: 4),
@@ -232,7 +285,7 @@ class EventsScreen extends StatelessWidget {
               style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
             ),
           ]),
-
+          /// Event location (if available).
           if (event.location.isNotEmpty) ...[
             const SizedBox(height: 4),
             Row(children: [
@@ -241,19 +294,15 @@ class EventsScreen extends StatelessWidget {
               Expanded(child: Text(event.location, style: const TextStyle(fontSize: 13))),
             ]),
           ],
-
           const SizedBox(height: 8),
-
-          // badges tipo y estado
+          /// Event type, status and capacity badges.
           Wrap(spacing: 6, children: [
             _badge(event.eventType, Colors.blue),
             _badge(event.status, event.status == 'FINALIZADO' || event.status == 'CANCELADO' ? Colors.grey : Colors.green),
             _badge('👥 ${event.maxCapacity}', Colors.grey),
           ]),
-
           const SizedBox(height: 10),
-
-          // descripción completa — sin maxLines ni altura fija
+          /// Full event description.
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(14),
@@ -266,7 +315,6 @@ class EventsScreen extends StatelessWidget {
               event.description,
               textAlign: TextAlign.left,
               style: const TextStyle(fontSize: 15, height: 1.4),
-              // sin maxLines → se muestra completa
             ),
           ),
         ],
@@ -274,7 +322,13 @@ class EventsScreen extends StatelessWidget {
     );
   }
 
-  /// EVENTO PASADO — descripción completa, sin altura fija en la card
+  /// Creates a horizontal row layout for a past event with full description.
+  ///
+  /// Admin users see edit and delete icon buttons next to the title.
+  ///
+  /// Parameters:
+  /// - [event]: The event to display.
+  /// - [isAdmin]: Whether the current user has admin privileges.
   Widget _pastEventRow(BuildContext context, Event event, bool isAdmin) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
@@ -283,14 +337,12 @@ class EventsScreen extends StatelessWidget {
         runSpacing: 20,
         alignment: WrapAlignment.center,
         children: [
-
-          // imagen
+          /// Event image.
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: _eventImage(event.imageUrl, width: _cardWidth, height: _cardHeight),
           ),
-
-          // card info — sin altura fija para que no corte
+          /// Event info card without fixed height.
           ConstrainedBox(
             constraints: BoxConstraints(maxWidth: _pastInfoCardWidth, minWidth: 200),
             child: Container(
@@ -303,8 +355,7 @@ class EventsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
-                  // título + botones admin
+                  /// Event title with optional admin action buttons.
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -313,16 +364,16 @@ class EventsScreen extends StatelessWidget {
                             style: const TextStyle(fontSize: 22, fontFamily: "MilkyVintage")),
                       ),
                       if (isAdmin) ...[
+                        /// Edit button.
                         _iconBtn(Icons.edit, const Color(0xFF7B3FE4), () => _openEditEventDialog(context, event)),
                         const SizedBox(width: 4),
+                        /// Delete button.
                         _iconBtn(Icons.delete, Colors.redAccent, () => _confirmDelete(context, event)),
                       ],
                     ],
                   ),
-
                   const SizedBox(height: 8),
-
-                  // fecha y ubicación
+                  /// Event date and optional location.
                   Row(children: [
                     const Icon(Icons.calendar_today, size: 14, color: Colors.grey),
                     const SizedBox(width: 4),
@@ -337,17 +388,14 @@ class EventsScreen extends StatelessWidget {
                       Text(event.location, style: const TextStyle(fontSize: 13, color: Colors.grey)),
                     ],
                   ]),
-
                   const SizedBox(height: 8),
-
+                  /// Event type and status badges.
                   Wrap(spacing: 6, children: [
                     _badge(event.eventType, Colors.blue),
                     _badge(event.status, Colors.grey),
                   ]),
-
                   const SizedBox(height: 10),
-
-                  // descripción completa — sin maxLines
+                  /// Full event description.
                   Text(event.description,
                       style: const TextStyle(fontSize: 14, height: 1.4)),
                 ],
@@ -359,18 +407,25 @@ class EventsScreen extends StatelessWidget {
     );
   }
 
+  /// Creates a styled badge used for event type, status, and capacity.
   Widget _badge(String text, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.4)),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
       ),
       child: Text(text, style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.bold)),
     );
   }
 
+  /// Creates a circular icon button used for edit and delete actions.
+  ///
+  /// Parameters:
+  /// - [icon]: Icon to display inside the button.
+  /// - [color]: Background color of the button.
+  /// - [onTap]: Callback triggered when the button is tapped.
   Widget _iconBtn(IconData icon, Color color, VoidCallback onTap) {
     return Tooltip(
       message: icon == Icons.edit ? 'Editar' : 'Borrar',

@@ -82,7 +82,7 @@ class ApiConector {
   /// to change.
   Future<void> updateAvatar(User user, int id) async {
     try {
-      // just send the imageUrl to update the avatar, the backend should ignore the rest of the fields
+      /// just send the imageUrl to update the avatar, the backend should ignore the rest of the fields
       final response = await dio.put(
         '/users/$id',
         data: {
@@ -95,8 +95,8 @@ class ApiConector {
           'role':      user.role,
           'imageUrl':  user.imageUrl,
           
-          // Empty password should be ignored
-          // by the backend.
+          /// Empty password should be ignored
+          /// by the backend.
           'password':  user.password.isNotEmpty ? user.password : null,
         },
       );
@@ -149,8 +149,8 @@ class ApiConector {
     setToken(token);
     return {'token': token};
   }
-  // Method used to retrieve the
-  // authenticated user's information.
+  /// Method used to retrieve the
+  /// authenticated user's information.
   /// Fetches the authenticated user's data
   /// using the stored JWT token.
   Future<UserWithoutPassword> getMe() async {
@@ -163,7 +163,7 @@ class ApiConector {
 
     throw Exception('Unexpected response from /users/me');
   }
-  // Method used to upload user avatars.
+  /// Method used to upload user avatars.
   /// Uploads a user avatar image
   /// using multipart/form-data.
   ///
@@ -191,7 +191,7 @@ class ApiConector {
 
     throw Exception('No imageUrl received in response.');
   }
-  // Method used to upload pet images.
+  /// Method used to upload pet images.
   /// Uploads a pet image
   /// using multipart/form-data.
   ///
@@ -219,7 +219,7 @@ Future<String> uploadPetsImage(Uint8List fileBytes, String fileName) async {
 
   throw Exception('No imageUrl received in response.');
 }
-  // Method used to upload event images.
+  /// Method used to upload event images.
   /// Uploads an event image
   /// using multipart/form-data.
   ///
@@ -248,7 +248,7 @@ Future<String> uploadEventsImages(Uint8List fileBytes, String fileName) async {
   throw Exception('No imageUrl received in response.');
 }
 
-  // Method used to register a new user.
+  /// Method used to register a new user.
   /// Registers a new user account.
   ///
   /// Strips empty imageUrl before sending
@@ -271,7 +271,7 @@ Future<void> register(Map<String, dynamic> user) async {
   }
 }
 
-  // Method used to fetch all available pets.
+  /// Method used to fetch all available pets.
   Future<List<Pet>> getPets() async {
     final Response<dynamic> response = await dio.get('/pets');
     final List<dynamic> items = _extractList(response.data);
@@ -282,8 +282,8 @@ Future<void> register(Map<String, dynamic> user) async {
         .toList();
   }
 
-  // Method used to fetch a single pet by id.
-  // Falls back to the full list endpoint if /pets/:id is not available.
+  /// Method used to fetch a single pet by id.
+  /// Falls back to the full list endpoint if /pets/:id is not available.
   Future<Pet?> getPetById(int id) async {
     try {
       final Response<dynamic> response = await dio.get('/pets/$id');
@@ -297,7 +297,7 @@ Future<void> register(Map<String, dynamic> user) async {
         return Pet.fromJson(data.first as Map<String, dynamic>);
       }
     } catch (_) {
-      // Fallback to list endpoint for backends that do not expose /pets/:id.
+        /// Fallback to list endpoint for backends that do not expose /pets/:id.
     }
 
     final List<Pet> pets = await getPets();
@@ -309,7 +309,7 @@ Future<void> register(Map<String, dynamic> user) async {
 
     return null;
   }
-  // Method used to add a new pet.
+  /// Method used to add a new pet.
   Future<void> addPet (Pet pet) async {
     final Map<String, dynamic> petData = pet.toJson();
     try {
@@ -321,7 +321,7 @@ Future<void> register(Map<String, dynamic> user) async {
       throw Exception(_extractApiErrorMessage(error));
     }
   }
-  // Method used to update an existing pet.
+  /// Method used to update an existing pet.
   Future<void> updatePet (Pet pet) async {
     final Map<String, dynamic> petData = pet.toJson();
     print('SENDING: $petData'); 
@@ -335,7 +335,7 @@ Future<void> register(Map<String, dynamic> user) async {
       throw Exception(_extractApiErrorMessage(error));
     }
   }
-  // Method used to delete a pet by id.
+  /// Method used to delete a pet by id.
   Future<void> deletePet (int id) async {
     try {
       await dio.delete('/pets/$id');
@@ -344,7 +344,7 @@ Future<void> register(Map<String, dynamic> user) async {
     }
   }
 
-  // Method used to fetch all available events.
+  /// Method used to fetch all available events.
   Future<List<Event>> getEvents() async {
     final Response<dynamic> response = await dio.get('/events');
     final List<dynamic> items = _extractList(response.data);
@@ -354,7 +354,7 @@ Future<void> register(Map<String, dynamic> user) async {
         .map(Event.fromJson)
         .toList();
   }
-  // Method used to add a new event.
+  /// Method used to add a new event.
   Future<void> addEvent (Event event) async {
     final Map<String, dynamic> eventData = event.toJson();
     try {
@@ -366,7 +366,7 @@ Future<void> register(Map<String, dynamic> user) async {
       throw Exception(_extractApiErrorMessage(error));
     }
   }
-  // Method used to update an existing event.
+  /// Method used to update an existing event.
   Future<void> updateEvent (Event event) async {
     final Map<String, dynamic> eventData = event.toJson();
     try {
@@ -378,7 +378,7 @@ Future<void> register(Map<String, dynamic> user) async {
       throw Exception(_extractApiErrorMessage(error));
     }
   }
-  // Method used to delete an event by id.
+  /// Method used to delete an event by id.
   Future<void> deleteEvent (int id) async {
     try {
       await dio.delete('/events/$id');
@@ -386,8 +386,8 @@ Future<void> register(Map<String, dynamic> user) async {
       throw Exception(_extractApiErrorMessage(error));
     }
   }
-  // Helper used to normalize API list responses
-  // before mapping them into model objects.
+  /// Helper used to normalize API list responses
+  /// before mapping them into model objects.
   List<dynamic> _extractList(dynamic data) {
     if (data is List) {
       return data;
@@ -417,8 +417,8 @@ Future<void> register(Map<String, dynamic> user) async {
     );
   }
 
-  // Helper used to extract a readable error message
-  // from a DioException response body.
+  /// Helper used to extract a readable error message
+  /// from a DioException response body.
   String _extractApiErrorMessage(DioException error) {
     final dynamic data = error.response?.data;
 
@@ -436,7 +436,7 @@ Future<void> register(Map<String, dynamic> user) async {
 
     return 'Could not complete the request due to a server error.';
   }
-  // Method used to fetch all donations.
+  /// Method used to fetch all donations.
   Future<List<Donation>> getDonations() async {
     final Response<dynamic> response = await dio.get('/donations');
     final List<dynamic> items = _extractList(response.data);
@@ -447,7 +447,7 @@ Future<void> register(Map<String, dynamic> user) async {
         .toList();
   }
 
-  // Method used to submit a new donation.
+  /// Method used to submit a new donation.
   Future<void> addDonation (Donation donation) async {
     final Map<String, dynamic> donationData = donation.toJson();
     try {
@@ -459,8 +459,7 @@ Future<void> register(Map<String, dynamic> user) async {
       throw Exception(_extractApiErrorMessage(error));
     }
   }
-  
-  // Method used to fetch the authenticated user's donations.
+  /// Method used to fetch the authenticated user's donations.
   Future<List<Donation>> getMeDonation() async {
     final Response<dynamic> response = await dio.get('/donations/me');
     final List<dynamic> items = _extractList(response.data);
@@ -471,7 +470,7 @@ Future<void> register(Map<String, dynamic> user) async {
         .toList();
   }
 
-  // Method used to fetch all user-pet relationships.
+  /// Method used to fetch all user-pet relationships.
   Future <List<Userpetrelationship>> getUserPetRelationShip() async {
     final Response<dynamic> response = await dio.get('/relationships');
       final List<dynamic> items = _extractList(response.data);
@@ -482,11 +481,11 @@ Future<void> register(Map<String, dynamic> user) async {
         .toList();
   }
 
-  // Method used to create a new user-pet relationship.
-  // The user fills a form with a start date, end date, and preferred pet.
-  // The relationship is saved as active=false until an admin approves it.
-  // Once approved, active is set to true and a specific pet is assigned.
-  // The user can then see the assigned pet and the help period in their profile.
+  /// Method used to create a new user-pet relationship.
+  /// The user fills a form with a start date, end date, and preferred pet.
+  /// The relationship is saved as active=false until an admin approves it.
+  /// Once approved, active is set to true and a specific pet is assigned.
+  /// The user can then see the assigned pet and the help period in their profile.
   Future<void> addUserPetRelationship(Userpetrelationship relationship) async {
     final Map<String, dynamic> relationshipData = relationship.toJson();
     try {
@@ -498,7 +497,7 @@ Future<void> register(Map<String, dynamic> user) async {
       throw Exception(_extractApiErrorMessage(error));
     }
   }
-  // Method used to fetch relationships belonging to a specific user.
+  /// Method used to fetch relationships belonging to a specific user.
   Future<List<Userpetrelationship>> getMyRelationships(int idUser) async {
     final Response<dynamic> response = await dio.get('/relationships/user/$idUser');
       final List<dynamic> items = _extractList(response.data);
@@ -508,8 +507,8 @@ Future<void> register(Map<String, dynamic> user) async {
         .map(Userpetrelationship.fromJson)
         .toList();
   }
-  // Method used to trigger the adoption form email.
-  // The backend sends a link to the user's email to fill in the adoption form.
+  /// Method used to trigger the adoption form email.
+  /// The backend sends a link to the user's email to fill in the adoption form.
  Future<void> requestAdoptionForm(int idUser, int idPet) async {
   try {
      await dio.post(
@@ -520,9 +519,9 @@ Future<void> register(Map<String, dynamic> user) async {
     throw Exception(_extractApiErrorMessage(error));
   }
 }
-  // Method used to submit the adoption form received by email.
-  // Creates a new record in adoption-requests.
-  // When the admin approves it, a new user-pet relationship is automatically created.
+  /// Method used to submit the adoption form received by email.
+  /// Creates a new record in adoption-requests.
+  /// When the admin approves it, a new user-pet relationship is automatically created.
   Future <void> submitAdoptionForm(Map<String, dynamic> formData, String token) async {
     try {
       await dio.post('/adoption-form/submit/$token', data: formData);
@@ -530,7 +529,7 @@ Future<void> register(Map<String, dynamic> user) async {
       throw Exception(_extractApiErrorMessage(error));
     }
   }
-  // Method used to fetch all adoption requests (admin only).
+  /// Method used to fetch all adoption requests (admin only).
   Future <List<AdoptionRequest>> getAdoptionRequest() async {
     final Response<dynamic> response = await dio.get('/adoption-requests');
     final List<dynamic> items = _extractList(response.data);
@@ -539,7 +538,7 @@ Future<void> register(Map<String, dynamic> user) async {
         .map(AdoptionRequest.fromJson)
         .toList();
   }
-  // Method used to fetch the authenticated user's adoption requests.
+  /// Method used to fetch the authenticated user's adoption requests.
   Future <List<AdoptionRequest>> getMeAdoptionRequest() async {
     final Response<dynamic> response = await dio.get('/adoption-requests/me');
     final List<dynamic> items = _extractList(response.data);
@@ -548,7 +547,7 @@ Future<void> register(Map<String, dynamic> user) async {
         .map(AdoptionRequest.fromJson)
         .toList();
   }
-  // Method used to update the status of a user-pet relationship.
+  /// Method used to update the status of a user-pet relationship.
 Future<void> updateRelationshipStatus(int relationshipId, Userpetrelationship relationship) async {
   try {
     await dio.put('/relationships/$relationshipId', data: relationship.toJson());
@@ -557,8 +556,8 @@ Future<void> updateRelationshipStatus(int relationshipId, Userpetrelationship re
   }
 }
 
-  // Method used to update the status of an adoption request.
-  // Only accepts: pending, approved or denied.
+  /// Method used to update the status of an adoption request.
+  /// Only accepts: pending, approved or denied.
 Future<void> updateAdoptionStatus(int requestId, String newStatus) async {
   try {
     await dio.patch('/adoption-requests/$requestId/status', queryParameters: {'status': newStatus});
@@ -566,7 +565,7 @@ Future<void> updateAdoptionStatus(int requestId, String newStatus) async {
     throw Exception(_extractApiErrorMessage(error));
   }
 }
-  // Method used to create a relationship for the authenticated user (no admin privileges required).
+  /// Method used to create a relationship for the authenticated user (no admin privileges required).
 Future <void> postMyRelationships(Userpetrelationship relationship) async {
   final Map<String, dynamic> relationshipData = relationship.toJson();
     try {
@@ -579,4 +578,13 @@ Future <void> postMyRelationships(Userpetrelationship relationship) async {
     }
 
   }
+  /// Method used to send a message from the contact form to the backend, which then forwards it to the organization's email.
+
+Future<void> sendContactMessage(Map<String, dynamic> messageData) async {
+  try {
+    await dio.post('/contact', data: messageData);
+  } on DioException catch (error) {
+    throw Exception(_extractApiErrorMessage(error));
+  } 
+}
 }

@@ -5,9 +5,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+/// Screen that serves as a navigation hub for the user or admin panel.
+///
+/// - Admin users see the administration panel with options to
+///   manage donations and adoption requests.
+/// - Regular users see their personal panel with options to
+///   view their own donations and requests.
+///
+/// It also includes the application's shared
+/// header and footer components.
 class PanelScreen extends StatelessWidget {
+  /// Creates the panel screen widget.
   const PanelScreen({super.key});
 
+  /// Builds the panel screen UI.
+  ///
+  /// Layout structure:
+  /// - Application header.
+  /// - Banner image.
+  /// - Screen title (dynamic based on user role).
+  /// - Navigation cards grid.
+  /// - Application footer.
   @override
   Widget build(BuildContext context) {
     final authState = context.watch<AuthBloc>().state;
@@ -17,10 +35,13 @@ class PanelScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            /// Shared application header.
             AppHeader(),
+            /// Main banner image.
             Image.asset('assets/images/banners/banner-inicio.png',
                 width: double.infinity, height: 250, fit: BoxFit.cover),
             const SizedBox(height: 40),
+            /// Screen title, dynamic based on user role.
             Text(
               isAdmin ? 'Panel de Administración' : 'Mis cosas',
               style: const TextStyle(
@@ -30,11 +51,13 @@ class PanelScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 40),
+            /// Navigation cards grid.
             Wrap(
               spacing: 24,
               runSpacing: 24,
               alignment: WrapAlignment.center,
               children: [
+                /// Donations navigation card.
                 _panelCard(
                   context,
                   icon: Icons.volunteer_activism,
@@ -44,6 +67,7 @@ class PanelScreen extends StatelessWidget {
                       : 'Ver mis donaciones',
                   onTap: () => context.go('/panel/donations'),
                 ),
+                /// Adoption requests navigation card.
                 _panelCard(
                   context,
                   icon: Icons.pets,
@@ -51,11 +75,12 @@ class PanelScreen extends StatelessWidget {
                   subtitle: isAdmin
                       ? 'Gestionar solicitudes de adopción'
                       : 'Ver mis solicitudes de adopción',
-                  onTap: () => context.go('/panel/relationships'), 
+                  onTap: () => context.go('/panel/relationships'),
                 ),
               ],
             ),
             const SizedBox(height: 60),
+            /// Shared application footer.
             const AppFooter(),
           ],
         ),
@@ -63,6 +88,14 @@ class PanelScreen extends StatelessWidget {
     );
   }
 
+  /// Creates a styled navigation card with an icon, title, subtitle,
+  /// and tap callback.
+  ///
+  /// Parameters:
+  /// - [icon]: Icon displayed inside the card avatar.
+  /// - [title]: Main card title.
+  /// - [subtitle]: Descriptive subtitle text.
+  /// - [onTap]: Callback triggered when the card is tapped.
   Widget _panelCard(BuildContext context, {
     required IconData icon,
     required String title,
@@ -80,28 +113,39 @@ class PanelScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: Colors.purple.shade100, width: 2),
           boxShadow: [
-            BoxShadow(color: Colors.purple.withOpacity(0.08),
-                blurRadius: 12, offset: const Offset(0, 4)),
+            BoxShadow(
+              color: Colors.purple.withOpacity(0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
           ],
         ),
         child: Column(
           children: [
+            /// Card icon avatar.
             CircleAvatar(
               radius: 32,
               backgroundColor: const Color(0xFF7B3FE4),
               child: Icon(icon, color: Colors.white, size: 32),
             ),
             const SizedBox(height: 16),
-            Text(title,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'MilkyVintage')),
+            /// Card title.
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'MilkyVintage',
+              ),
+            ),
             const SizedBox(height: 8),
-            Text(subtitle,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 13, color: Colors.grey[600])),
+            /// Card subtitle.
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+            ),
           ],
         ),
       ),

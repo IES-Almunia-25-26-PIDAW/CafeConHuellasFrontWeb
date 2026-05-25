@@ -1,6 +1,7 @@
 import 'package:cafeconhuellas_front/presentation/widgets/app_footer.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_header.dart';
 import 'package:cafeconhuellas_front/theme/AppColors.dart';
+import 'package:cafeconhuellas_front/utils/api_conector.dart';
 import 'package:flutter/material.dart';
 
 /// Screen that allows users to contact the organization.
@@ -34,18 +35,42 @@ class _ContactusScreenState
   final messageController = TextEditingController();
   /// Handles contact form submission.
   ///
-  /// Currently displays a confirmation snackbar.
-  /// This method can later be connected to
-  /// a backend API or email service.
-  void sendForm() {
+  /// 
+  /// This method is connected to our
+  /// a backend API .
+ void sendForm() async {
+  final contactData = {
+    'nombre': nameController.text,
+    'email': emailController.text,
+    'mensaje': messageController.text,
+  };
+
+  try {
+    await ApiConector().sendContactMessage(contactData);
+
+    if (!mounted) return;
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text(
-          'Mensaje enviado correctamente',
-        ),
+        content: Text('Mensaje enviado con éxito'),
+        backgroundColor: AppColors.darkViolet,
+      ),
+    );
+    nameController.clear();
+    emailController.clear();
+    messageController.clear();
+
+  } catch (error) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Error al enviar el mensaje: $error'),
+        backgroundColor: Colors.red,
       ),
     );
   }
+}
   /// Releases all text controllers when
   /// the widget is removed from memory.
   ///

@@ -12,18 +12,42 @@ import '../bloc/auth_bloc.dart';
 import '../bloc/auth_state.dart';
 import '../bloc/auth_event.dart';
 
+/// Screen that displays the current user's profile information.
+///
+/// This screen contains:
+/// - Profile avatar with change photo option.
+/// - User name, email, phone, and role.
+/// - Navigation button to the admin panel or user panel.
+/// - Logout button.
+///
+/// It also includes the application's shared
+/// header and footer components.
 class ProfileScreen extends StatefulWidget {
+  /// Creates the profile screen widget.
   const ProfileScreen({super.key});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
+/// State class responsible for managing:
+/// - Avatar upload state.
+/// - Avatar change dialog.
+/// - Widget lifecycle.
 class _ProfileScreenState extends State<ProfileScreen> {
+
+  /// Whether an avatar upload is currently in progress.
   bool _uploadingAvatar = false;
 
-  //tenemos que mostrar el díalogo de confirmación si el usuario le hace tap a su foto de perfil para poder cambiar dicha foto de perfil:
-  //el método para realizar eso es el siguiente:
+  /// Shows a confirmation dialog and handles avatar image selection and upload.
+  ///
+  /// On confirmation:
+  /// - Opens the device image gallery.
+  /// - Uploads the selected image to the backend.
+  /// - Dispatches [UpdateAvatarRequested] to [AuthBloc] on success.
+  ///
+  /// Shows a success or error [SnackBar] depending on the result.
+  /// Verifies [mounted] before using [BuildContext] after async gaps.
   Future<void> _onAvatarTap(BuildContext context) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -32,12 +56,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: const Text("Cambiar foto de perfil"),
         content: const Text("¿Quieres seleccionar una nueva foto de perfil?"),
         actions: [
-          //botón para cancelar
+          /// Cancel button.
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
             child: const Text("Cancelar"),
           ),
-          //botón para seleccionar la foto
+          /// Confirm selection button.
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.purple,
@@ -53,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
 
-    //si la confirmación no ha sido verdadera no hacemos nada, si ha sido verdadera abrimos el selector de imagen
+    /// Exit if the user cancelled.
     if (confirmed != true) return;
 
     final plugin = ImagePickerPlugin();
@@ -70,7 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       final String newImageUrl = await ApiConector().uploadAvatar(bytes, fileName);
 
-      // el Bloc se encarga del PUT al backend y de actualizar el estado
+      /// Verify mounted before using context after the async gap.
       if (!context.mounted) return;
       context.read<AuthBloc>().add(UpdateAvatarRequested(newImageUrl));
 
@@ -93,29 +117,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  /// Builds the profile screen UI.
+  ///
+  /// Layout structure:
+  /// - Application header.
+  /// - Banner with floating avatar.
+  /// - Profile card with user info.
+  /// - Admin panel or user panel button (role dependent).
+  /// - Logout button.
+  /// - Application footer.
+  ///
+  /// Shows a loading state if user data is not yet available.
+  /// Shows a not-authenticated message if the user is not logged in.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
 
-          // Si hay token, estamos autenticados, aunque falten datos del usuario
+          /// Not authenticated state.
           if (!state.isAuthenticated) {
             return const Center(child: Text("No has iniciado sesión"));
           }
-          // cogemos el usuario del estado del bloc
+
           final user = state.user;
           final bool isAdmin = user?.role.toUpperCase() == "ADMIN";
+
           return SingleChildScrollView(
             child: Column(
               children: [
+                /// Shared application header.
                 AppHeader(),
-                // HEADER BONITO CON EL AVATAR FLOTANTE
+                /// Banner with floating avatar.
                 Stack(
                   clipBehavior: Clip.none,
                   alignment: Alignment.center,
                   children: [
-                    // Banner
+                    /// Background banner image.
                     Container(
                       height: 220,
                       width: double.infinity,
@@ -128,7 +166,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                     ),
-                   // Avatar flotante para que se vea bonito, con GestureDetector para poder cambiar la foto
+                    /// Floating avatar with tap-to-change support.
                     Positioned(
                       bottom: -50,
                       child: GestureDetector(
@@ -141,7 +179,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             CircleAvatar(
                               radius: 62,
                               backgroundColor: Colors.white,
-                              // si está subiendo mostramos el loading, si no la foto
+                              /// Shows loading indicator while uploading,
+                              /// otherwise shows the user's profile image.
                               child: _uploadingAvatar
                                   ? const CircularProgressIndicator(
                                       color: Colors.purple)
@@ -154,7 +193,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               as ImageProvider,
                                     ),
                             ),
-                            // icono de cámara para indicarle al usuario que puede pulsar para cambiar la foto
+                            /// Camera icon indicating the avatar is tappable.
                             if (!_uploadingAvatar)
                               CircleAvatar(
                                 radius: 16,
@@ -174,7 +213,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: 60),
 
-                // CONTENIDO
+                /// Profile card with user information and action buttons.
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Center(
@@ -189,34 +228,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           padding: const EdgeInsets.all(28),
                           child: Column(
                             children: [
-                              //si hemos podido obtener los datos del usuario, los mostramos en modo de tarjetita abajo para que se vea mas bonito
+                              /// User data loaded state.
                               if (user != null) ...[
+                                /// User full name.
                                 Text(
                                   "${user.firstName} ${user.lastName1}",
                                   style: const TextStyle(
                                     fontSize: 35,
                                     fontWeight: FontWeight.bold,
-                                    fontFamily: "MilkyVintage"
+                                    fontFamily: "MilkyVintage",
                                   ),
                                 ),
                                 const SizedBox(height: 6),
+                                /// User email.
                                 Text(
                                   user.email,
                                   style: TextStyle(
                                     fontSize: 28,
                                     color: Colors.grey[600],
-                                    fontFamily: "MilkyVintage"
+                                    fontFamily: "MilkyVintage",
                                   ),
                                 ),
                                 const SizedBox(height: 20),
                                 const Divider(),
                                 const SizedBox(height: 10),
-                                // TARJETITAS BONITAS
+                                /// Phone and role info cards.
                                 _infoCard(Icons.phone, "Teléfono", user.phone),
                                 _infoCard(Icons.badge, "Rol", user.role),
                               ]
 
-                              // si no hemos podido obtener los datos del usuario mostramos loading
+                              /// User data loading state.
                               else ...[
                                 const Text(
                                   "Sesión Activa",
@@ -225,16 +266,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-
                                 const SizedBox(height: 10),
-
                                 const Text(
                                   "Cargando datos del usuario...",
                                   style: TextStyle(color: Colors.grey),
                                 ),
-
                                 const SizedBox(height: 20),
-
                                 const CircularProgressIndicator(
                                   color: Colors.purple,
                                 ),
@@ -242,8 +279,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                               const SizedBox(height: 30),
 
-                              // botón de configuración web, solo visible si el usuario es ADMIN
-                              //nos lleva a la página del admin
+                              /// Admin panel button, visible to admin users only.
                               if (isAdmin) ...[
                                 ElevatedButton.icon(
                                   style: ElevatedButton.styleFrom(
@@ -263,8 +299,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                                 const SizedBox(height: 12),
                               ],
+
+                              /// User panel button, visible to regular users only.
                               if (!isAdmin) ...[
-                                 ElevatedButton.icon(
+                                ElevatedButton.icon(
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.purple,
                                     foregroundColor: Colors.white,
@@ -278,7 +316,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 const SizedBox(height: 12),
                               ],
 
-                              // botón logout
+                              /// Logout button.
                               ElevatedButton.icon(
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.redAccent,
@@ -292,9 +330,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  context
-                                      .read<AuthBloc>()
-                                      .add(LogoutRequested());
+                                  context.read<AuthBloc>().add(LogoutRequested());
                                   context.go('/');
                                 },
                                 icon: const Icon(Icons.logout),
@@ -309,7 +345,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
 
                 const SizedBox(height: 20),
-
+                /// Shared application footer.
                 const AppFooter(),
               ],
             ),
@@ -319,7 +355,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // Widget más bonito tipo card para mostrar la información del usuario, con un icono a la izquierda, el label y el valor, todo dentro de una caja con fondo gris claro y bordes redondeados.
+  /// Creates a styled info card displaying a labeled value with an icon.
+  ///
+  /// Used for displaying:
+  /// - Phone number.
+  /// - User role.
+  ///
+  /// Parameters:
+  /// - [icon]: Icon displayed on the left.
+  /// - [label]: Small label text shown above the value.
+  /// - [value]: Main value text displayed below the label.
   Widget _infoCard(IconData icon, String label, String value) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),

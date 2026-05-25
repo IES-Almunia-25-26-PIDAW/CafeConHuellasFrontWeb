@@ -7,26 +7,67 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker_for_web/image_picker_for_web.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 
+/// Screen that allows new users to register an account.
+///
+/// This screen contains:
+/// - Profile photo selector.
+/// - First name, last names, email, phone, and password fields.
+/// - Form validation for all fields.
+/// - Registration button.
+/// - Link to the login screen.
 class RegisterScreen extends StatefulWidget {
+  /// Creates the register screen widget.
   const RegisterScreen({super.key});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
+/// State class responsible for managing:
+/// - Form controllers and validation key.
+/// - Image selection state.
+/// - Form submission and loading state.
+/// - Widget lifecycle.
 class _RegisterScreenState extends State<RegisterScreen> {
+
+  /// Global key used to validate the form.
   final _formKey = GlobalKey<FormState>();
+
+  /// Controller used for the first name input field.
   final firstNameController = TextEditingController();
+
+  /// Controller used for the first last name input field.
   final lastName1Controller = TextEditingController();
+
+  /// Controller used for the second last name input field.
   final lastName2Controller = TextEditingController();
+
+  /// Controller used for the email input field.
   final emailController = TextEditingController();
+
+  /// Controller used for the phone input field.
   final phoneController = TextEditingController();
+
+  /// Controller used for the password input field.
   final passwordController = TextEditingController();
 
+  /// Bytes of the selected profile image.
+  ///
+  /// Null if no image has been selected.
   Uint8List? _imageBytes;
+
+  /// File name of the selected profile image.
+  ///
+  /// Null if no image has been selected.
   String? _imageFileName;
+
+  /// Whether the registration form is currently submitting.
   bool _isLoading = false;
 
+  /// Releases all text controllers when
+  /// the widget is removed from memory.
+  ///
+  /// Prevents memory leaks.
   @override
   void dispose() {
     firstNameController.dispose();
@@ -38,6 +79,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
+  /// Opens the device image gallery and stores the selected image.
+  ///
+  /// Updates [_imageBytes] and [_imageFileName] on success.
   Future<void> _pickImage() async {
     final plugin = ImagePickerPlugin();
     final XFile? picked = await plugin.getImageFromSource(
@@ -52,7 +96,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
   }
 
-  // Validadores 
+  /// Validates that the field contains only letters.
+  ///
+  /// Returns an error message if invalid, or null if valid.
   String? _validateName(String? value) {
     if (value == null || value.trim().isEmpty) return 'Este campo es obligatorio';
     final soloLetras = RegExp(r"^[a-záéíóúäëïöüàèìòùñA-ZÁÉÍÓÚÄËÏÖÜÀÈÌÒÙÑ\s'-]+$", unicode: true);
@@ -60,6 +106,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return null;
   }
 
+  /// Validates that the field contains a valid email address.
+  ///
+  /// Returns an error message if invalid, or null if valid.
   String? _validateEmail(String? value) {
     if (value == null || value.trim().isEmpty) return 'El email es obligatorio';
     final emailRegex = RegExp(r'^[\w.+-]+@[\w-]+\.[\w.]+$');
@@ -67,6 +116,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return null;
   }
 
+  /// Validates that the field contains a valid phone number.
+  ///
+  /// Returns an error message if invalid, or null if valid.
   String? _validatePhone(String? value) {
     if (value == null || value.trim().isEmpty) return 'El teléfono es obligatorio';
     final phoneRegex = RegExp(r'^\+?[0-9]{7,15}$');
@@ -74,14 +126,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return null;
   }
 
+  /// Validates that the password meets the minimum length requirement.
+  ///
+  /// Returns an error message if invalid, or null if valid.
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) return 'La contraseña es obligatoria';
     if (value.length < 6) return 'Mínimo 6 caracteres';
     return null;
   }
 
-  // Submit 
-
+  /// Handles form submission.
+  ///
+  /// Validates all fields before proceeding.
+  /// Uploads the selected image if present.
+  /// Sends the registration data to the backend API.
+  ///
+  /// Shows a success dialog and redirects to login on success.
+  /// Shows an error dialog if the registration fails.
+  ///
+  /// Verifies [mounted] before using [BuildContext] after async gaps.
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -91,6 +154,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     String? errorMessage;
 
     try {
+      /// Upload avatar image if one was selected.
       if (_imageBytes != null && _imageFileName != null) {
         imageUrl = await ApiConector().uploadAvatar(_imageBytes!, _imageFileName!);
       }
@@ -110,12 +174,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       errorMessage = e.toString();
     }
 
-    // ✅ Un único punto de uso del context, ya fuera del try/catch
+    /// Verify mounted before using context after the async gap.
     if (!mounted) return;
 
     setState(() => _isLoading = false);
 
     if (errorMessage != null) {
+      /// Show error dialog on failed registration.
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
@@ -130,6 +195,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       );
     } else {
+      /// Show success dialog and redirect to login.
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
@@ -149,6 +215,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
+  /// Builds the register screen UI.
+  ///
+  /// Layout structure:
+  /// - Centered card with registration form.
+  /// - Avatar selector.
+  /// - Name, email, phone, and password fields.
+  /// - Registration button with loading indicator.
+  /// - Link to the login screen.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -168,6 +242,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            /// Screen title.
                             Text(
                               "Registro",
                               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
@@ -176,6 +251,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ),
                             ),
                             const SizedBox(height: 16),
+                            /// Avatar image selector.
                             GestureDetector(
                               onTap: _pickImage,
                               child: Stack(
@@ -202,6 +278,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                             ),
                             const SizedBox(height: 6),
+                            /// Image selection status label.
                             Text(
                               _imageBytes != null ? "Foto seleccionada ✓" : "Añadir foto de perfil",
                               style: TextStyle(
@@ -210,18 +287,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                             ),
                             const SizedBox(height: 20),
+                            /// First name input field.
                             _input("Nombre", firstNameController, validator: _validateName),
                             const SizedBox(height: 15),
+                            /// First last name input field.
                             _input("Primer apellido", lastName1Controller, validator: _validateName),
                             const SizedBox(height: 15),
+                            /// Second last name input field.
                             _input("Segundo apellido", lastName2Controller, validator: _validateName),
                             const SizedBox(height: 15),
+                            /// Email input field.
                             _input("Email", emailController, validator: _validateEmail),
                             const SizedBox(height: 15),
+                            /// Phone input field.
                             _input("Teléfono", phoneController, validator: _validatePhone),
                             const SizedBox(height: 15),
+                            /// Password input field.
                             _input("Contraseña", passwordController, isPassword: true, validator: _validatePassword),
                             const SizedBox(height: 20),
+                            /// Registration button.
+                            ///
+                            /// Disabled while submitting.
+                            /// Shows a loading indicator during submission.
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.purple,
@@ -244,6 +331,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       ),
                                     ),
                             ),
+                            /// Link to the login screen.
                             TextButton(
                               onPressed: () => context.go('/login'),
                               child: const Text("¿Ya tienes cuenta? Inicia sesión"),
@@ -263,6 +351,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 }
 
+/// Creates a reusable styled validated text input field.
+///
+/// Parameters:
+/// - [label]: Label text shown inside the field.
+/// - [controller]: Controller linked to the input field.
+/// - [isPassword]: Whether to obscure the input text. Defaults to false.
+/// - [validator]: Optional validation function returning an error message or null.
 Widget _input(
   String label,
   TextEditingController controller, {

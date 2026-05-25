@@ -6,24 +6,49 @@ import 'package:cafeconhuellas_front/utils/api_conector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+/// Screen that displays a list of donations.
+///
+/// - Regular users see only their own donations.
+/// - Admin users see all donations in the system.
+///
+/// It also includes the application's shared
+/// header and footer components.
 class MyDonationsScreen extends StatelessWidget {
-  final ApiConector? api; // ← nuevo parámetro opcional
+
+  /// Optional API connector instance.
+  ///
+  /// Allows injecting a mock connector for testing purposes.
+  /// Defaults to [ApiConector] if not provided.
+  final ApiConector? api;
+
+  /// Creates the donations list screen widget.
   const MyDonationsScreen({super.key, this.api});
 
+  /// Builds the donations screen UI.
+  ///
+  /// Layout structure:
+  /// - Application header.
+  /// - Banner image.
+  /// - Screen title (dynamic based on user role).
+  /// - Donation list loaded asynchronously via [FutureBuilder].
+  /// - Application footer.
   @override
   Widget build(BuildContext context) {
     final authState = context.watch<AuthBloc>().state;
     final bool isAdmin = authState.user?.role.toUpperCase() == 'ADMIN';
-     final _api = api ?? ApiConector();
+    final _api = api ?? ApiConector();
 
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
+            /// Shared application header.
             AppHeader(),
+            /// Main banner image.
             Image.asset('assets/images/banners/banner-inicio.png',
                 width: double.infinity, height: 250, fit: BoxFit.cover),
             const SizedBox(height: 40),
+            /// Screen title, dynamic based on user role.
             Text(
               isAdmin ? 'Todas las Donaciones' : 'Mis Donaciones',
               style: const TextStyle(
@@ -33,17 +58,23 @@ class MyDonationsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
+            /// Donation list loaded asynchronously.
+            ///
+            /// Calls [getDonations] for admin users,
+            /// or [getMeDonation] for regular users.
             FutureBuilder<List<Donation>>(
               future: isAdmin
                   ? _api.getDonations()
                   : _api.getMeDonation(),
               builder: (context, snapshot) {
+                /// Loading state.
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Padding(
                     padding: EdgeInsets.symmetric(vertical: 40),
                     child: CircularProgressIndicator(color: Color(0xFF7B3FE4)),
                   );
                 }
+                /// Error state.
                 if (snapshot.hasError) {
                   return Padding(
                     padding: const EdgeInsets.all(20),
@@ -52,12 +83,14 @@ class MyDonationsScreen extends StatelessWidget {
                   );
                 }
                 final donations = snapshot.data ?? [];
+                /// Empty state.
                 if (donations.isEmpty) {
                   return const Padding(
                     padding: EdgeInsets.all(20),
                     child: Text('No hay donaciones disponibles.'),
                   );
                 }
+                /// Donation list.
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40),
                   child: Column(
@@ -67,13 +100,21 @@ class MyDonationsScreen extends StatelessWidget {
               },
             ),
             const SizedBox(height: 60),
+            /// Shared application footer.
             const AppFooter(),
           ],
         ),
       ),
     );
   }
-//tarjeta de donaciones
+
+  /// Creates a styled card that displays a single donation entry.
+  ///
+  /// Shows:
+  /// - Donation amount.
+  /// - Category and payment method.
+  /// - Optional notes.
+  /// - Submission date.
   Widget _donationCard(Donation d) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -89,6 +130,7 @@ class MyDonationsScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
+          /// Donation icon avatar.
           CircleAvatar(
             backgroundColor: const Color(0xFF7B3FE4),
             child: const Icon(Icons.volunteer_activism, color: Colors.white),
@@ -98,17 +140,21 @@ class MyDonationsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                /// Donation amount.
                 Text('${d.amount} €',
                     style: const TextStyle(
                         fontSize: 18, fontWeight: FontWeight.bold)),
+                /// Category and payment method.
                 Text('${d.category} · ${d.method}',
                     style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+                /// Optional notes.
                 if (d.notes.isNotEmpty)
                   Text(d.notes,
                       style: TextStyle(color: Colors.grey[500], fontSize: 12)),
               ],
             ),
           ),
+          /// Submission date.
           Text(
             '${d.date.day.toString().padLeft(2, '0')}/'
             '${d.date.month.toString().padLeft(2, '0')}/'

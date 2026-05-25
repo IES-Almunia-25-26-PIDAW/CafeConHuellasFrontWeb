@@ -10,24 +10,47 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+/// Main landing screen of the application.
+///
+/// This screen contains:
+/// - Organization welcome message.
+/// - "What we do" action items section.
+/// - Featured pets section.
+/// - Upcoming events section.
+/// - Link to the mini game.
+///
+/// It also includes the application's shared
+/// header and footer components.
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
+  /// Builds the home screen UI.
+  ///
+  /// Layout structure:
+  /// - Application header.
+  /// - Banner image.
+  /// - Welcome text.
+  /// - Action items section.
+  /// - Featured pets loaded from [PetsBloc].
+  /// - Events loaded from [PetsBloc].
+  /// - Mini game button.
+  /// - Application footer.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
+            /// Shared application header.
             AppHeader(userImageUrl: "assets/user.png"),
-            //banner
+            /// Main banner image.
             Image.asset(
               "assets/images/banners/banner-inicio.png",
               width: double.infinity,
               height: 400,
               fit: BoxFit.cover,
             ),
-            //Quienes somos
+            /// Organization welcome message.
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 40),
               child: Text(
@@ -40,44 +63,32 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
             ),
-            //que hacemos
+            /// "What we do" section.
             _sectionTitle("Qué hacemos"),
             Wrap(
               spacing: 60,
               runSpacing: 40,
               alignment: WrapAlignment.center,
               children: const [
-                ActionItem(
-                  "assets/icons/rescate.png",
-                  "Rescatamos animales en situación de abandono.",
-                ),
-                ActionItem(
-                  "assets/icons/cuidados.png",
-                  "Les damos cuidados veterinarios y alimentación.",
-                ),
-                ActionItem(
-                  "assets/icons/adopcion.png",
-                  "Buscamos familias responsables para adopción.",
-                ),
-                ActionItem(
-                  "assets/icons/educacion.png",
-                  "Concienciamos sobre el respeto animal.",
-                ),
+                ActionItem("assets/icons/rescate.png", "Rescatamos animales en situación de abandono."),
+                ActionItem("assets/icons/cuidados.png", "Les damos cuidados veterinarios y alimentación."),
+                ActionItem("assets/icons/adopcion.png", "Buscamos familias responsables para adopción."),
+                ActionItem("assets/icons/educacion.png", "Concienciamos sobre el respeto animal."),
               ],
             ),
             const SizedBox(height: 60),
-            //Mascotas
+            /// Featured pets section loaded from [PetsBloc].
             _sectionTitle("Nuestras mascotas"),
             BlocBuilder<PetsBloc, PetsState>(
               builder: (context, state) {
-                //si estña cargando mostramos un indicador de carga
+                /// Loading state.
                 if (state.isLoading) {
                   return const Padding(
                     padding: EdgeInsets.symmetric(vertical: 24),
                     child: CircularProgressIndicator(),
                   );
                 }
-                //si hay un error lo mostramos
+                /// Error state.
                 if (state.errorMessage != null) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 24),
@@ -87,16 +98,15 @@ class HomeScreen extends StatelessWidget {
                     ),
                   );
                 }
-                //si todo va bien guardo los pets en una variable y los muestro
                 final pets = state.pets.take(4).toList();
-                //si no he podido coger mascotas retorno un aviso
+                /// Empty state.
                 if (pets.isEmpty) {
                   return const Padding(
                     padding: EdgeInsets.symmetric(vertical: 24),
                     child: Text("No hay mascotas disponibles en este momento."),
                   );
                 }
-                //si he podido cargar mascotas muestro pet cards
+                /// Pet cards list.
                 return Wrap(
                   spacing: 30,
                   runSpacing: 30,
@@ -106,25 +116,24 @@ class HomeScreen extends StatelessWidget {
               },
             ),
             const SizedBox(height: 20),
-            //añado un botón que me lleva hasta la página de mascotas
+            /// Button linking to the full pets screen.
             ElevatedButton(
-              onPressed: () {
-                context.go("/pets");
-              },
+              onPressed: () => context.go("/pets"),
               child: const Text("Ver más"),
             ),
             const SizedBox(height: 60),
-            //Sección de eventos
+            /// Events section loaded from [PetsBloc].
             _sectionTitle("Eventos"),
-            //funciona exactamente igual que la sección de mascotas, pero con eventos en vez de mascotas
             BlocBuilder<PetsBloc, PetsState>(
               builder: (context, state) {
+                /// Loading state.
                 if (state.isLoading) {
                   return const Padding(
                     padding: EdgeInsets.symmetric(vertical: 24),
                     child: CircularProgressIndicator(),
                   );
                 }
+                /// Error state.
                 if (state.errorMessage != null) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 24),
@@ -135,14 +144,14 @@ class HomeScreen extends StatelessWidget {
                   );
                 }
                 final events = state.events.take(3).toList();
-
+                /// Empty state.
                 if (events.isEmpty) {
                   return const Padding(
                     padding: EdgeInsets.symmetric(vertical: 24),
                     child: Text("No hay eventos disponibles en este momento."),
                   );
                 }
-                //si he podido cargar eventos muestro event cards, gracias al método map
+                /// Event cards list.
                 return Wrap(
                   spacing: 30,
                   runSpacing: 30,
@@ -156,16 +165,14 @@ class HomeScreen extends StatelessWidget {
               },
             ),
             const SizedBox(height: 60),
-            //videojuego
+            /// Mini game section.
             _sectionTitle("¡Prueba nuestro videojuego!"),
             ElevatedButton(
-              onPressed: () {
-                context.go("/videojuego");
-              },
+              onPressed: () => context.go("/videojuego"),
               child: const Text("Jugar ahora →"),
             ),
             const SizedBox(height: 80),
-            //footer
+            /// Shared application footer.
             AppFooter(),
           ],
         ),
@@ -173,6 +180,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  /// Creates a styled section title used throughout the screen.
   Widget _sectionTitle(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 40),

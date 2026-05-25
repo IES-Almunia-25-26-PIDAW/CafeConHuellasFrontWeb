@@ -9,16 +9,36 @@ import 'package:cafeconhuellas_front/utils/api_conector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+/// Screen that allows users to make donations or start an adoption process.
+///
+/// This screen contains:
+/// - A donation form dialog.
+/// - An adoption request dialog.
+/// - Two action columns linking to each option.
+///
+/// It also includes the application's shared
+/// header and footer components.
 class DonationsScreen extends StatelessWidget {
   const DonationsScreen({super.key});
 
+  /// Available donation categories.
   static const _categories = ['MONETARIA', 'ALIMENTACION', 'MATERIAL', 'JUGUETES', 'MEDICAMENTOS', 'SUSCRIPCION', 'OTROS'];
-  static const _methods    = ['EFECTIVO', 'TRANSFERENCIA', 'TARJETA', 'BIZUM', 'ESPECIE'];
 
+  /// Available payment methods.
+  static const _methods = ['EFECTIVO', 'TRANSFERENCIA', 'TARJETA', 'BIZUM', 'ESPECIE'];
+
+  /// Shows a dialog that allows the user to submit a donation.
+  ///
+  /// The dialog includes:
+  /// - Date picker.
+  /// - Category and payment method dropdowns.
+  /// - Amount and optional notes fields.
+  ///
+  /// On success, sends the donation to the backend API.
   Future<void> _showDonationDialog(BuildContext context) async {
     final amountCtrl = TextEditingController();
     final notesCtrl  = TextEditingController();
-    DateTime selectedDate = DateTime.now().subtract(  const Duration(days: 1)); // por defecto, ayer
+    DateTime selectedDate = DateTime.now().subtract(const Duration(days: 1));
     String category = 'MONETARIA';
     String method   = 'TARJETA';
 
@@ -33,7 +53,7 @@ class DonationsScreen extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // fecha
+                /// Date picker selector.
                 InkWell(
                   onTap: () async {
                     final picked = await showDatePicker(
@@ -66,10 +86,13 @@ class DonationsScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
+                /// Category dropdown.
                 _dialogDropdown('Categoría', category, _categories, (v) => setState(() => category = v!)),
                 const SizedBox(height: 12),
+                /// Payment method dropdown.
                 _dialogDropdown('Método de pago', method, _methods, (v) => setState(() => method = v!)),
                 const SizedBox(height: 12),
+                /// Amount input field.
                 TextField(
                   controller: amountCtrl,
                   keyboardType: TextInputType.number,
@@ -81,6 +104,7 @@ class DonationsScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
+                /// Optional notes input field.
                 TextField(
                   controller: notesCtrl,
                   maxLines: 3,
@@ -95,10 +119,12 @@ class DonationsScreen extends StatelessWidget {
             ),
           ),
           actions: [
+            /// Cancel button.
             TextButton(
               onPressed: () => Navigator.pop(ctx),
               child: const Text('Cancelar'),
             ),
+            /// Confirm donation button.
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF7B3FE4),
@@ -142,6 +168,13 @@ class DonationsScreen extends StatelessWidget {
     );
   }
 
+  /// Creates a styled dropdown used inside dialogs.
+  ///
+  /// Parameters:
+  /// - [label]: Text label shown above the dropdown.
+  /// - [value]: Currently selected value.
+  /// - [options]: List of available options.
+  /// - [onChanged]: Callback triggered when the selection changes.
   Widget _dialogDropdown(String label, String value, List<String> options, ValueChanged<String?> onChanged) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -162,16 +195,27 @@ class DonationsScreen extends StatelessWidget {
     );
   }
 
+  /// Builds the donations screen UI.
+  ///
+  /// Layout structure:
+  /// - Application header.
+  /// - Banner image.
+  /// - Screen title.
+  /// - Two action columns: adoption and donation.
+  /// - Application footer.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
+            /// Shared application header.
             AppHeader(userImageUrl: "assets/user.png"),
+            /// Main banner image.
             Image.asset("assets/images/banners/banner-inicio.png",
                 width: double.infinity, height: 400, fit: BoxFit.cover),
             const SizedBox(height: 40),
+            /// Main screen title.
             const Text(
               "¿Quieres ayudarnos?",
               style: TextStyle(fontSize: 38, fontFamily: "WinkyMilky", color: AppColors.darkViolet),
@@ -185,6 +229,7 @@ class DonationsScreen extends StatelessWidget {
                 runSpacing: 40,
                 alignment: WrapAlignment.center,
                 children: [
+                  /// Adoption action column.
                   _donationColumn(
                     context,
                     title: "¡Adopta!",
@@ -192,18 +237,20 @@ class DonationsScreen extends StatelessWidget {
                     buttonText: "Adoptar",
                     onPressed: () => _showAdoptionDialog(context),
                   ),
+                  /// Donation action column.
                   _donationColumn(
                     context,
                     title: "¡Haznos una donación!",
                     text: "También puedes ayudarnos mediante una donación puntual. "
                         "Cada aportación nos ayuda a seguir rescatando y cuidando animales.",
                     buttonText: "Donar",
-                    onPressed: () => _showDonationDialog(context),  // ← aquí
+                    onPressed: () => _showDonationDialog(context),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 80),
+            /// Shared application footer.
             AppFooter(),
           ],
         ),
@@ -211,6 +258,13 @@ class DonationsScreen extends StatelessWidget {
     );
   }
 
+  /// Creates a reusable column with a title, description card, and action button.
+  ///
+  /// Parameters:
+  /// - [title]: Section heading.
+  /// - [text]: Descriptive body text.
+  /// - [buttonText]: Label shown on the button.
+  /// - [onPressed]: Callback triggered when the button is tapped.
   Widget _donationColumn(
     BuildContext context, {
     required String title,
@@ -255,6 +309,13 @@ class DonationsScreen extends StatelessWidget {
       ),
     );
   }
+
+  /// Shows a dialog that allows the user to select a pet and request adoption.
+  ///
+  /// Validates that the user is authenticated before proceeding.
+  /// Only shows pets with adoption status [NO_ADOPTADO].
+  ///
+  /// On success, sends the adoption request to the backend API.
   Future<void> _showAdoptionDialog(BuildContext context) async {
     final authState = context.read<AuthBloc>().state;
     if (!authState.isAuthenticated || authState.user == null) {
@@ -277,7 +338,7 @@ class DonationsScreen extends StatelessWidget {
 
     Pet? selectedPet = pets.first;
 
-    // ← guardamos el messenger ANTES del await
+    /// Messenger saved before async gap to avoid BuildContext issues.
     final messenger = ScaffoldMessenger.of(context);
 
     await showDialog(
@@ -308,10 +369,12 @@ class DonationsScreen extends StatelessWidget {
             ),
           ),
           actions: [
+            /// Cancel button.
             TextButton(
               onPressed: () => Navigator.pop(ctx),
               child: const Text('Cancelar'),
             ),
+            /// Confirm adoption request button.
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF7B3FE4),

@@ -13,6 +13,17 @@ import 'package:go_router/go_router.dart';
 
 const Color _purple = Color(0xFF7B3FE4);
 
+/// Main screen that displays user-pet relationships and adoption requests.
+///
+/// This screen handles:
+/// - Displaying pet-user relationships.
+/// - Displaying adoption requests.
+/// - Role-based access (ADMIN vs USER).
+/// - Authentication validation.
+/// - Automatic data loading using BLoC events.
+/// - Redirecting unauthenticated users to login.
+///
+/// ADMIN users can manage all data, while regular users only see their own.
 class RelationshipsScreen extends StatelessWidget {
   const RelationshipsScreen({super.key});
 
@@ -22,7 +33,7 @@ class RelationshipsScreen extends StatelessWidget {
     final bool isAdmin = authState.user?.role.toUpperCase() == 'ADMIN';
     final int? userId = authState.user?.id;
 
-    // si no está logueado mostramos pantalla de login
+    // If user is not authenticated, show login prompt screen
     if (!authState.isAuthenticated || authState.user == null) {
       return Scaffold(
         body: Column(
@@ -35,23 +46,36 @@ class RelationshipsScreen extends StatelessWidget {
                   children: [
                     const Icon(Icons.lock_outline, size: 64, color: _purple),
                     const SizedBox(height: 16),
-                    const Text('¡Necesitas iniciar sesión!',
-                        style: TextStyle(fontSize: 22, fontFamily: 'MilkyVintage', color: _purple)),
+                    const Text(
+                      'You need to log in!',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontFamily: 'MilkyVintage',
+                        color: _purple,
+                      ),
+                    ),
                     const SizedBox(height: 8),
-                    const Text('Inicia sesión o regístrate para ver tus peticiones.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.grey)),
+                    const Text(
+                      'Sign in or register to view your requests.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.grey),
+                    ),
                     const SizedBox(height: 24),
                     ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: _purple,
                         foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
                       ),
                       onPressed: () => context.go('/login'),
                       icon: const Icon(Icons.login),
-                      label: const Text('Iniciar sesión'),
+                      label: const Text('Login'),
                     ),
                   ],
                 ),
@@ -62,14 +86,16 @@ class RelationshipsScreen extends StatelessWidget {
       );
     }
 
-    // lanzamos los eventos del bloc al entrar en la pantalla
+    /// Trigger BLoC events after the first frame is rendered
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (isAdmin) {
         context.read<PetsBloc>().add(LoadAdoptionRequests());
         context.read<PetsBloc>().add(LoadPetUserRelations());
       } else {
         context.read<PetsBloc>().add(LoadMyAdoptionRequests());
-        context.read<PetsBloc>().add(LoadMyPetUserRelations( userId ?? 0));
+        context.read<PetsBloc>().add(
+              LoadMyPetUserRelations(userId ?? 0),
+            );
       }
     });
 
@@ -79,12 +105,20 @@ class RelationshipsScreen extends StatelessWidget {
         body: Column(
           children: [
             AppHeader(),
-            Image.asset('assets/images/banners/banner-inicio.png',
-                width: double.infinity, height: 200, fit: BoxFit.cover),
+            Image.asset(
+              'assets/images/banners/banner-inicio.png',
+              width: double.infinity,
+              height: 200,
+              fit: BoxFit.cover,
+            ),
             const SizedBox(height: 16),
             Text(
-              isAdmin ? 'Gestionar Peticiones' : 'Mis Peticiones',
-              style: const TextStyle(fontSize: 32, fontFamily: 'MilkyVintage', color: _purple),
+              isAdmin ? 'Manage Requests' : 'My Requests',
+              style: const TextStyle(
+                fontSize: 32,
+                fontFamily: 'MilkyVintage',
+                color: _purple,
+              ),
             ),
             const SizedBox(height: 16),
             const TabBar(
@@ -92,8 +126,8 @@ class RelationshipsScreen extends StatelessWidget {
               unselectedLabelColor: Colors.grey,
               indicatorColor: _purple,
               tabs: [
-                Tab(text: 'Relaciones'),
-                Tab(text: 'Solicitudes de adopción'),
+                Tab(text: 'Relationships'),
+                Tab(text: 'Adoption Requests'),
               ],
             ),
             Expanded(
@@ -111,8 +145,14 @@ class RelationshipsScreen extends StatelessWidget {
   }
 }
 
-// PESTAÑA RELACIONES 
-
+/// Tab that displays user-pet relationships.
+///
+/// Admin users can:
+/// - View all relationships.
+/// - Activate or deactivate relationships.
+///
+/// Regular users can:
+/// - Only view their own relationships.
 class _RelacionesTab extends StatelessWidget {
   final bool isAdmin;
   const _RelacionesTab({required this.isAdmin});
@@ -122,43 +162,66 @@ class _RelacionesTab extends StatelessWidget {
     return BlocBuilder<PetsBloc, PetsState>(
       builder: (context, state) {
         if (state.isLoading) {
-          return const Center(child: CircularProgressIndicator(color: _purple));
+          return const Center(
+            child: CircularProgressIndicator(color: _purple),
+          );
         }
+
         if (state.errorMessage != null) {
-          return Center(child: Text(state.errorMessage!,
-              style: const TextStyle(color: Colors.red)));
+          return Center(
+            child: Text(
+              state.errorMessage!,
+              style: const TextStyle(color: Colors.red),
+            ),
+          );
         }
+
         final relations = state.relations;
+
         if (relations.isEmpty) {
-          return const Center(child: Text('No hay relaciones registradas.'));
+          return const Center(
+            child: Text('No relationships found.'),
+          );
         }
+
         return ListView.builder(
           padding: const EdgeInsets.all(16),
           itemCount: relations.length,
           itemBuilder: (context, index) {
             final r = relations[index];
+
             return _RelationCard(
               relation: r,
               isAdmin: isAdmin,
-              onToggleActive: isAdmin ? () async {
-                final updated = Userpetrelationship(
-                  id: r.id,
-                  userId: r.userId,
-                  petId: r.petId,
-                  relationshipType: r.relationshipType,
-                  startDate: r.startDate,
-                  endDate: r.endDate,
-                  active: !r.active,
-                );
-                try {
-                  await ApiConector().updateRelationshipStatus(r.id, updated);
-                  context.read<PetsBloc>().add(LoadPetUserRelations());
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-                  );
-                }
-              } : null,
+              onToggleActive: isAdmin
+                  ? () async {
+                      final updated = Userpetrelationship(
+                        id: r.id,
+                        userId: r.userId,
+                        petId: r.petId,
+                        relationshipType: r.relationshipType,
+                        startDate: r.startDate,
+                        endDate: r.endDate,
+                        active: !r.active,
+                      );
+
+                      try {
+                        await ApiConector()
+                            .updateRelationshipStatus(r.id, updated);
+
+                        context
+                            .read<PetsBloc>()
+                            .add(LoadPetUserRelations());
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Error: $e'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    }
+                  : null,
             );
           },
         );
@@ -166,7 +229,16 @@ class _RelacionesTab extends StatelessWidget {
     );
   }
 }
-//CARD RELACIÓN 
+
+/// Card widget that represents a user-pet relationship.
+///
+/// Displays:
+/// - Relationship type
+/// - Start and end dates
+/// - Status (active/pending)
+/// - User ID (admin only)
+///
+/// Admins can toggle activation using a switch.
 class _RelationCard extends StatelessWidget {
   final Userpetrelationship relation;
   final bool isAdmin;
@@ -181,7 +253,7 @@ class _RelationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = relation.active ? Colors.green : Colors.orange;
-    final label = relation.active ? 'Activo' : 'Pendiente de revisar';
+    final label = relation.active ? 'Active' : 'Pending review';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -191,46 +263,70 @@ class _RelationCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.purple.shade100),
         boxShadow: [
-          BoxShadow(color: Colors.purple.withValues(),
-              blurRadius: 8, offset: const Offset(0, 3)),
+          BoxShadow(
+            color: Colors.purple.withValues(),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
         ],
       ),
       child: Row(
         children: [
           CircleAvatar(
             backgroundColor: _purple,
-            child: const Icon(Icons.pets, color: Colors.white, size: 20),
+            child: const Icon(Icons.pets,
+                color: Colors.white, size: 20),
           ),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(relation.relationshipType,
-                    style: const TextStyle(fontWeight: FontWeight.bold,
-                        fontSize: 15, fontFamily: 'MilkyVintage')),
-                const SizedBox(height: 4),
                 Text(
-                  'Desde: ${_fmt(relation.startDate)}'
-                  '${relation.endDate != null ? '  →  ${_fmt(relation.endDate!)}' : ''}',
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  relation.relationshipType,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    fontFamily: 'MilkyVintage',
+                  ),
                 ),
                 const SizedBox(height: 4),
+                Text(
+                  'From: ${_fmt(relation.startDate)}'
+                  '${relation.endDate != null ? ' → ${_fmt(relation.endDate!)}' : ''}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
+                ),
                 if (isAdmin)
-                Text(
-                  'Usuario ID: ${relation.userId}',
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                ),
+                  Text(
+                    'User ID: ${relation.userId}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
+                  ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: color.withValues(alpha: 0.4)),
+                    border: Border.all(
+                      color: color.withValues(alpha: 0.4),
+                    ),
                   ),
-                  child: Text(label,
-                      style: TextStyle(color: color, fontSize: 11,
-                          fontWeight: FontWeight.bold)),
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      color: color,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -239,19 +335,29 @@ class _RelationCard extends StatelessWidget {
             Switch(
               value: relation.active,
               activeThumbColor: _purple,
-              onChanged: onToggleActive != null ? (_) => onToggleActive!() : null,
+              onChanged: onToggleActive != null
+                  ? (_) => onToggleActive!()
+                  : null,
             ),
         ],
       ),
     );
   }
 
+  /// Formats a date as dd/MM/yyyy
   String _fmt(DateTime d) =>
-      '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
+      '${d.day.toString().padLeft(2, '0')}/'
+      '${d.month.toString().padLeft(2, '0')}/'
+      '${d.year}';
 }
 
-// PESTAÑA ADOPCIONES 
-
+/// Tab that displays adoption requests.
+///
+/// Admin users can:
+/// - Approve, reject, or reset requests.
+///
+/// Regular users can:
+/// - Only view their own requests.
 class _AdopcionesTab extends StatelessWidget {
   final bool isAdmin;
   const _AdopcionesTab({required this.isAdmin});
@@ -261,46 +367,84 @@ class _AdopcionesTab extends StatelessWidget {
     return BlocBuilder<PetsBloc, PetsState>(
       builder: (context, state) {
         if (state.isLoading) {
-          return const Center(child: CircularProgressIndicator(color: _purple));
+          return const Center(
+            child: CircularProgressIndicator(color: _purple),
+          );
         }
+
         if (state.errorMessage != null) {
-          return Center(child: Text(state.errorMessage!,
-              style: const TextStyle(color: Colors.red)));
+          return Center(
+            child: Text(
+              state.errorMessage!,
+              style: const TextStyle(color: Colors.red),
+            ),
+          );
         }
+
         final requests = state.adoptionRequests;
+
         if (requests.isEmpty) {
-          return const Center(child: Text('No hay solicitudes de adopción.'));
+          return const Center(
+            child: Text('No adoption requests found.'),
+          );
         }
+
         return ListView.builder(
           padding: const EdgeInsets.all(16),
           itemCount: requests.length,
-          itemBuilder: (context, index) =>
-              _AdoptionCard(request: requests[index], isAdmin: isAdmin),
+          itemBuilder: (context, index) {
+            return _AdoptionCard(
+              request: requests[index],
+              isAdmin: isAdmin,
+            );
+          },
         );
       },
     );
   }
 }
 
-// CARD ADOPCIÓn
-
+/// Card widget that displays an adoption request.
+///
+/// Shows detailed information:
+/// - Pet and user info
+/// - Address and city
+/// - Housing type
+/// - Adoption reason
+/// - Lifestyle indicators
+/// - Current status
+///
+/// Admins can approve, reject, or reset the request status.
 class _AdoptionCard extends StatelessWidget {
-  //helper para evitar q me salga el aviso ese 
-    Future<void> _cambiarStatus(BuildContext context, String nuevoStatus) async {
+  final AdoptionRequest request;
+  final bool isAdmin;
+
+  const _AdoptionCard({
+    required this.request,
+    required this.isAdmin,
+  });
+
+  Future<void> _cambiarStatus(
+    BuildContext context,
+    String nuevoStatus,
+  ) async {
     final messenger = ScaffoldMessenger.of(context);
     final bloc = context.read<PetsBloc>();
+
     try {
-      await ApiConector().updateAdoptionStatus(request.id, nuevoStatus);
+      await ApiConector()
+          .updateAdoptionStatus(request.id, nuevoStatus);
+
       bloc.add(LoadAdoptionRequests());
     } catch (e) {
       messenger.showSnackBar(
-        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
-  final AdoptionRequest request;
-  final bool isAdmin;
-  const _AdoptionCard({required this.request, required this.isAdmin});
 
   @override
   Widget build(BuildContext context) {
@@ -318,108 +462,141 @@ class _AdoptionCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.purple.shade100),
         boxShadow: [
-          BoxShadow(color: Colors.purple.withValues(),
-              blurRadius: 8, offset: const Offset(0, 3)),
+          BoxShadow(
+            color: Colors.purple.withValues(),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // HEADER
           Row(
             children: [
               CircleAvatar(
                 backgroundColor: _purple,
-                child: const Icon(Icons.description, color: Colors.white, size: 20),
+                child: const Icon(Icons.description,
+                    color: Colors.white, size: 20),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(request.petName,
-                        style: const TextStyle(fontWeight: FontWeight.bold,
-                            fontSize: 16, fontFamily: 'MilkyVintage')),
-                    Text(request.userName,
-                        style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                    Text(
+                      request.petName,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        fontFamily: 'MilkyVintage',
+                      ),
+                    ),
+                    Text(
+                      request.userName,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ),
+                    ),
                   ],
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: statusColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: statusColor.withValues(alpha: 0.4)),
+                  border: Border.all(
+                    color: statusColor.withValues(alpha: 0.4),
+                  ),
                 ),
-                child: Text(request.status,
-                    style: TextStyle(color: statusColor, fontSize: 11,
-                        fontWeight: FontWeight.bold)),
+                child: Text(
+                  request.status,
+                  style: TextStyle(
+                    color: statusColor,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 10),
-          _row('Ciudad', request.city),
-          _row('Dirección', request.address),
-          _row('Tipo de vivienda', request.housingType),
-          _row('Horas solo al día', '${request.hoursAlonePerDay}h'),
-          _row('Motivo', request.reasonForAdoption),
+
+          _row('City', request.city),
+          _row('Address', request.address),
+          _row('Housing type', request.housingType),
+          _row('Hours alone per day', '${request.hoursAlonePerDay}h'),
+          _row('Reason', request.reasonForAdoption),
+
           const SizedBox(height: 6),
-          Wrap(spacing: 8, children: [
-            _chip('Jardín', request.hasGarden),
-            _chip('Otras mascotas', request.hasOtherPets),
-            _chip('Niños', request.hasChildren),
-            _chip('Experiencia', request.experienceWithPets),
-            _chip('Seguimiento', request.agreesToFollowUp),
-          ]),
+
+          Wrap(
+            spacing: 8,
+            children: [
+              _chip('Garden', request.hasGarden),
+              _chip('Other pets', request.hasOtherPets),
+              _chip('Children', request.hasChildren),
+              _chip('Experience', request.experienceWithPets),
+              _chip('Follow-up', request.agreesToFollowUp),
+            ],
+          ),
+
           const SizedBox(height: 6),
+
           Text(
-            'Enviado: ${request.submittedAt.day.toString().padLeft(2, '0')}/'
+            'Submitted: ${request.submittedAt.day.toString().padLeft(2, '0')}/'
             '${request.submittedAt.month.toString().padLeft(2, '0')}/'
             '${request.submittedAt.year}',
-            style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.grey[500],
+            ),
           ),
-          if (isAdmin)...[
+
+          if (isAdmin) ...[
             const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                //si no es pendiente aparece
                 if (request.status != 'PENDIENTE')
-                TextButton(
-                  onPressed: () => _cambiarStatus(context, 'PENDIENTE'),
-                  child: const Text('Pendiente', style: TextStyle(color: Colors.orange)),
-                ),
-                //si no es aprobado aparece 
+                  TextButton(
+                    onPressed: () =>
+                        _cambiarStatus(context, 'PENDIENTE'),
+                    child: const Text(
+                      'Pending',
+                      style: TextStyle(color: Colors.orange),
+                    ),
+                  ),
                 if (request.status != 'APROBADA')
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                    ),
+                    onPressed: () =>
+                        _cambiarStatus(context, 'APROBADA'),
+                    child: const Text('Approve'),
                   ),
-                  onPressed: () async {
-                      _cambiarStatus(context, 'APROBADA');
-                  },
-                  child: const Text('Aprobar'),
-                ),
                 const SizedBox(width: 8),
-                //si no es rechazado aparece
                 if (request.status != 'DENEGADA')
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                    ),
+                    onPressed: () =>
+                        _cambiarStatus(context, 'DENEGADA'),
+                    child: const Text('Reject'),
                   ),
-                  onPressed: () async { _cambiarStatus(context, 'DENEGADA');
-                  },
-                  child: const Text('Rechazar'),
-                ),
               ],
             )
-          ]
+          ],
         ],
       ),
     );
@@ -430,10 +607,15 @@ class _AdoptionCard extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 3),
       child: RichText(
         text: TextSpan(
-          style: const TextStyle(fontSize: 13, color: Colors.black87),
+          style: const TextStyle(
+            fontSize: 13,
+            color: Colors.black87,
+          ),
           children: [
-            TextSpan(text: '$label: ',
-                style: const TextStyle(fontWeight: FontWeight.bold)),
+            TextSpan(
+              text: '$label: ',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
             TextSpan(text: value),
           ],
         ),
@@ -443,8 +625,12 @@ class _AdoptionCard extends StatelessWidget {
 
   Widget _chip(String label, bool value) {
     final color = value ? Colors.green : Colors.grey;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 8,
+        vertical: 3,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
@@ -452,7 +638,11 @@ class _AdoptionCard extends StatelessWidget {
       ),
       child: Text(
         '${value ? '✓' : '✗'} $label',
-        style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          color: color,
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }

@@ -11,12 +11,28 @@ import 'package:cafeconhuellas_front/utils/api_conector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+/// Purple color constant used throughout this screen.
 const Color _purple = Color(0xFF7B3FE4);
 
+/// Screen that displays the full list of available pets.
+///
+/// Regular users can:
+/// - Filter pets by species.
+/// - Filter pets by emergency status.
+///
+/// Admin users can additionally:
+/// - Add new pets.
+/// - Edit existing pets.
+/// - Delete pets.
+///
+/// It also includes the application's shared
+/// header and footer components.
 class PetScreen extends StatelessWidget {
   const PetScreen({super.key});
 
-  //vamos a añadir una mascota y si el usuario confirmar lanzar el evento add pet
+  /// Opens a dialog to create a new pet.
+  ///
+  /// Dispatches [AddPet] to [PetsBloc] on confirmation.
   Future<void> _openAddDialog(BuildContext context) async {
     final Pet? result = await showDialog<Pet>(
       context: context,
@@ -27,7 +43,12 @@ class PetScreen extends StatelessWidget {
     }
   }
 
-  //Helper que Abre el formulario de editar con los datos de pet y si confirma lanza update pet
+  /// Opens a dialog to edit an existing pet.
+  ///
+  /// Dispatches [UpdatePet] to [PetsBloc] on confirmation.
+  ///
+  /// Parameters:
+  /// - [pet]: The pet to be edited.
   Future<void> _openEditDialog(BuildContext context, Pet pet) async {
     final Pet? result = await showDialog<Pet>(
       context: context,
@@ -38,9 +59,17 @@ class PetScreen extends StatelessWidget {
     }
   }
 
-  // Helper para mostrar el diálogo de confirmación de eliminación, si confirma lanza el evento de eliminar mascota
+  /// Shows a confirmation dialog before deleting a pet.
+  ///
+  /// Dispatches [DeletePet] to [PetsBloc] on confirmation.
+  ///
+  /// Parameters:
+  /// - [pet]: The pet to be deleted.
   Future<void> _confirmDelete(BuildContext context, Pet pet) async {
-    //guardamos el resultado del diálogo, que será true si el usuario confirma, false si cancela o null si cierra el diálogo de otra forma
+    /// Stores the dialog result:
+    /// - true if the user confirms.
+    /// - false if the user cancels.
+    /// - null if the dialog is dismissed.
     final bool? confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -48,10 +77,12 @@ class PetScreen extends StatelessWidget {
         title: const Text('Borrar mascota'),
         content: Text('¿Seguro que quieres borrar a ${pet.name}? Esta acción no se puede deshacer.'),
         actions: [
+          /// Cancel button.
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
             child: const Text('Cancelar'),
           ),
+          /// Confirm delete button.
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.redAccent,
@@ -64,12 +95,20 @@ class PetScreen extends StatelessWidget {
         ],
       ),
     );
-    //si el usuario ha confirmado la eliminación, lanzamos el evento para eliminar la mascota
+    /// Dispatch delete event if the user confirmed.
     if (confirmed == true && context.mounted) {
       context.read<PetsBloc>().add(DeletePet(pet.id));
     }
   }
 
+  /// Builds the pets screen UI.
+  ///
+  /// Layout structure:
+  /// - Application header.
+  /// - Banner image.
+  /// - Filter controls and add button (admin only).
+  /// - Responsive pet grid loaded from [PetsBloc].
+  /// - Application footer.
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -77,17 +116,15 @@ class PetScreen extends StatelessWidget {
       child: Scaffold(
         body: Column(
           children: [
+            /// Shared application header.
             AppHeader(userImageUrl: "assets/user.png"),
-
-            // Usamos un CustomScrollView para que el header y el banner también hagan scroll
             Expanded(
               child: CustomScrollView(
                 slivers: [
-
-                  // Banner e Imagen
                   SliverToBoxAdapter(
                     child: Column(
                       children: [
+                        /// Main banner image.
                         Image.asset(
                           'assets/images/banners/banner-inicio.png',
                           width: double.infinity,
@@ -96,10 +133,10 @@ class PetScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 24),
 
-                        /// CONTROLES: filtros + botones admin, todo centrado
+                        /// Filter controls and admin add button.
                         BlocBuilder<PetsBloc, PetsState>(
                           builder: (context, state) {
-                            //leemos el rol del usuario del AuthBloc para mostrar el botón de añadir mascota solo a los admin
+                            /// Read user role from [AuthBloc] to control admin-only buttons.
                             final authState = context.watch<AuthBloc>().state;
                             final bool isAdmin =
                                 authState.user?.role.toUpperCase() == 'ADMIN';
@@ -111,8 +148,7 @@ class PetScreen extends StatelessWidget {
                                 spacing: 12,
                                 runSpacing: 12,
                                 children: [
-
-                                  // botón emergencia
+                                  /// Emergency filter toggle button.
                                   ElevatedButton.icon(
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: state.isEmergencyActive
@@ -130,7 +166,7 @@ class PetScreen extends StatelessWidget {
                                     label: const Text("Emergencia"),
                                   ),
 
-                                  // dropdown especie
+                                  /// Species filter dropdown.
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                                     decoration: BoxDecoration(
@@ -154,7 +190,7 @@ class PetScreen extends StatelessWidget {
                                     ),
                                   ),
 
-                                  // botón añadir — solo si es ADMIN
+                                  /// Add pet button, visible to admin users only.
                                   if (isAdmin)
                                     ElevatedButton.icon(
                                       style: ElevatedButton.styleFrom(
@@ -179,10 +215,13 @@ class PetScreen extends StatelessWidget {
                     ),
                   ),
 
-                  /// GRID DE MASCOTAS
+                  /// Responsive pet grid loaded from [PetsBloc].
+                  ///
+                  /// Column count and aspect ratio adapt to screen width.
+                  /// Admin users see edit and delete buttons overlaid on each card.
                   BlocBuilder<PetsBloc, PetsState>(
                     builder: (context, state) {
-                      // leemos el rol también aquí para los botones de editar/borrar
+                      /// Read user role to control admin action buttons.
                       final authState = context.read<AuthBloc>().state;
                       final bool isAdmin =
                           authState.user?.role.toUpperCase() == 'ADMIN';
@@ -190,12 +229,12 @@ class PetScreen extends StatelessWidget {
                       final double width = MediaQuery.of(context).size.width;
                       final int crossAxisCount = width < 600 ? 2 : width < 1000 ? 3 : 4;
                       final double horizontalPadding = width < 700 ? 16.0 : width < 1100 ? 40.0 : 80.0;
-                      // si es admin dejamos un poco más de altura para los botones de acción
+                      /// Admin cards need extra height to accommodate action buttons.
                       final double childAspectRatio = isAdmin
                           ? (width < 600 ? 0.58 : width < 1000 ? 0.65 : 0.72)
                           : (width < 600 ? 0.66 : width < 1000 ? 0.74 : 0.82);
 
-                      // cargando
+                      /// Loading state.
                       if (state.isLoading) {
                         return const SliverToBoxAdapter(
                           child: Padding(
@@ -205,7 +244,7 @@ class PetScreen extends StatelessWidget {
                         );
                       }
 
-                      // error
+                      /// Error state.
                       if (state.errorMessage != null) {
                         return SliverToBoxAdapter(
                           child: Padding(
@@ -228,21 +267,20 @@ class PetScreen extends StatelessWidget {
                             (context, index) {
                               final pet = state.pets[index];
 
-                              // Si es admin envolvemos la PetCard con los botones de acción
+                              /// Admin view: pet card with overlaid edit and delete buttons.
                               if (isAdmin) {
                                 return Stack(
                                   children: [
-                                    // la tarjeta normal
+                                    /// Regular pet card.
                                     PetCard(pet),
-
-                                    // botones flotantes en la esquina superior derecha
+                                    /// Admin action buttons positioned on top right.
                                     Positioned(
                                       top: 6,
                                       right: 6,
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          // Editar
+                                          /// Edit button.
                                           _adminActionButton(
                                             icon: Icons.edit_rounded,
                                             color: _purple,
@@ -250,7 +288,7 @@ class PetScreen extends StatelessWidget {
                                             onTap: () => _openEditDialog(context, pet),
                                           ),
                                           const SizedBox(width: 4),
-                                          // Borrar
+                                          /// Delete button.
                                           _adminActionButton(
                                             icon: Icons.delete_rounded,
                                             color: Colors.redAccent,
@@ -264,7 +302,7 @@ class PetScreen extends StatelessWidget {
                                 );
                               }
 
-                              // Usuario normal: tarjeta sin botones
+                              /// Regular user view: pet card without action buttons.
                               return PetCard(pet);
                             },
                             childCount: state.pets.length,
@@ -274,7 +312,7 @@ class PetScreen extends StatelessWidget {
                     },
                   ),
 
-                  // Footer al final del scroll
+                  /// Shared application footer at the bottom of the scroll.
                   SliverToBoxAdapter(
                     child: Column(
                       children: [
@@ -292,7 +330,13 @@ class PetScreen extends StatelessWidget {
     );
   }
 
-  /// Pequeño botón circular para las acciones de admin sobre cada tarjeta
+  /// Creates a small circular action button used on admin pet cards.
+  ///
+  /// Parameters:
+  /// - [icon]: Icon to display inside the button.
+  /// - [color]: Background color of the button.
+  /// - [tooltip]: Tooltip message shown on long press.
+  /// - [onTap]: Callback triggered when the button is tapped.
   Widget _adminActionButton({
     required IconData icon,
     required Color color,

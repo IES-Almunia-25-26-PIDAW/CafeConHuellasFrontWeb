@@ -6,18 +6,39 @@ import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 
+/// Screen that allows users to log into the application.
+///
+/// This screen contains:
+/// - Email input field.
+/// - Password input field.
+/// - Login button.
+/// - Link to the registration screen.
+///
+/// Uses [BlocConsumer] to react to [AuthBloc] state changes.
 class LoginPage extends StatefulWidget {
+  /// Creates the login screen widget.
   const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
 
+/// State class responsible for managing:
+/// - Form controllers.
+/// - Form submission.
+/// - Widget lifecycle.
 class _LoginPageState extends State<LoginPage> {
 
+  /// Controller used for the email input field.
   final emailController = TextEditingController();
+
+  /// Controller used for the password input field.
   final passwordController = TextEditingController();
-  //aquí controlamos el estado de los campos de texto, es importante liberar los recursos que usan estos controladores cuando el widget se destruye, por eso el dispose() abajo.
+
+  /// Releases all text controllers when
+  /// the widget is removed from memory.
+  ///
+  /// Prevents memory leaks.
   @override
   void dispose() {
     emailController.dispose();
@@ -25,14 +46,27 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  /// Builds the login screen UI.
+  ///
+  /// Layout structure:
+  /// - Centered card with login form.
+  /// - Email and password input fields.
+  /// - Login button with loading indicator.
+  /// - Link to the registration screen.
+  ///
+  /// Listens to [AuthBloc]:
+  /// - Redirects to home on successful authentication.
+  /// - Shows an error dialog on failed login.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
+          /// Redirect to home on successful login.
           if (state.isAuthenticated) {
             context.go('/');
           } else if (state.errorMessage != null) {
+            /// Show error dialog on failed login.
             showDialog(
               context: context,
               builder: (context) {
@@ -65,6 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
+                              /// Screen title.
                               Text(
                                 "Iniciar Sesión",
                                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
@@ -73,10 +108,16 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                               const SizedBox(height: 20),
+                              /// Email input field.
                               _input("Email", emailController),
                               const SizedBox(height: 15),
+                              /// Password input field.
                               _input("Contraseña", passwordController, isPassword: true),
                               const SizedBox(height: 20),
+                              /// Login button.
+                              ///
+                              /// Disabled while [AuthBloc] is loading.
+                              /// Shows a loading indicator during submission.
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.purple,
@@ -110,6 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                                         ),
                                       ),
                               ),
+                              /// Link to the registration screen.
                               TextButton(
                                 onPressed: () {
                                   context.go('/register');
@@ -131,6 +173,13 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+
+/// Creates a reusable styled text input field.
+///
+/// Parameters:
+/// - [label]: Label text shown inside the field.
+/// - [controller]: Controller linked to the input field.
+/// - [isPassword]: Whether to obscure the input text. Defaults to false.
 Widget _input(String label, TextEditingController controller, {bool isPassword = false}) {
   return TextField(
     controller: controller,
