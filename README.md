@@ -404,7 +404,37 @@ Docker realiza los siguientes pasos:
 3. Crea el contenedor.
 4. Inicia el servidor Nginx.
 5. Expone la aplicación en `http://localhost:4200`.
+---
+## 📚 Documentación del código
 
+El código fuente está documentado con comentarios `///` compatibles con **dartdoc**.
+
+> Esta sección es solo para **desarrolladores** que quieran contribuir al proyecto.
+> Los usuarios finales no necesitan hacer nada, la app se levanta con Docker como 
+> se indica al inicio de este README.
+
+### Generar localmente (solo para desarrolladores)
+
+Requiere tener Flutter/Dart instalado en la máquina. Desde la raíz del proyecto:
+
+```bash
+dart doc .
+```
+
+Esto genera la carpeta `doc/api/` con la documentación en HTML. Para visualizarla:
+
+```bash
+# Con Node.js
+npx serve doc/api
+
+# Con Dart
+dart pub global activate dhttpd
+dhttpd --path doc/api
+```
+
+O abre directamente `doc/api/index.html` con VS Code + extensión **Live Server**.
+
+> La carpeta `doc/` está en `.gitignore` y no se sube al repositorio.
 ---
 
 ## ⚠️ Consideraciones importantes
