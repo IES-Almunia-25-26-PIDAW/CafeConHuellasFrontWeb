@@ -45,8 +45,7 @@ class MyDonationsScreen extends StatelessWidget {
             /// Shared application header.
             AppHeader(),
             /// Main banner image.
-            Image.asset('assets/images/banners/banner-inicio.png',
-                width: double.infinity, height: 250, fit: BoxFit.cover),
+            Image.asset('assets/images/banners/banner-inicio.png',width: double.infinity, height: 250, fit: BoxFit.cover),
             const SizedBox(height: 40),
             /// Screen title, dynamic based on user role.
             Text(

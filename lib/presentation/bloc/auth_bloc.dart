@@ -55,7 +55,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         ),
         state.user!.id,
       );
-
       /// Updates the bloc state with the new avatar.
       emit(state.copyWith(user: updatedUser));
     });
@@ -71,21 +70,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ///
   /// If an error occurs:
   /// - The state is updated with an error message.
-  Future<void> _onLogin(
-    LoginSubmitted event,
-    Emitter<AuthState> emit,
-  ) async {
+  Future<void> _onLogin(LoginSubmitted event,Emitter<AuthState> emit,) async {
     /// Enables loading state and clears previous errors.
-    emit(state.copyWith(
-      isLoading: true,
-      clearError: true,
-    ));
+    emit(state.copyWith(isLoading: true,clearError: true,));
     try {
       /// Sends login request to the backend.
-      final response = await api.login(
-        event.email,
-        event.password,
-      );
+      final response = await api.login(event.email,event.password,);
       /// Extracts the JWT token from the response.
       final String token = (response['token'] ?? '').toString();
       /// Validates that the token exists.
@@ -101,19 +91,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         /// execution continues with a valid token.
       }
       /// Updates the bloc state with authentication data.
-      emit(state.copyWith(
-        isLoading: false,
-        token: token,
-        user: user,
-      ));
+      emit(state.copyWith(isLoading: false,token: token,user: user,));
     } catch (e) {
       /// If an error occurs during login,
       /// updates the state with an error message.
-      emit(state.copyWith(
-        isLoading: false,
-        errorMessage:
-            'Login error. ${e.toString()}',
-      ));
+      emit(state.copyWith(isLoading: false,errorMessage:'Login error. ${e.toString()}',));
     }
   }
   /// Handles the logout process.
@@ -123,10 +105,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   /// - JWT token.
   /// - User information.
   /// - Loading and error states.
-  void _onLogout(
-    LogoutRequested event,
-    Emitter<AuthState> emit,
-  ) {
+  void _onLogout(LogoutRequested event,Emitter<AuthState> emit,) {
     /// Completely resets the bloc state.
     emit(AuthState());
   }

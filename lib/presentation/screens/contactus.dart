@@ -21,7 +21,6 @@ class ContactusScreen extends StatefulWidget {
   State<ContactusScreen> createState() =>
       _ContactusScreenState();
 }
-
 /// State class responsible for managing:
 /// - Form controllers.
 /// - Form submission.
@@ -77,7 +76,6 @@ class _ContactusScreenState extends State<ContactusScreen> {
     nameController.dispose();
     emailController.dispose();
     messageController.dispose();
-
     super.dispose();
   }
   /// Builds the contact screen UI.

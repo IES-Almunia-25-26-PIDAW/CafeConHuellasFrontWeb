@@ -42,13 +42,8 @@ class AuthState {
   /// replacing only the provided values.
   ///
   /// Used to preserve immutability while updating state.
-  AuthState copyWith({
-    UserWithoutPassword? user,
-    String? token,
-    bool? isLoading,
-    String? errorMessage,
-    bool clearError = false,
-  }) {
+  AuthState copyWith({UserWithoutPassword? user,String? token,bool? isLoading,String? errorMessage,bool clearError = false,}) 
+  {
     return AuthState(
       user: user ?? this.user,
       token: token ?? this.token,

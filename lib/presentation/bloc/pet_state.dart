@@ -64,7 +64,6 @@ class PetsState {
     List<Userpetrelationship>? relations,
     List<AdoptionRequest>? adoptionRequests,
   }) {
-
     return PetsState(
       pets: pets ?? this.pets,
       selectedSpecies:

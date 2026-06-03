@@ -84,10 +84,7 @@ class _DonationFormScreenState extends State<DonationFormScreen> {
   /// 4. Sends the form to the backend API.
   /// 5. Displays success or error messages.
   Future<void> _submit() async {
-    if (_addressCtrl.text.trim().isEmpty ||
-        _cityCtrl.text.trim().isEmpty ||
-        _housingTypeCtrl.text.trim().isEmpty ||
-        _reasonCtrl.text.trim().isEmpty) {
+    if (_addressCtrl.text.trim().isEmpty ||_cityCtrl.text.trim().isEmpty ||_housingTypeCtrl.text.trim().isEmpty ||_reasonCtrl.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Rellena todos los campos obligatorios'),
             backgroundColor: Colors.red),

@@ -27,9 +27,7 @@ class LogoutRequested extends AuthEvent {}
 ///
 /// Contains the new image URL.
 class UpdateAvatarRequested extends AuthEvent {
-
   /// URL of the new profile image.
   final String imageUrl;
-
   UpdateAvatarRequested(this.imageUrl);
 }

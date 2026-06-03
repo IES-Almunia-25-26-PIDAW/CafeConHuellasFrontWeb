@@ -38,17 +38,10 @@ class PanelScreen extends StatelessWidget {
             /// Shared application header.
             AppHeader(),
             /// Main banner image.
-            Image.asset('assets/images/banners/banner-inicio.png',
-                width: double.infinity, height: 250, fit: BoxFit.cover),
+            Image.asset('assets/images/banners/banner-inicio.png',width: double.infinity, height: 250, fit: BoxFit.cover),
             const SizedBox(height: 40),
             /// Screen title, dynamic based on user role.
-            Text(
-              isAdmin ? 'Panel de Administración' : 'Mis cosas',
-              style: const TextStyle(
-                fontSize: 36,
-                fontFamily: 'MilkyVintage',
-                color: Color(0xFF7B3FE4),
-              ),
+            Text(isAdmin ? 'Panel de Administración' : 'Mis cosas',style: const TextStyle(fontSize: 36,fontFamily: 'MilkyVintage',color: Color(0xFF7B3FE4),),
             ),
             const SizedBox(height: 40),
             /// Navigation cards grid.
@@ -96,12 +89,7 @@ class PanelScreen extends StatelessWidget {
   /// - [title]: Main card title.
   /// - [subtitle]: Descriptive subtitle text.
   /// - [onTap]: Callback triggered when the card is tapped.
-  Widget _panelCard(BuildContext context, {
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-  }) {
+  Widget _panelCard(BuildContext context, {required IconData icon,required String title,required String subtitle,required VoidCallback onTap,}) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),

@@ -32,13 +32,7 @@ class HelpScreen extends StatelessWidget {
   /// - [onTap]: Callback triggered when the selector is tapped.
   /// - [isOptional]: Whether the date field is optional.
   /// - [onClear]: Optional callback to clear the selected date.
-  Widget _dateSelector({
-    required String label,
-    required DateTime date,
-    required VoidCallback onTap,
-    bool isOptional = false,
-    VoidCallback? onClear,
-  }) {
+  Widget _dateSelector({required String label,required DateTime date,required VoidCallback onTap,bool isOptional = false,VoidCallback? onClear,}) {
     return InkWell(
       onTap: onTap,
       child: Container(

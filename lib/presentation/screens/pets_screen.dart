@@ -266,7 +266,6 @@ class PetScreen extends StatelessWidget {
                           delegate: SliverChildBuilderDelegate(
                             (context, index) {
                               final pet = state.pets[index];
-
                               /// Admin view: pet card with overlaid edit and delete buttons.
                               if (isAdmin) {
                                 return Stack(

@@ -85,23 +85,22 @@ class PetsBloc extends Bloc<PetsEvent, PetsState> {
   ///Handle for loading the authenticated user's pet relationships from the backend API.
   Future<void> _onLoadMyPetUserRelations(LoadMyPetUserRelations event, Emitter<PetsState> emit) async {
     emit(state.copyWith(isLoading: true));
-  try {
-    final relations = await api.getMyRelationships(event.userId); // Debes tener este endpoint en tu API
-    emit(state.copyWith(relations: relations, isLoading: false));
-  } catch (e) {
-    emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
-  }
-
+    try {
+      final relations = await api.getMyRelationships(event.userId); // Debes tener este endpoint en tu API
+      emit(state.copyWith(relations: relations, isLoading: false));
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+    }
   }
   //Handle for loading the authenticated user's adoption requests from the backend API.
   Future<void> _onLoadMyAdoptionRequests(LoadMyAdoptionRequests event, Emitter<PetsState> emit) async {
     emit(state.copyWith(isLoading: true));
-  try {
-    final myRequests = await api.getMeAdoptionRequest(); // Endpoint /me
-    emit(state.copyWith(adoptionRequests: myRequests, isLoading: false));
-  } catch (e) {
-    emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
-  }
+    try {
+      final myRequests = await api.getMeAdoptionRequest(); // Endpoint /me
+      emit(state.copyWith(adoptionRequests: myRequests, isLoading: false));
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+    }
   }
   /// Handles loading all adoption requests from the backend API.
   ///
@@ -114,39 +113,39 @@ class PetsBloc extends Bloc<PetsEvent, PetsState> {
   /// - The loading state is disabled.
   /// - The error message is stored in the state
   Future<void> _onLoadAdoptionRequests(LoadAdoptionRequests event, Emitter<PetsState> emit) async {
-  emit(state.copyWith(isLoading: true));
-  try {
-    ///Retrieves all adoption requests from the backend API.
-    final requests = await api.getAdoptionRequest(); 
-    ///Updates the state with retrieved requests
-    emit(state.copyWith(adoptionRequests: requests, isLoading: false));
-  } catch (e) {
-    ///Updates the state with the corresponding error message.
-    emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+    emit(state.copyWith(isLoading: true));
+    try {
+      ///Retrieves all adoption requests from the backend API.
+      final requests = await api.getAdoptionRequest(); 
+      ///Updates the state with retrieved requests
+      emit(state.copyWith(adoptionRequests: requests, isLoading: false));
+    } catch (e) {
+      ///Updates the state with the corresponding error message.
+      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+    }
   }
-}
-/// Handles submitting a new adoption request to the backend API.
-///
-/// This method:
-/// 1. Activates the loading state.
-/// 2. Sends the adoption form to the backend.
-/// 3. Disables the loading state once completed.
-///
-/// If an error occurs:
-/// - The loading state is disabled.
-/// - The error message is stored in the state.
-Future<void> _onSubmitAdoptionRequest(SubmitAdoptionRequest event, Emitter<PetsState> emit) async {
-  emit(state.copyWith(isLoading: true));
-  try {
-    /// Send the adoption form using the authenticated token.
-    await api.submitAdoptionForm(event.request, event.token);
-    ///disables loading state after successfull submission
-    emit(state.copyWith(isLoading: false));
-  } catch (e) {
-    ///Update the state with the corresponding error message if submission fails.
-    emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+  /// Handles submitting a new adoption request to the backend API.
+  ///
+  /// This method:
+  /// 1. Activates the loading state.
+  /// 2. Sends the adoption form to the backend.
+  /// 3. Disables the loading state once completed.
+  ///
+  /// If an error occurs:
+  /// - The loading state is disabled.
+  /// - The error message is stored in the state.
+  Future<void> _onSubmitAdoptionRequest(SubmitAdoptionRequest event, Emitter<PetsState> emit) async {
+    emit(state.copyWith(isLoading: true));
+    try {
+      /// Send the adoption form using the authenticated token.
+      await api.submitAdoptionForm(event.request, event.token);
+      ///disables loading state after successfull submission
+      emit(state.copyWith(isLoading: false));
+    } catch (e) {
+      ///Update the state with the corresponding error message if submission fails.
+      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+    }
   }
-}
   /// Handles loading all user-pet relationships from the backend API.
   ///
   /// This method:
@@ -160,7 +159,6 @@ Future<void> _onSubmitAdoptionRequest(SubmitAdoptionRequest event, Emitter<PetsS
   /// - The error message is stored in the state.
   Future<void> _onLoadPetUserRelations(LoadPetUserRelations event, Emitter<PetsState> emit) async {
     emit(state.copyWith(isLoading: true, clearErrorMessage: true));
-
     try {
       ///Retrieves all user-pet relationships from the backend API.
       final List<Userpetrelationship> relations = await api.getUserPetRelationShip();
@@ -193,15 +191,15 @@ Future<void> _onSubmitAdoptionRequest(SubmitAdoptionRequest event, Emitter<PetsS
   /// If an error occurs:
   /// - The error message is stored in the state.
   Future<void> _onAddPetUserRelation(AddPetUserRelation event, Emitter<PetsState> emit) async {
-    emit(state.copyWith(isLoading: true, clearErrorMessage: true));
-    try {
-      /// Sends the relationship to the backend API.
-      await api.addUserPetRelationship(event.relation);
-      emit(state.copyWith(isLoading: false, clearErrorMessage: true));
-    } catch (e) {
-      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
-    }
-   }
+        emit(state.copyWith(isLoading: true, clearErrorMessage: true));
+        try {
+          /// Sends the relationship to the backend API.
+          await api.addUserPetRelationship(event.relation);
+          emit(state.copyWith(isLoading: false, clearErrorMessage: true));
+        } catch (e) {
+          emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+        }
+  }
     /// Handles adding a new relationship for the authenticated user.
     ///
     /// This method:
@@ -211,7 +209,7 @@ Future<void> _onSubmitAdoptionRequest(SubmitAdoptionRequest event, Emitter<PetsS
     ///
     /// If an error occurs:
     /// - The error message is stored in the state.
-    Future<void> _onAddMyPetUserRelation(AddMyPetUserRelation event, Emitter<PetsState> emit) async {
+  Future<void> _onAddMyPetUserRelation(AddMyPetUserRelation event, Emitter<PetsState> emit) async {
     emit(state.copyWith(isLoading: true, clearErrorMessage: true));
     try {
        /// Sends the authenticated user's relationship to the backend.
@@ -220,7 +218,7 @@ Future<void> _onSubmitAdoptionRequest(SubmitAdoptionRequest event, Emitter<PetsS
     } catch (e) {
       emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
     }
-   }
+  }
 
   /// Handles adding a new pet to the backend API.
   ///
@@ -459,14 +457,14 @@ Future<void> _onSubmitAdoptionRequest(SubmitAdoptionRequest event, Emitter<PetsS
     emit(_applyFilters(newState));
   }
 
-/// Handle for applying active filters to the complete pets list.
-/// This method:
-/// 1. Iterates through the complete list of pets.
-/// 2. Checks if each pet matches the selected species filter (if any).
-/// 3. Checks if each pet matches the emergency filter (if active).
-/// 4. Returns a new state with the filtered list of pets.
-/// If an error occurs:
-/// - The error message is stored in the state.
+  /// Handle for applying active filters to the complete pets list.
+  /// This method:
+  /// 1. Iterates through the complete list of pets.
+  /// 2. Checks if each pet matches the selected species filter (if any).
+  /// 3. Checks if each pet matches the emergency filter (if active).
+  /// 4. Returns a new state with the filtered list of pets.
+  /// If an error occurs:
+  /// - The error message is stored in the state.
   PetsState _applyFilters(PetsState state) {
     final filtered = _allPets.where((pet) {
       final matchesSpecies =

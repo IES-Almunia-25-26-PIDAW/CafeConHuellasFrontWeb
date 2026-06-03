@@ -133,7 +133,6 @@ class ApiConector {
       if (token.isEmpty && data['data'] is Map<String, dynamic>) {
         final nested = data['data'] as Map<String, dynamic>;
         token = (nested['token'] ?? nested['accessToken'] ?? nested['jwt'] ?? '').toString();
-      
       }
     } else if (data is String) {
       token = data;
@@ -376,7 +375,6 @@ class ApiConector {
     if (data is List) {
       return data;
     }
-
     if (data is Map<String, dynamic>) {
       const List<String> candidateKeys = <String>[
         'data',
@@ -386,7 +384,6 @@ class ApiConector {
         'pets',
         'events',
       ];
-
       for (final String key in candidateKeys) {
         final dynamic value = data[key];
         if (value is List) {
@@ -394,7 +391,6 @@ class ApiConector {
         }
       }
     }
-
     throw DioException(
       requestOptions: RequestOptions(path: ''),
       error: 'API response does not contain a valid list.',
@@ -405,13 +401,11 @@ class ApiConector {
   /// from a DioException response body.
   String _extractApiErrorMessage(DioException error) {
     final dynamic data = error.response?.data;
-
     if (data is Map<String, dynamic>) {
       final dynamic errors = data['errors'];
       if (errors is List && errors.isNotEmpty) {
         return errors.map((item) => item.toString()).join('\n');
       }
-
       final dynamic message = data['message'];
       if (message != null && message.toString().trim().isNotEmpty) {
         return message.toString();
@@ -532,43 +526,41 @@ class ApiConector {
         .toList();
   }
   /// Method used to update the status of a user-pet relationship.
-Future<void> updateRelationshipStatus(int relationshipId, Userpetrelationship relationship) async {
-  try {
-    await dio.put('/relationships/$relationshipId', data: relationship.toJson());
-  } on DioException catch (error) {
-    throw Exception(_extractApiErrorMessage(error));
-  }
-}
-
-  /// Method used to update the status of an adoption request.
-  /// Only accepts: pending, approved or denied.
-Future<void> updateAdoptionStatus(int requestId, String newStatus) async {
-  try {
-    await dio.patch('/adoption-requests/$requestId/status', queryParameters: {'status': newStatus});
-  } on DioException catch (error) {
-    throw Exception(_extractApiErrorMessage(error));
-  }
-}
-  /// Method used to create a relationship for the authenticated user (no admin privileges required).
-Future <void> postMyRelationships(Userpetrelationship relationship) async {
-  final Map<String, dynamic> relationshipData = relationship.toJson();
+  Future<void> updateRelationshipStatus(int relationshipId, Userpetrelationship relationship) async {
     try {
-      await dio.post(
-        '/relationships/me',
-        data: relationshipData,
-      );
+      await dio.put('/relationships/$relationshipId', data: relationship.toJson());
     } on DioException catch (error) {
       throw Exception(_extractApiErrorMessage(error));
     }
-
   }
-  /// Method used to send a message from the contact form to the backend, which then forwards it to the organization's email.
 
-Future<void> sendContactMessage(Map<String, dynamic> messageData) async {
-  try {
-    await dio.post('/contact', data: messageData);
-  } on DioException catch (error) {
-    throw Exception(_extractApiErrorMessage(error));
-  } 
-}
+  /// Method used to update the status of an adoption request.
+  /// Only accepts: pending, approved or denied.
+  Future<void> updateAdoptionStatus(int requestId, String newStatus) async {
+    try {
+      await dio.patch('/adoption-requests/$requestId/status', queryParameters: {'status': newStatus});
+    } on DioException catch (error) {
+      throw Exception(_extractApiErrorMessage(error));
+    }
+  }
+  /// Method used to create a relationship for the authenticated user (no admin privileges required).
+  Future <void> postMyRelationships(Userpetrelationship relationship) async {
+    final Map<String, dynamic> relationshipData = relationship.toJson();
+      try {
+        await dio.post(
+          '/relationships/me',
+          data: relationshipData,
+        );
+      } on DioException catch (error) {
+        throw Exception(_extractApiErrorMessage(error));
+      }
+    }
+  /// Method used to send a message from the contact form to the backend, which then forwards it to the organization's email.
+  Future<void> sendContactMessage(Map<String, dynamic> messageData) async {
+    try {
+      await dio.post('/contact', data: messageData);
+    } on DioException catch (error) {
+      throw Exception(_extractApiErrorMessage(error));
+    } 
+  }
 }
