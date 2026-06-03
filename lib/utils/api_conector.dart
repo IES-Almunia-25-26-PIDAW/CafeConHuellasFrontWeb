@@ -69,9 +69,9 @@ class ApiConector {
       /// Save token after login.
       /// Stores the authentication token
       /// used for future API requests.
-      void setToken(String token) {
-       _token = token;
-    }
+  void setToken(String token) {
+    _token = token;
+  }
   // Method used to update the user's avatar.
   /// Updates the authenticated user's avatar.
   ///
@@ -94,13 +94,11 @@ class ApiConector {
           'phone':     user.phone,
           'role':      user.role,
           'imageUrl':  user.imageUrl,
-          
           /// Empty password should be ignored
           /// by the backend.
           'password':  user.password.isNotEmpty ? user.password : null,
         },
       );
-  
       if (response.statusCode != 200) {
         throw Exception('Failed to update avatar. Status code: ${response.statusCode}');
       }
@@ -137,15 +135,12 @@ class ApiConector {
         token = (nested['token'] ?? nested['accessToken'] ?? nested['jwt'] ?? '').toString();
       
       }
-
     } else if (data is String) {
       token = data;
     }
-
     if (token.isEmpty) {
       throw Exception('No token received in login response.');
     }
-
     setToken(token);
     return {'token': token};
   }
@@ -176,19 +171,16 @@ class ApiConector {
         contentType: DioMediaType('image', fileName.endsWith('.png') ? 'png' : 'jpeg'),
       ),
     });
-
     final response = await dio.post(
       '/files/upload-avatar',
       data: formData,
       options: Options(contentType: 'multipart/form-data'),
     );
-
     final dynamic data = response.data;
     if (data is Map<String, dynamic>) {
       final String url = (data['imageUrl'] ?? '').toString();
       if (url.isNotEmpty) return url;
     }
-
     throw Exception('No imageUrl received in response.');
   }
   /// Method used to upload pet images.
@@ -196,80 +188,72 @@ class ApiConector {
   /// using multipart/form-data.
   ///
   /// Returns the uploaded image URL.
-Future<String> uploadPetsImage(Uint8List fileBytes, String fileName) async {
-  final formData = FormData.fromMap({
-    'file': MultipartFile.fromBytes(
-      fileBytes,
-      filename: fileName,
-      contentType: DioMediaType('image', fileName.endsWith('.png') ? 'png' : 'jpeg'),
-    ),
-  });
-
-  final response = await dio.post(
-    '/files/upload-pet-image',
-    data: formData,
-    options: Options(contentType: 'multipart/form-data'),
-  );
-
-  final dynamic data = response.data;
-  if (data is Map<String, dynamic>) {
-    final String url = (data['imageUrl'] ?? '').toString();
-    if (url.isNotEmpty) return url;
+  Future<String> uploadPetsImage(Uint8List fileBytes, String fileName) async {
+    final formData = FormData.fromMap({
+      'file': MultipartFile.fromBytes(
+        fileBytes,
+        filename: fileName,
+        contentType: DioMediaType('image', fileName.endsWith('.png') ? 'png' : 'jpeg'),
+      ),
+    });
+    final response = await dio.post(
+      '/files/upload-pet-image',
+      data: formData,
+      options: Options(contentType: 'multipart/form-data'),
+    );
+    final dynamic data = response.data;
+    if (data is Map<String, dynamic>) {
+      final String url = (data['imageUrl'] ?? '').toString();
+      if (url.isNotEmpty) return url;
+    }
+    throw Exception('No imageUrl received in response.');
   }
-
-  throw Exception('No imageUrl received in response.');
-}
   /// Method used to upload event images.
   /// Uploads an event image
   /// using multipart/form-data.
   ///
   /// Returns the uploaded image URL.
-Future<String> uploadEventsImages(Uint8List fileBytes, String fileName) async {
-  final formData = FormData.fromMap({
-    'file': MultipartFile.fromBytes(
-      fileBytes,
-      filename: fileName,
-      contentType: DioMediaType('image', fileName.endsWith('.png') ? 'png' : 'jpeg'),
-    ),
-  });
-
-  final response = await dio.post(
-    '/files/upload-event-image',
-    data: formData,
-    options: Options(contentType: 'multipart/form-data'),
-  );
-
-  final dynamic data = response.data;
-  if (data is Map<String, dynamic>) {
-    final String url = (data['imageUrl'] ?? '').toString();
-    if (url.isNotEmpty) return url;
+  Future<String> uploadEventsImages(Uint8List fileBytes, String fileName) async {
+    final formData = FormData.fromMap({
+      'file': MultipartFile.fromBytes(
+        fileBytes,
+        filename: fileName,
+        contentType: DioMediaType('image', fileName.endsWith('.png') ? 'png' : 'jpeg'),
+      ),
+    });
+    final response = await dio.post(
+      '/files/upload-event-image',
+      data: formData,
+      options: Options(contentType: 'multipart/form-data'),
+    );
+    final dynamic data = response.data;
+    if (data is Map<String, dynamic>) {
+      final String url = (data['imageUrl'] ?? '').toString();
+      if (url.isNotEmpty) return url;
+    }
+    throw Exception('No imageUrl received in response.');
   }
-
-  throw Exception('No imageUrl received in response.');
-}
 
   /// Method used to register a new user.
   /// Registers a new user account.
   ///
   /// Strips empty imageUrl before sending
   /// to avoid backend validation errors.
-Future<void> register(Map<String, dynamic> user) async {
-  final Map<String, dynamic> sanitizedUser = Map<String, dynamic>.from(user);
-  final String? imageUrl = sanitizedUser['imageUrl']?.toString().trim();
-
-  if (imageUrl == null || imageUrl.isEmpty) {
-    sanitizedUser.remove('imageUrl');
+  Future<void> register(Map<String, dynamic> user) async {
+    final Map<String, dynamic> sanitizedUser = Map<String, dynamic>.from(user);
+    final String? imageUrl = sanitizedUser['imageUrl']?.toString().trim();
+    if (imageUrl == null || imageUrl.isEmpty) {
+      sanitizedUser.remove('imageUrl');
+    }
+    try {
+      await dio.post(
+        '/auth/register',
+        data: sanitizedUser,
+      );
+    } on DioException catch (error) {
+    throw Exception(_extractApiErrorMessage(error));
+    }
   }
-
-  try {
-    await dio.post(
-      '/auth/register',
-      data: sanitizedUser,
-    );
-  } on DioException catch (error) {
-  throw Exception(_extractApiErrorMessage(error));
-  }
-}
 
   /// Method used to fetch all available pets.
   Future<List<Pet>> getPets() async {

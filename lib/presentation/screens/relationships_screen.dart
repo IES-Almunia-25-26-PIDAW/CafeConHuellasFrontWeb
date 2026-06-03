@@ -175,21 +175,17 @@ class _RelacionesTab extends StatelessWidget {
             ),
           );
         }
-
         final relations = state.relations;
-
         if (relations.isEmpty) {
           return const Center(
             child: Text('No relationships found.'),
           );
         }
-
         return ListView.builder(
           padding: const EdgeInsets.all(16),
           itemCount: relations.length,
           itemBuilder: (context, index) {
             final r = relations[index];
-
             return _RelationCard(
               relation: r,
               isAdmin: isAdmin,
@@ -204,14 +200,9 @@ class _RelacionesTab extends StatelessWidget {
                         endDate: r.endDate,
                         active: !r.active,
                       );
-
                       try {
-                        await ApiConector()
-                            .updateRelationshipStatus(r.id, updated);
-
-                        context
-                            .read<PetsBloc>()
-                            .add(LoadPetUserRelations());
+                        await ApiConector().updateRelationshipStatus(r.id, updated);
+                        context.read<PetsBloc>().add(LoadPetUserRelations());
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(

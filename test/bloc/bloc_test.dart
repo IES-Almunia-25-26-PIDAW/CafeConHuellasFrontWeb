@@ -2,6 +2,7 @@ import 'package:cafeconhuellas_front/models/adoptionForm.dart';
 import 'package:cafeconhuellas_front/models/event.dart';
 import 'package:cafeconhuellas_front/models/pet.dart';
 import 'package:cafeconhuellas_front/models/user.dart';
+import 'package:cafeconhuellas_front/models/userPetRelationship.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_event.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_state.dart';
@@ -40,7 +41,7 @@ void main() {
   
   });
 
-  // ── AuthBloc básico ──────────────────────────────────────────────
+  //  AuthBloc básico 
   group('AuthBloc', () {
     test('emite loading y luego success cuando login va bien', () async {
       final mockApi = MockApi();
@@ -66,7 +67,7 @@ void main() {
     });
   });
 
-  // ── PetsBloc básico ──────────────────────────────────────────────
+  //  PetsBloc básico 
   group('PetsBloc', () {
     test('filtra por especie perro', () async {
       final mockApi = MockApi();
@@ -454,7 +455,7 @@ void main() {
           email: 'admin@test.com', phone: '', role: 'ADMIN', imageUrl: '',
         ),
       );
-      bloc.add(LoginSubmitted('admin@test.com', 'pass'));
+
       final future = expectLater(
         bloc.stream,
         emitsInOrder([
@@ -462,7 +463,9 @@ void main() {
           isA<AuthState>().having((s) => s.user?.role, 'role', 'ADMIN'),
         ]),
       );
-      await future;
+
+      bloc.add(LoginSubmitted('admin@test.com', 'pass')); // ← primero add
+      await future;                                        // ← luego await
     });
 
     test('logout sin sesión activa no lanza excepción', () async {
@@ -583,7 +586,19 @@ void main() {
     expect(state.user?.role, 'USER');
     expect(state.user?.imageUrl, 'newpic.jpg');
   });
+  test('los eventos se instancian correctamente', () {
+    final event = Event(id: 1, name: '', description: '', imageUrl: '', date: DateTime.now());
+    final relation = Userpetrelationship(id: 1, userId: 1, petId: 1, relationshipType: '', startDate: DateTime.now(), active: true);
 
-
+    expect(AddEvent(event), isA<PetsEvent>());
+    expect(UpdateEvent(event), isA<PetsEvent>());
+    expect(DeleteEvent(1), isA<PetsEvent>());
+    expect(AddPetUserRelation(relation), isA<PetsEvent>());
+    expect(AddMyPetUserRelation(relation), isA<PetsEvent>());
+    expect(LoadPetUserRelations(), isA<PetsEvent>());
+    expect(SubmitAdoptionRequest({}, 'token'), isA<PetsEvent>());
+    expect(LoadMyAdoptionRequests(), isA<PetsEvent>());
+    expect(LoadMyPetUserRelations(1), isA<PetsEvent>());
+  });
 
 });} // ← único cierre de main()

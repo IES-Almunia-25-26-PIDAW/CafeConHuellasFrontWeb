@@ -14,8 +14,9 @@ import 'package:flutter/material.dart';
 /// It also includes the application's shared
 /// header and footer components.
 class ContactusScreen extends StatefulWidget {
+  final ApiConector? apiConector;
   /// Creates the contact screen widget.
-  const ContactusScreen({super.key});
+  const ContactusScreen({super.key, this.apiConector});
   @override
   State<ContactusScreen> createState() =>
       _ContactusScreenState();
@@ -25,8 +26,7 @@ class ContactusScreen extends StatefulWidget {
 /// - Form controllers.
 /// - Form submission.
 /// - Widget lifecycle.
-class _ContactusScreenState
-    extends State<ContactusScreen> {
+class _ContactusScreenState extends State<ContactusScreen> {
   /// Controller used for the name input field.
   final nameController = TextEditingController();
   /// Controller used for the email input field.
@@ -38,39 +38,36 @@ class _ContactusScreenState
   /// 
   /// This method is connected to our
   /// a backend API .
- void sendForm() async {
-  final contactData = {
-    'nombre': nameController.text,
-    'email': emailController.text,
-    'mensaje': messageController.text,
-  };
+  void sendForm() async {
+    final contactData = {
+      'nombre': nameController.text,
+      'email': emailController.text,
+      'mensaje': messageController.text,
+    };
 
-  try {
-    await ApiConector().sendContactMessage(contactData);
-
-    if (!mounted) return;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Mensaje enviado con éxito'),
-        backgroundColor: AppColors.darkViolet,
-      ),
-    );
-    nameController.clear();
-    emailController.clear();
-    messageController.clear();
-
-  } catch (error) {
-    if (!mounted) return;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Error al enviar el mensaje: $error'),
-        backgroundColor: Colors.red,
-      ),
-    );
+    try {
+      final api = widget.apiConector ?? ApiConector();
+      await api.sendContactMessage(contactData);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Mensaje enviado con éxito'),
+          backgroundColor: AppColors.darkViolet,
+        ),
+      );
+      nameController.clear();
+      emailController.clear();
+      messageController.clear();
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al enviar el mensaje: $error'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
-}
   /// Releases all text controllers when
   /// the widget is removed from memory.
   ///
@@ -229,9 +226,7 @@ class _ContactusScreenState
                                       ),
                                     ),
                                   ),
-
                                   onPressed: sendForm,
-
                                   child: const Text(
                                     'Enviar',
                                     style: TextStyle(
@@ -254,7 +249,6 @@ class _ContactusScreenState
                       crossAxisAlignment:
                           CrossAxisAlignment.start,
                       children: [
-
                         /// Contact information title.
                         const Text(
                           'Otras formas de contacto',
@@ -264,15 +258,12 @@ class _ContactusScreenState
                             color: AppColors.darkViolet,
                           ),
                         ),
-
                         const SizedBox(height: 16),
-
                         /// Contact information container.
                         Container(
                           width: double.infinity,
                           padding:
                               const EdgeInsets.all(24),
-
                           decoration: BoxDecoration(
                             color: Colors.white,
                             border: Border.all(
@@ -281,7 +272,6 @@ class _ContactusScreenState
                             borderRadius:
                                 BorderRadius.circular(12),
                           ),
-
                           child: Column(
                             crossAxisAlignment:
                                 CrossAxisAlignment.start,
@@ -338,7 +328,6 @@ class _ContactusScreenState
                 ],
               ),
             ),
-
             const SizedBox(height: 60),
             /// Shared application footer.
             const AppFooter(),
@@ -354,10 +343,7 @@ class _ContactusScreenState
   /// Used for displaying:
   /// - Email.
   /// - Phone number.
-  Widget _infoRow(
-    IconData icon,
-    String text,
-  ) {
+  Widget _infoRow(IconData icon,String text,) {
     return Row(
       children: [
         Icon(
@@ -377,22 +363,17 @@ class _ContactusScreenState
       ],
     );
   }
-
   /// Creates a reusable social media chip.
   ///
   /// Displays:
   /// - Social media icon.
   /// - Platform label.
-  Widget _socialChip(
-    IconData icon,
-    String label,
-  ) {
+  Widget _socialChip(IconData icon,String label,) {
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 12,
         vertical: 8,
       ),
-
       decoration: BoxDecoration(
         color: AppColors.vanilla,
         border: Border.all(

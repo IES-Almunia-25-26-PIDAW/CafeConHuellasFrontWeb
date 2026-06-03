@@ -113,7 +113,7 @@ void main() {
       expect(result.agreesToFollowUp, false);
       expect(result.additionalInfo, '');
       expect(result.relationshipId, 0);
-      expect(result.status, 'PENDIENTE');
+      expect(result.status, 'PENDING');
     });
 
     test('fromJson convierte strings booleanos correctamente', () {

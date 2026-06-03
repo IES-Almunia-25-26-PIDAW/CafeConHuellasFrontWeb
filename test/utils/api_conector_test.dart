@@ -31,12 +31,12 @@ Map<String, dynamic> get _eventJson => {
 
 Map<String, dynamic> get _donationJson => {
   'id': 5,
-  'amount': 20,           // ← cámbialo aquí
+  'amount': 20,           
   'userId': 1,
   'date': '2025-01-01T00:00:00',
-  'category': 'MONETARIA', // ← añádelo aquí
-  'method': 'TARJETA',     // ← añádelo aquí
-  'notes': '',             // ← añádelo aquí
+  'category': 'MONETARIA',
+  'method': 'TARJETA',     
+  'notes': '',            
 };
 
 Map<String, dynamic> get _relationshipJson => {
@@ -552,6 +552,94 @@ void main() {
           ),
         ),
       );
+    });
+  });
+  group('getPets', () {
+  test('devuelve lista de mascotas correctamente', () async {
+    dioAdapter.onGet(
+      '/pets',
+      (server) => server.reply(200, [_petJson]),
+    );
+    final pets = await api.getPets();
+    expect(pets.length, 1);
+    expect(pets.first.name, 'Rex');
+  });
+
+  test('lanza excepción cuando la respuesta no tiene lista válida', () async {
+    dioAdapter.onGet(
+      '/pets',
+      (server) => server.reply(200, {'unexpected': 'value'}),
+    );
+    expect(() => api.getPets(), throwsException);
+  });
+});
+
+group('getEvents', () {
+  test('devuelve lista de eventos correctamente', () async {
+    dioAdapter.onGet(
+      '/events',
+      (server) => server.reply(200, [_eventJson]),
+    );
+    final events = await api.getEvents();
+    expect(events.length, 1);
+    expect(events.first.name, 'Adopción masiva');
+  });
+});
+
+group('getPetById', () {
+  test('devuelve mascota por id cuando el backend responde correctamente', () async {
+    dioAdapter.onGet(
+      '/pets/1',
+      (server) => server.reply(200, _petJson),
+    );
+    final pet = await api.getPetById(1);
+    expect(pet, isNotNull);
+    expect(pet!.id, 1);
+  });
+
+  test('devuelve null si la mascota no existe en la lista', () async {
+    dioAdapter.onGet(
+      '/pets/99',
+      (server) => server.reply(404, {}),
+    );
+    dioAdapter.onGet(
+      '/pets',
+      (server) => server.reply(200, [_petJson]),
+    );
+    final pet = await api.getPetById(99);
+    expect(pet, isNull);
+  });
+});
+
+  group('sendContactMessage', () {
+    test('completa sin error cuando el backend responde 200', () async {
+      dioAdapter.onPost(
+        '/contact',
+        (server) => server.reply(200, {}),
+        data: {'nombre': 'Ana', 'email': 'ana@test.com', 'mensaje': 'Hola'},
+      );
+      await expectLater(
+        api.sendContactMessage({'nombre': 'Ana', 'email': 'ana@test.com', 'mensaje': 'Hola'}),
+        completes,
+      );
+    });
+
+    test('lanza excepción cuando el backend responde 500', () async {
+      dioAdapter.onPost(
+        '/contact',
+        (server) => server.reply(500, {'message': 'Error interno'}),
+        data: {'nombre': 'Ana', 'email': 'ana@test.com', 'mensaje': 'Hola'},
+      );
+      expect(
+        () => api.sendContactMessage({'nombre': 'Ana', 'email': 'ana@test.com', 'mensaje': 'Hola'}),
+        throwsException,
+      );
+    });
+  });
+
+  group('setToken', () {
+    test('setToken no lanza excepción', () {
+      expect(() => api.setToken('mi-token'), returnsNormally);
     });
   });
 }
