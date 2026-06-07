@@ -437,6 +437,38 @@ O abre directamente `doc/api/index.html` con VS Code + extensión **Live Server*
 > La carpeta `doc/` está en `.gitignore` y no se sube al repositorio.
 ---
 
+## 🧪 Calidad de código
+
+> Esta sección es para **desarrolladores** que quieran contribuir al proyecto.
+> Requiere tener Flutter instalado localmente.
+
+### Análisis estático
+
+Detecta errores, warnings y problemas de estilo sin ejecutar la app:
+
+```bash
+flutter analyze
+```
+
+Las reglas de análisis están configuradas en `analysis_options.yaml`.
+
+### Tests
+
+Ejecuta todos los tests del proyecto:
+
+```bash
+flutter test
+```
+
+Para generar un informe de cobertura:
+
+```bash
+flutter test --coverage
+```
+
+El informe se genera en `coverage/lcov.info`.
+
+
 ## ⚠️ Consideraciones importantes
 
 * Si se modifica la variable `BACKEND_URL`, es necesario reconstruir la imagen:
