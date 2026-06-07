@@ -437,6 +437,91 @@ O abre directamente `doc/api/index.html` con VS Code + extensión **Live Server*
 > La carpeta `doc/` está en `.gitignore` y no se sube al repositorio.
 ---
 
+## 🧪 Testing
+
+El proyecto cuenta con dos niveles de pruebas automatizadas, ejecutables con:
+
+```bash
+flutter test
+```
+
+---
+
+### 🔬 Tests unitarios
+
+Prueban la lógica de negocio y los modelos de forma aislada, sin interfaz ni dependencias externas.
+
+**Modelos:**
+- `adoption_request_test.dart` — parseo y validación del modelo de solicitud de adopción
+- `adoptionform_test.dart` — validación del formulario de adopción
+- `donation_test.dart` — modelo de donación
+- `event_test.dart` — modelo de evento
+- `pet_test.dart` — modelo `Pet`, incluyendo campos alternativos de la API (`imageUrl` / `image_url`, `adopted` / `isAdopted`, etc.)
+- `user_test.dart` — modelos `User` y `UserWithoutPassword`
+- `userPetRelationship_test.dart` — relación entre usuario y mascota
+
+**BLoC:**
+- `bloc_test.dart` — lógica de autenticación y gestión de mascotas
+
+**Utilidades:**
+- `api_conector_test.dart` — cliente HTTP centralizado
+
+---
+
+### 🖼️ Tests de widgets
+
+Prueban que los componentes visuales renderizan correctamente y responden a las interacciones del usuario.
+
+**Pantallas:**
+- `contactus_test.dart`, `donations_test.dart`, `donationFormScreen_test.dart`
+- `events_test.dart`, `helpus_test.dart`, `home_test.dart`, `information_test.dart`
+- `login_test.dart`, `register_test.dart`, `profile_test.dart`
+- `petscreen_test.dart`, `petdetail_screen_test.dart`
+- `mydonations_test.dart`, `panel_screen_test.dart`, `relationships_screen_test.dart`
+
+**Widgets:**
+- `petformdialog_test.dart` — diálogo de formulario de mascota
+- `widgets_test.dart` — componentes comunes reutilizables
+
+---
+
+### 📁 Estructura de tests
+
+```
+test/
+├── bloc/
+│   └── bloc_test.dart
+├── models/
+│   ├── adoption_request_test.dart
+│   ├── adoptionform_test.dart
+│   ├── donation_test.dart
+│   ├── event_test.dart
+│   ├── pet_test.dart
+│   ├── user_test.dart
+│   └── userPetRelationship_test.dart
+├── screens/
+│   ├── contactus_test.dart
+│   ├── donationFormScreen_test.dart
+│   ├── donations_test.dart
+│   ├── events_test.dart
+│   ├── helpus_test.dart
+│   ├── home_test.dart
+│   ├── information_test.dart
+│   ├── login_test.dart
+│   ├── mydonations_test.dart
+│   ├── panel_screen_test.dart
+│   ├── petdetail_screen_test.dart
+│   ├── petscreen_test.dart
+│   ├── profile_test.dart
+│   ├── register_test.dart
+│   └── relationships_screen_test.dart
+├── utils/
+│   └── api_conector_test.dart
+└── widgets/
+    ├── petformdialog_test.dart
+    └── widgets_test.dart
+```
+
 ## 🧪 Calidad de código
 
 > Esta sección es para **desarrolladores** que quieran contribuir al proyecto.
