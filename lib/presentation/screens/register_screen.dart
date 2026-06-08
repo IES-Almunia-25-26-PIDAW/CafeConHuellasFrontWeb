@@ -167,7 +167,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         "password": passwordController.text,
         "phone": phoneController.text.trim(),
         "role": "USER",
-        "imageUrl": ?imageUrl,
+        "imageUrl": imageUrl,
       });
 
     } catch (e) {

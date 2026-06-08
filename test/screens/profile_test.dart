@@ -1,4 +1,4 @@
-// test/screens/profile_test.dart
+/// test/screens/profile_test.dart
 import 'package:cafeconhuellas_front/models/user.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_state.dart';
@@ -10,7 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 void main() {
-  //necesitamos un usuario para mostrarlo en el perfil
+  ///necesitamos un usuario para mostrarlo en el perfil
   final UserWithoutPassword fakeUser = UserWithoutPassword(
     id: 1,
     firstName: 'Yoli',
@@ -29,7 +29,7 @@ void main() {
     await tester.pumpWidget(widget);
     await tester.pumpAndSettle();
   }
-//test si no se autentica
+///test si no se autentica
   group('ProfileScreen - no autenticado', () {
     testWidgets('muestra mensaje de no sesión', (tester) async {
       await pumpBig(
@@ -44,14 +44,14 @@ void main() {
       expect(find.text('No has iniciado sesión'), findsOneWidget);
     });
   });
-//test de lo que sale si estamos autenticados
+///test de lo que sale si estamos autenticados
   group('ProfileScreen - autenticado con usuario', () {
-    // AuthBloc con estado ya autenticado inyectado directamente
+    /// AuthBloc con estado ya autenticado inyectado directamente
     late AuthBloc authBloc;
 
     setUp(() {
       authBloc = AuthBloc(ApiConector());
-      // emitimos estado autenticado con usuario
+      /// emitimos estado autenticado con usuario
       authBloc.emit(AuthState(
         token: 'fake-token',
         user: fakeUser,

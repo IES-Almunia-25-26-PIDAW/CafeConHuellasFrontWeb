@@ -10,7 +10,7 @@ import 'config/app_router.dart';
 import 'config/app_theme.dart';
 
 void main() {
-  // Enables clean URLs (no hash) for web routing.
+/// Enables clean URLs (no hash) for web routing.
   usePathUrlStrategy();
   runApp(const MyApp());
 }
@@ -32,8 +32,8 @@ class MyApp extends StatelessWidget {
           create: (context) => AuthBloc(ApiConector()),
         ),
         BlocProvider(
-          // Initialized here instead of in the router to avoid
-          // creating a new bloc instance every time the pets page is visited.
+          /// Initialized here instead of in the router to avoid
+          ///creating a new bloc instance every time the pets page is visited.
           create: (context) => PetsBloc(api: ApiConector())..add(LoadPets())..add(LoadEvents()),
         ),
       ],
@@ -46,3 +46,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+

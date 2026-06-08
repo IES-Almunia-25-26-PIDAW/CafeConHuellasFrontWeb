@@ -9,6 +9,7 @@ class ActionItem extends StatelessWidget {
   final String image;
   /// Label text displayed below the image.
   final String text;
+  /// Creates an instance of [ActionItem].
   const ActionItem(this.image, this.text);
   @override
   Widget build(BuildContext context) {

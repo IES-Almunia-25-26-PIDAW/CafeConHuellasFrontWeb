@@ -1,4 +1,4 @@
-// test/screens/register_test.dart
+/// test/screens/register_test.dart
 import 'package:cafeconhuellas_front/presentation/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,7 +10,7 @@ void main() {
           routes: [
             GoRoute(
               path: '/',
-              // usamos context y state con nombres distintos
+              /// usamos context y state con nombres distintos
               builder: (context, state) => const RegisterScreen(),
             ),
             GoRoute(
@@ -52,7 +52,7 @@ void main() {
     testWidgets('botón activo en estado inicial', (tester) async {
       await pumpBig(tester);
       final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton).first);
-      // en estado inicial no está cargando, así que el botón está activo
+      /// en estado inicial no está cargando, así que el botón está activo
       expect(button.onPressed, isNotNull);
     });
   });

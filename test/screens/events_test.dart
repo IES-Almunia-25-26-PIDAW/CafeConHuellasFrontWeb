@@ -1,4 +1,4 @@
-// test/screens/events_test.dart
+/// test/screens/events_test.dart
 import 'package:cafeconhuellas_front/models/event.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/pet_bloc.dart';
@@ -18,7 +18,7 @@ class MockPetsBloc extends MockBloc<PetsEvent, PetsState> implements PetsBloc {}
 void main() {
   late MockPetsBloc mockBloc;
 
-  // Evento futuro y pasado para los tests
+  /// Evento futuro y pasado para los tests
   final eventActivo = Event(
     id: 1,
     name: 'Adopción Primavera',
@@ -35,7 +35,7 @@ void main() {
     eventdate: DateTime.now().subtract(const Duration(days: 5)),
   );
 
-  // Estado base vacío
+  /// Estado base vacío
   final estadoVacio = PetsState(
     pets: const [],
     events: const [],
@@ -50,7 +50,7 @@ void main() {
 
   tearDown(() => mockBloc.close());
 
-  // Helper para construir el widget con el bloc mockeado
+  /// Helper para construir el widget con el bloc mockeado
   Widget buildWidget() => MaterialApp(
         home: MultiBlocProvider(
           providers: [
@@ -188,7 +188,7 @@ void main() {
 
   group('EventsScreen - imagen con error de red', () {
     setUp(() {
-      // Imagen con URL rota para ejercitar el errorBuilder
+      /// Imagen con URL rota para ejercitar el errorBuilder
       when(() => mockBloc.state).thenReturn(
         estadoVacio.copyWith(events: [
           Event(

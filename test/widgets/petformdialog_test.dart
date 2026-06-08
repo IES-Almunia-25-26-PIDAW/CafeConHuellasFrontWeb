@@ -1,4 +1,4 @@
-// test/screens/pet_form_dialog_test.dart
+/// test/screens/pet_form_dialog_test.dart
 import 'package:cafeconhuellas_front/models/pet.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/petformdialog.dart';
 import 'package:flutter/material.dart';
@@ -151,7 +151,7 @@ void main() {
 
     testWidgets('muestra error si nombre vacío al guardar', (tester) async {
       await pumpAndOpen(tester);
-      // pulsa el botón de guardar sin rellenar nada
+      /// pulsa el botón de guardar sin rellenar nada
       await tester.tap(find.text('Añadir mascota').last);
       await tester.pumpAndSettle();
       expect(find.text('El nombre es obligatorio'), findsOneWidget);
@@ -183,7 +183,7 @@ void main() {
 
     testWidgets('activar switch Emergencia lo pone en true', (tester) async {
       await pumpAndOpen(tester);
-      // el último switch es Emergencia
+      /// el último switch es Emergencia
       final switchFinder = find.byType(Switch).last;
       expect(tester.widget<Switch>(switchFinder).value, false);
       await tester.tap(switchFinder);
@@ -234,13 +234,13 @@ void main() {
 
     testWidgets('switch Castrado prerelleno a true', (tester) async {
       await pumpAndOpen(tester, pet: _petExistente);
-      // primer switch = Castrado
+      /// primer switch = Castrado
       expect(tester.widget<Switch>(find.byType(Switch).first).value, true);
     });
 
     testWidgets('switch PPP prerelleno a false', (tester) async {
       await pumpAndOpen(tester, pet: _petExistente);
-      // segundo switch = PPP
+      /// segundo switch = PPP
       expect(tester.widget<Switch>(find.byType(Switch).at(1)).value, false);
     });
 

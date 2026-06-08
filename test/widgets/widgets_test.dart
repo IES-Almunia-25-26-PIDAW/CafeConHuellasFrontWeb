@@ -1,4 +1,4 @@
-// test/widgets/widgets_test.dart
+/// test/widgets/widgets_test.dart
 import 'package:bloc_test/bloc_test.dart';
 import 'package:cafeconhuellas_front/models/pet.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
@@ -19,7 +19,7 @@ import 'package:mocktail/mocktail.dart';
 class MockAuthBloc extends MockBloc<AuthEvent, AuthState> implements AuthBloc {}
 class MockApi extends Mock implements ApiConector {}
 
-// GoRouter mínimo para que context.go no explote
+/// GoRouter mínimo para que context.go no explote
 GoRouter _testRouter(Widget child) => GoRouter(
       routes: [
         GoRoute(path: '/', builder: (_, _) => child),
@@ -35,7 +35,7 @@ GoRouter _testRouter(Widget child) => GoRouter(
       ],
     );
 
-// HELPERS 
+/// HELPERS 
 
 Widget wrapWithRouter(Widget child, {MockAuthBloc? authBloc}) {
   final bloc = authBloc ?? MockAuthBloc();
@@ -69,7 +69,7 @@ Pet _makePet({
       adoptionStatus: 'NO_ADOPTADO',
     );
 void main (){
-//EVENT CARD 
+///EVENT CARD 
 
 group('EventCard', () {
   testWidgets('muestra título y descripción', (tester) async {
@@ -127,12 +127,12 @@ group('EventCard', () {
       ),
     );
 
-    // El widget existe aunque el texto esté recortado
+    /// El widget existe aunque el texto esté recortado
     expect(find.byType(EventCard), findsOneWidget);
   });
 });
 
-// PET CARD 
+/// PET CARD 
 
 group('PetCard', () {
   testWidgets('muestra nombre, raza, edad y estado normal', (tester) async {
@@ -177,7 +177,7 @@ group('PetCard', () {
 
 });
 
-//  APP HEADER 
+///  APP HEADER 
 group('AppHeader', () {
   late MockAuthBloc authBloc;
 
@@ -185,7 +185,7 @@ group('AppHeader', () {
     authBloc = MockAuthBloc();
   });
 
-  // Helper específico para el header con tamaño de pantalla controlado
+  /// Helper específico para el header con tamaño de pantalla controlado
   Future<void> pumpHeader(
     WidgetTester tester, {
     double width = 1400,
@@ -222,7 +222,7 @@ group('AppHeader', () {
   testWidgets('renderiza en modo compacto en pantalla estrecha', (tester) async {
     await pumpHeader(tester, width: 800);
 
-    // En compacto también aparecen los items de nav
+    /// En compacto también aparecen los items de nav
     expect(find.text('Inicio'), findsWidgets);
     expect(find.text('Mascotas'), findsWidgets);
   });
@@ -238,8 +238,8 @@ group('AppHeader', () {
     await tester.tap(find.byType(GestureDetector).first);
     await tester.pumpAndSettle();
 
-    // El tap en el logo va a '/', el del avatar debería ir a login
-    // Buscamos el GestureDetector del avatar (el último de la fila)
+    /// El tap en el logo va a '/', el del avatar debería ir a login
+    /// Buscamos el GestureDetector del avatar (el último de la fila)
     final gestures = find.byType(GestureDetector);
     await tester.tap(gestures.last);
     await tester.pumpAndSettle();
@@ -253,7 +253,7 @@ group('AppHeader', () {
     await tester.tap(find.text('Inicio').first);
     await tester.pumpAndSettle();
 
-    // Volvemos a la ruta raíz que muestra el propio header
+    /// Volvemos a la ruta raíz que muestra el propio header
     expect(find.byType(AppHeader), findsOneWidget);
   });
 
@@ -270,7 +270,7 @@ group('AppHeader', () {
     when(() => authBloc.state).thenReturn(
       AuthState(
         token: 'tok',
-        // Asume que tu AuthState acepta user; ajusta si el constructor es diferente
+        /// Asume que tu AuthState acepta user; ajusta si el constructor es diferente
       ),
     );
 

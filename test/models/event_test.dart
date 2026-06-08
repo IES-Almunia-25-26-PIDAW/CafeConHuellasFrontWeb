@@ -2,7 +2,7 @@ import 'package:cafeconhuellas_front/models/event.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main (){
-  //aquí se harán los test del modelo event
+  ///aquí se harán los test del modelo event
     group 
       ('Event', (){
         test('fromJson crea correctamente un Event', (){

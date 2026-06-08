@@ -11,7 +11,7 @@ class AppFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Responsive spacing based on screen width.
+    /// Responsive spacing based on screen width.
     final screenWidth = MediaQuery.sizeOf(context).width;
     final sectionSpacing = screenWidth > 1200 ? 70.0 : screenWidth > 900 ? 48.0 : 34.0;
 
@@ -33,14 +33,14 @@ class AppFooter extends StatelessWidget {
             spacing: sectionSpacing,
             runSpacing: sectionSpacing,
             children: [
-              // Logo
+              /// Logo
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Image.asset('assets/logo.png', width: 100),
                 ],
               ),
-              // Contact section
+              /// Contact section
               _footerColumn(
                 title: "Contacto",
                 children: const [
@@ -49,7 +49,7 @@ class AppFooter extends StatelessWidget {
                   Text("Lun - Vie: 9:00 - 18:00", style: TextStyle(fontFamily: 'WinkyMilky', fontSize: 18, color: AppColors.darkViolet)),
                 ],
               ),
-              // Address section
+              /// Address section
               _footerColumn(
                 title: "Dirección",
                 children: const [
@@ -58,7 +58,7 @@ class AppFooter extends StatelessWidget {
                   Text("CP 28001", style: TextStyle(fontFamily: 'WinkyMilky', fontSize: 18, color: AppColors.darkViolet)),
                 ],
               ),
-              // Navigation links section
+              /// Navigation links section
               _footerColumn(
                 title: "Navegación",
                 children: [
@@ -73,7 +73,7 @@ class AppFooter extends StatelessWidget {
     );
   }
 
-  // Helper that builds a labeled column of footer items.
+  /// Helper that builds a labeled column of footer items.
   Widget _footerColumn({
     required String title,
     required List<Widget> children,
@@ -95,7 +95,7 @@ class AppFooter extends StatelessWidget {
     );
   }
 
-  // Helper that builds a tappable navigation link.
+  /// Helper that builds a tappable navigation link.
   Widget _footerLink(BuildContext context, String text, String route) {
     return GestureDetector(
       onTap: () {

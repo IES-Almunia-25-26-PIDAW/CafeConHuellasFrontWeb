@@ -92,7 +92,7 @@ class PetsBloc extends Bloc<PetsEvent, PetsState> {
       emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
     }
   }
-  //Handle for loading the authenticated user's adoption requests from the backend API.
+  ///Handle for loading the authenticated user's adoption requests from the backend API.
   Future<void> _onLoadMyAdoptionRequests(LoadMyAdoptionRequests event, Emitter<PetsState> emit) async {
     emit(state.copyWith(isLoading: true));
     try {
@@ -331,7 +331,7 @@ class PetsBloc extends Bloc<PetsEvent, PetsState> {
     emit(state.copyWith(isLoading: true, clearErrorMessage: true));
     try {
       await api.updatePet(event.pet);
-      // sustituimos la mascota editada en la lista local sin hacer un GET extra
+      /// sustituimos la mascota editada en la lista local sin hacer un GET extra
       final int idx = _allPets.indexWhere((p) => p.id == event.pet.id);
       if (idx != -1) _allPets[idx] = event.pet;
       emit(_applyFilters(state.copyWith(isLoading: false, clearErrorMessage: true)));

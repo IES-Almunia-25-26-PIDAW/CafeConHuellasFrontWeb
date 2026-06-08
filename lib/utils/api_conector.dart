@@ -52,8 +52,8 @@ class ApiConector {
         headers: {'Content-Type': 'application/json'},
       ),
     );
-    // Interceptor used to automatically
-    // attach the JWT token to every request.
+    /// Interceptor used to automatically
+    /// attach the JWT token to every request.
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
@@ -72,7 +72,7 @@ class ApiConector {
   void setToken(String token) {
     _token = token;
   }
-  // Method used to update the user's avatar.
+  /// Method used to update the user's avatar.
   /// Updates the authenticated user's avatar.
   ///
   /// Sends a PUT request containing

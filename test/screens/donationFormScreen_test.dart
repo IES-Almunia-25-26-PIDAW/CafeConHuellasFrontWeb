@@ -1,4 +1,4 @@
-// test/screens/donation_form_test.dart
+/// test/screens/donation_form_test.dart
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/screens/donationFormScreen.dart';
 import 'package:cafeconhuellas_front/utils/api_conector.dart';
@@ -13,7 +13,7 @@ class MockApi extends Mock implements ApiConector {}
 Widget buildWidget() {
   final mockApi = MockApi();
 
-  // submitAdoptionForm lo necesitamos para que no explote al enviar
+  /// submitAdoptionForm lo necesitamos para que no explote al enviar
   when(() => mockApi.submitAdoptionForm(any(), any()))
       .thenAnswer((_) async {});
 
@@ -137,7 +137,7 @@ group('DonationFormScreen — validaciones', () {
   testWidgets('muestra error si campos obligatorios vacíos', (tester) async {
     await pumpBig(tester);
     
-    // hacemos scroll hasta el botón antes de pulsarlo
+    /// hacemos scroll hasta el botón antes de pulsarlo
     await tester.ensureVisible(find.text('Enviar solicitud'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Enviar solicitud'));
@@ -162,7 +162,7 @@ group('DonationFormScreen — validaciones', () {
     await tester.enterText(
         find.widgetWithText(TextField, 'Horas solo al día *'), 'abc');
 
-    // hacemos scroll hasta el botón antes de pulsarlo
+    /// hacemos scroll hasta el botón antes de pulsarlo
     await tester.ensureVisible(find.text('Enviar solicitud'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Enviar solicitud'));

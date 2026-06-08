@@ -1,4 +1,4 @@
-// test/screens/login_test.dart
+/// test/screens/login_test.dart
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/screens/login_screen.dart';
 import 'package:cafeconhuellas_front/utils/api_conector.dart';
@@ -9,7 +9,7 @@ import 'package:go_router/go_router.dart';
 
 void main() {
   Widget buildWidget() => MaterialApp.router(
-    //Hacmos nuestro propio gp router de prueba, para probar los caminos, por ello ni siquiera en el register usamos la clase register
+    ///Hacmos nuestro propio gp router de prueba, para probar los caminos, por ello ni siquiera en el register usamos la clase register
         routerConfig: GoRouter(
           routes: [
             GoRoute(path: '/', builder: (_, _) => BlocProvider(
@@ -49,7 +49,7 @@ void main() {
     testWidgets('botón deshabilitado mientras carga', (tester) async {
       await pumpBig(tester);
       final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
-      // en estado inicial no está cargando, así que el botón está activo
+      /// en estado inicial no está cargando, así que el botón está activo
       expect(button.onPressed, isNotNull);
     });
   });

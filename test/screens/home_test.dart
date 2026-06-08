@@ -1,4 +1,4 @@
-// test/screens/home_test.dart
+/// test/screens/home_test.dart
 import 'package:bloc_test/bloc_test.dart';
 import 'package:cafeconhuellas_front/models/event.dart';
 import 'package:cafeconhuellas_front/models/pet.dart';
@@ -24,7 +24,7 @@ void main() {
   late MockPetsBloc petsBloc;
   late MockAuthBloc authBloc;
 
-  // Estado base vacío
+  /// Estado base vacío
   final estadoVacio = PetsState(
     pets: const [],
     events: const [],
@@ -33,7 +33,7 @@ void main() {
     isLoading: false, relations: [], adoptionRequests: [],
   );
 
-  // Mascotas de ejemplo
+  /// Mascotas de ejemplo
   final pets = [
     Pet(id: 1, name: 'Rex', category: 'Perro', breed: 'Labrador',
         age: 3,  imageUrl: 'https://example.com/pet.jpg',
@@ -43,7 +43,7 @@ void main() {
         description: '', urgentAdoption: false, adoptionStatus: ''),
   ];
 
-  // Eventos de ejemplo
+  /// Eventos de ejemplo
   final events = [
     Event(id: 1, name: 'Adopción', description: 'Gran evento',
         imageUrl: 'https://example.com/ev.jpg',
@@ -94,7 +94,7 @@ void main() {
     await tester.pump();
   }
 
-  //  Estado vacío 
+  ///  Estado vacío 
   group('HomeScreen — estado vacío', () {
     setUp(() {
       when(() => petsBloc.state).thenReturn(estadoVacio);
@@ -149,7 +149,7 @@ void main() {
     });
   });
 
-  // Estado cargando 
+  /// Estado cargando 
   group('HomeScreen - estado cargando', () {
     setUp(() {
       when(() => petsBloc.state).thenReturn(
@@ -159,12 +159,12 @@ void main() {
 
     testWidgets('muestra CircularProgressIndicator para mascotas y eventos', (tester) async {
       await pump(tester);
-      // Hay dos BlocBuilder con isLoading, uno para pets y otro para events
+      /// Hay dos BlocBuilder con isLoading, uno para pets y otro para events
       expect(find.byType(CircularProgressIndicator), findsNWidgets(2));
     });
   });
 
-  // Estado con error
+  /// Estado con error
   group('HomeScreen — estado con error', () {
     setUp(() {
       when(() => petsBloc.state).thenReturn(
@@ -183,7 +183,7 @@ void main() {
     });
   });
 
-  // Estado con datos 
+  /// Estado con datos 
   group('HomeScreen - con mascotas y eventos', () {
     setUp(() {
       when(() => petsBloc.state).thenReturn(
@@ -215,7 +215,7 @@ void main() {
     });
 
     testWidgets('muestra máximo 4 mascotas aunque haya más', (tester) async {
-      // Ponemos 6 mascotas, debe mostrar solo 4
+      /// Ponemos 6 mascotas, debe mostrar solo 4
       final muchasMascotas = List.generate(
         6,
         (i) => Pet(
@@ -235,7 +235,7 @@ void main() {
 
       await pump(tester);
 
-      // Solo aparecen Pet0..Pet3, no Pet4 ni Pet5
+      /// Solo aparecen Pet0..Pet3, no Pet4 ni Pet5
       expect(find.text('Pet0'), findsOneWidget);
       expect(find.text('Pet3'), findsOneWidget);
       expect(find.text('Pet4'), findsNothing);

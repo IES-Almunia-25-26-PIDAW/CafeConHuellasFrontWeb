@@ -17,7 +17,7 @@ class AppHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Responsive sizing based on screen width.
+    /// Responsive sizing based on screen width.
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isCompactHeader = screenWidth < 1100;
     final logoHeight = screenWidth < 900 ? 50.0 : screenWidth < 1200 ? 58.0 : 66.0;
@@ -39,7 +39,7 @@ class AppHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Logo — tapping navigates to home.
+          /// Logo — tapping navigates to home.
           GestureDetector(
             onTap: () {
               context.go('/');
@@ -47,7 +47,7 @@ class AppHeader extends StatelessWidget {
             child: Image.asset('assets/logo.png', height: logoHeight),
           ),
           SizedBox(width: itemSpacing),
-          // Navigation — compact (scrollable) or full row depending on width.
+          /// Navigation — compact (scrollable) or full row depending on width.
           Expanded(
             child: isCompactHeader
                 ? LayoutBuilder(
@@ -63,7 +63,7 @@ class AppHeader extends StatelessWidget {
                               SizedBox(width: itemSpacing),
                               _navItem(context, 'Mascotas', '/pets', navFontSize),
                               SizedBox(width: itemSpacing),
-                              // Dropdown: shelter info section.
+                              /// Dropdown: shelter info section.
                               PopupMenuButton<String>(
                                 tooltip: '',
                                 child: Text(
@@ -98,7 +98,7 @@ class AppHeader extends StatelessWidget {
                                 ],
                               ),
                               SizedBox(width: itemSpacing),
-                              // Dropdown: activities section.
+                              /// Dropdown: activities section.
                               PopupMenuButton<String>(
                                 tooltip: '',
                                 child: Text(
@@ -139,7 +139,7 @@ class AppHeader extends StatelessWidget {
                         SizedBox(width: itemSpacing),
                         _navItem(context, 'Mascotas', '/pets', navFontSize),
                         SizedBox(width: itemSpacing),
-                        // Dropdown: shelter info section.
+                        /// Dropdown: shelter info section.
                         PopupMenuButton<String>(
                           tooltip: '',
                           child: Text(
@@ -174,7 +174,7 @@ class AppHeader extends StatelessWidget {
                           ],
                         ),
                         SizedBox(width: itemSpacing),
-                        // Dropdown: activities section.
+                        /// Dropdown: activities section.
                         PopupMenuButton<String>(
                           tooltip: '',
                           child: Text(
@@ -206,7 +206,7 @@ class AppHeader extends StatelessWidget {
                   ),
           ),
           SizedBox(width: itemSpacing),
-          // Avatar — navigates to profile if logged in, otherwise to login.
+          /// Avatar — navigates to profile if logged in, otherwise to login.
           GestureDetector(
             onTap: () {
               final authState = context.read<AuthBloc>().state;
@@ -218,7 +218,7 @@ class AppHeader extends StatelessWidget {
             },
             child: BlocBuilder<AuthBloc, AuthState>(
               builder: (context, state) {
-                // Resolves the avatar image: network if available, asset otherwise.
+                /// Resolves the avatar image: network if available, asset otherwise.
                 final String resolvedImage =
                     (state.user?.imageUrl.isNotEmpty ?? false) ? state.user!.imageUrl : userImageUrl;
                 final ImageProvider imageProvider = resolvedImage.startsWith('http')

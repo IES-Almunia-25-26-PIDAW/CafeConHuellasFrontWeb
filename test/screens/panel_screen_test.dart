@@ -1,4 +1,4 @@
-// test/screens/panel_test.dart
+/// test/screens/panel_test.dart
 import 'package:cafeconhuellas_front/models/user.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_state.dart';
@@ -12,7 +12,7 @@ import 'package:mocktail/mocktail.dart';
 
 class MockApi extends Mock implements ApiConector {}
 
-// AuthBloc que arranca con un estado concreto
+/// AuthBloc que arranca con un estado concreto
 class FakeAuthBloc extends AuthBloc {
   final AuthState _fakeState;
   FakeAuthBloc(this._fakeState) : super(MockApi());
@@ -48,7 +48,7 @@ Future<void> pumpBig(WidgetTester tester, Widget widget) async {
   await tester.pumpAndSettle();
 }
 
-// Estados de prueba
+/// Estados de prueba
 AuthState get _userState => AuthState(
   token: 'tok', isLoading: false,
   user: UserWithoutPassword(
@@ -151,7 +151,7 @@ void main() {
   group('PanelScreen — estructura visual', () {
     testWidgets('muestra exactamente 2 tarjetas', (tester) async {
       await pumpBig(tester, buildWidget(authState: _userState));
-      // cada tarjeta tiene un CircleAvatar con un icono
+/// cada tarjeta tiene un CircleAvatar con un icono
       expect(find.byType(CircleAvatar), findsWidgets);
     });
 

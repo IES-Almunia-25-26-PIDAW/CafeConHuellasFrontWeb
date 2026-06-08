@@ -30,7 +30,7 @@ class PetCard extends StatelessWidget {
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              // Compact mode activates below 220px width.
+              /// Compact mode activates below 220px width.
               final compact = constraints.maxWidth < 220;
               final nameStyle = TextStyle(
                 fontSize: compact ? 17 : 20,
@@ -41,7 +41,7 @@ class PetCard extends StatelessWidget {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Pet image with rounded corners and aspect ratio lock.
+                  /// Pet image with rounded corners and aspect ratio lock.
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: AspectRatio(
@@ -104,7 +104,7 @@ class PetCard extends StatelessWidget {
   }
 }
 
-// Helper that builds a colored badge showing the pet's adoption status.
+/// Helper that builds a colored badge showing the pet's adoption status.
 Widget _adoptionBadge(String status, bool compact) {
   final color = status == 'ADOPTADO'
       ? Colors.green

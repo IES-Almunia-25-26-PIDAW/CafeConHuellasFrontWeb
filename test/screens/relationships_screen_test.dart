@@ -1,4 +1,4 @@
-// test/screens/relationships_test.dart
+/// test/screens/relationships_test.dart
 import 'package:cafeconhuellas_front/models/adoptionForm.dart';
 import 'package:cafeconhuellas_front/models/user.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
@@ -92,7 +92,7 @@ void main() {
       await pumpBig(tester, buildWidget(_unauthState, emptyPetsState()));
       expect(find.text('Sign in or register to view your requests.'), findsOneWidget);
     });
-    //  Tap en el botón real
+    ///  Tap en el botón real
     testWidgets('tap en Login navega a /login', (tester) async {
       await pumpBig(tester, buildWidget(_unauthState, emptyPetsState()));
       await tester.tap(find.text('Login')); // ← el ElevatedButton
@@ -113,7 +113,7 @@ void main() {
       expect(find.text('Adoption Requests'), findsOneWidget);
     });
 
-   // Este test abre la pestaña "Solicitudes de adopción" pero busca texto de RELACIONES
+   /// Este test abre la pestaña "Solicitudes de adopción" pero busca texto de RELACIONES
    testWidgets('pestaña adopciones muestra mensaje vacío', (tester) async {
     await pumpBig(tester, buildWidget(_userState, emptyPetsState())); // ← faltaba esto
     await tester.tap(find.text('Adoption Requests'));

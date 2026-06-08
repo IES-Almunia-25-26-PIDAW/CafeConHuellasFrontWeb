@@ -1,4 +1,4 @@
-// test/utils/api_conector_extra_test.dart
+/// test/utils/api_conector_extra_test.dart
 import 'package:cafeconhuellas_front/models/donation.dart';
 import 'package:cafeconhuellas_front/models/event.dart';
 import 'package:cafeconhuellas_front/models/pet.dart';
@@ -7,7 +7,7 @@ import 'package:cafeconhuellas_front/utils/api_conector.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http_mock_adapter/http_mock_adapter.dart';
 
-// helpers 
+/// helpers 
 
 Map<String, dynamic> get _petJson => {
       'id': 1,
@@ -62,7 +62,7 @@ Event get _event => Event.fromJson(_eventJson);
 Donation get _donation => Donation.fromJson(_donationJson);
 Userpetrelationship get _relationship => Userpetrelationship.fromJson(_relationshipJson);
 
-//  tests
+///  tests
 
 void main() {
   late ApiConector api;
@@ -73,7 +73,7 @@ void main() {
     dioAdapter = DioAdapter(dio: api.dio);
   });
 
-  //  PETS CRUD 
+  ///  PETS CRUD 
 
   group('addPet', () {
     test('completa sin error cuando el backend responde 201', () async {
@@ -158,7 +158,7 @@ void main() {
     });
   });
 
-  // EVENTS CRUD
+  /// EVENTS CRUD
 
   group('addEvent', () {
 
@@ -208,7 +208,7 @@ void main() {
     });
   });
 
-  //  DONATIONS 
+  ///  DONATIONS 
 
   group('getDonations', () {
     test('devuelve lista de donaciones con respuesta directa', () async {
@@ -285,7 +285,7 @@ void main() {
     });
   });
 
-  // RELATIONSHIPS 
+  /// RELATIONSHIPS 
 
   group('getUserPetRelationShip', () {
     test('devuelve lista de relaciones correctamente', () async {
@@ -400,7 +400,7 @@ void main() {
     });
   });
 
-  //  ADOPTION 
+  ///  ADOPTION 
 
   group('getAdoptionRequest', () {
     test('devuelve lista de solicitudes de adopción', () async {
@@ -527,7 +527,7 @@ void main() {
     });
   });
 
-  //  _extractApiErrorMessage con errors[] 
+  ///  _extractApiErrorMessage con errors[] 
 
   group('_extractApiErrorMessage — lista de errores', () {
     test('muestra todos los errores concatenados en el mensaje de la excepción', () async {

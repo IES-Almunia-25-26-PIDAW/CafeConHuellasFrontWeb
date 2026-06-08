@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 /// - Secondary colors.
 /// - Neutral colors.
 class AppColors {
-  // Primary colors
+  /// Primary colors
   /// Main dark violet color used for
   /// headers, titles, and primary UI elements.
   static const darkViolet = Color(0xFF33233D);
@@ -29,7 +29,7 @@ class AppColors {
   /// Light pink color used for
   /// subtle UI accents and backgrounds.
   static const pink = Color(0xFFF8D9E2);
-  // Secondary colors
+  /// Secondary colors
   /// Denim blue accent color.
   static const denimBlue = Color(0xFF326F7D);
   /// Dark charcoal color used for
@@ -40,7 +40,7 @@ class AppColors {
   static const green = Color(0xFF6C7F61);
   /// Light green accent color.
   static const lightGreen = Color(0xFF7EA06B);
-  // Neutral colors
+  /// Neutral colors
   /// Pure white color.
   static const white = Color(0xFFFFFFFF);
   /// Pure black color.

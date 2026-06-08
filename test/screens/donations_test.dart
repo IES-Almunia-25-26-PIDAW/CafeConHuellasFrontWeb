@@ -1,4 +1,4 @@
-// test/screens/donations_screen_test.dart
+/// test/screens/donations_screen_test.dart
 import 'package:cafeconhuellas_front/models/pet.dart';
 import 'package:cafeconhuellas_front/models/user.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
@@ -12,7 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-// ── Mocks ─────────────────────────────────────────────────────────────────────
+///Mocks
 
 class MockApi extends Mock implements ApiConector {}
 
@@ -30,8 +30,7 @@ class FakePetsBloc extends PetsBloc {
   PetsState get state => _s;
 }
 
-// ── Estados de prueba ─────────────────────────────────────────────────────────
-
+///  Estados de prueba
 AuthState get _unauthState => AuthState(isLoading: false);
 
 AuthState get _userState => AuthState(
@@ -74,7 +73,7 @@ PetsState _petsState(List<Pet> pets) => PetsState(
 PetsState get _emptyPets => _petsState([]);
 PetsState get _withPets  => _petsState([_makePet(1, 'Rex'), _makePet(2, 'Luna')]);
 
-// ── Helper buildWidget ────────────────────────────────────────────────────────
+///  Helper buildWidget 
 
 Widget buildWidget({AuthState? auth, PetsState? pets}) => MaterialApp(
       home: MultiBlocProvider(
@@ -94,10 +93,10 @@ Future<void> pumpBig(WidgetTester tester, Widget widget) async {
   await tester.pumpAndSettle();
 }
 
-// ── Tests ─────────────────────────────────────────────────────────────────────
+/// Tests 
 
 void main() {
-  // ── Contenido básico ────────────────────────────────────────────────────────
+  ///  Contenido básico 
 
   group('DonationsScreen — contenido básico', () {
     testWidgets('muestra título principal', (tester) async {
@@ -143,7 +142,7 @@ void main() {
     });
   });
 
-  // ── Dialog de donación ──────────────────────────────────────────────────────
+  ///  Dialog de donación
 
   group('DonationsScreen — dialog de donación', () {
     testWidgets('abre el dialog al pulsar Donar', (tester) async {
@@ -223,7 +222,7 @@ void main() {
       await pumpBig(tester, buildWidget());
       await tester.tap(find.text('Donar'));
       await tester.pumpAndSettle();
-      // no introducimos cantidad → campo vacío
+      /// no introducimos cantidad → campo vacío
       await tester.tap(find.text('Confirmar donación'));
       await tester.pumpAndSettle();
       expect(find.text('Introduce una cantidad válida'), findsOneWidget);
@@ -263,11 +262,11 @@ void main() {
       await tester.tap(find.text('Donar'));
       await tester.pumpAndSettle();
 
-      // abrimos el dropdown de categoría
+      /// abrimos el dropdown de categoría
       await tester.tap(find.text('MONETARIA'));
       await tester.pumpAndSettle();
 
-      // seleccionamos otra opción
+      /// seleccionamos otra opción
       await tester.tap(find.text('ALIMENTACION').last);
       await tester.pumpAndSettle();
 
@@ -293,13 +292,13 @@ void main() {
       await tester.tap(find.text('Donar'));
       await tester.pumpAndSettle();
 
-      // el segundo TextField es el de notas
+      /// el segundo TextField es el de notas
       await tester.enterText(find.byType(TextField).last, 'Con mucho cariño');
       expect(find.text('Con mucho cariño'), findsOneWidget);
     });
   });
 
-  // ── Dialog de adopción — sin autenticar ────────────────────────────────────
+  /// Dialog de adopción  sin autenticar
 
   group('DonationsScreen — adopción sin login', () {
     testWidgets('pulsar Adoptar sin login muestra snackbar de error', (tester) async {
@@ -317,7 +316,7 @@ void main() {
     });
   });
 
-  // ── Dialog de adopción — autenticado sin mascotas ──────────────────────────
+  /// Dialog de adopción — autenticado sin mascotas
 
   group('DonationsScreen — adopción autenticado sin mascotas', () {
     testWidgets('muestra snackbar cuando no hay mascotas disponibles', (tester) async {
@@ -335,8 +334,7 @@ void main() {
     });
   });
 
-  // ── Dialog de adopción — autenticado con mascotas ──────────────────────────
-
+  ///  Dialog de adopción — autenticado con mascotas
   group('DonationsScreen — adopción autenticado con mascotas', () {
     testWidgets('abre dialog de adopción', (tester) async {
       await pumpBig(tester, buildWidget(auth: _userState, pets: _withPets));
@@ -387,11 +385,11 @@ void main() {
       await tester.tap(find.text('Adoptar'));
       await tester.pumpAndSettle();
 
-      // abrimos el dropdown
+      /// abrimos el dropdown
       await tester.tap(find.text('Rex'));
       await tester.pumpAndSettle();
 
-      // elegimos la segunda mascota
+      /// elegimos la segunda mascota
       await tester.tap(find.text('Luna').last);
       await tester.pumpAndSettle();
 

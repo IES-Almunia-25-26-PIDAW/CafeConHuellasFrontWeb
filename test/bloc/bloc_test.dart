@@ -41,7 +41,7 @@ void main() {
   
   });
 
-  //  AuthBloc básico 
+  ///  AuthBloc básico 
   group('AuthBloc', () {
     test('emite loading y luego success cuando login va bien', () async {
       final mockApi = MockApi();
@@ -67,7 +67,7 @@ void main() {
     });
   });
 
-  //  PetsBloc básico 
+  ///  PetsBloc básico 
   group('PetsBloc', () {
     test('filtra por especie perro', () async {
       final mockApi = MockApi();
@@ -97,7 +97,7 @@ void main() {
     });
   });
 
-  //  PetsBloc adicionales 
+  ///  PetsBloc adicionales 
   group('PetsBloc — casos adicionales', () {
     late MockApi mockApi;
     late PetsBloc bloc;
@@ -337,7 +337,7 @@ void main() {
     });
   });
 
-  // AuthBloc adicionales 
+  /// AuthBloc adicionales 
   group('AuthBloc — casos adicionales', () {
     late MockApi mockApi;
     late AuthBloc bloc;
@@ -503,7 +503,7 @@ void main() {
   tearDown(() => bloc.close());
 
   test('UpdateAvatarRequested actualiza el avatar en el estado', () async {
-    // Simulamos usuario logueado
+    /// Simulamos usuario logueado
     bloc.emit(
       bloc.state.copyWith(
         token: 'token123',

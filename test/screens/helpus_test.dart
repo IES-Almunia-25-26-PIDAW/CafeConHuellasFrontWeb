@@ -1,4 +1,4 @@
-// test/screens/help_screen_test.dart
+/// test/screens/help_screen_test.dart
 import 'package:cafeconhuellas_front/models/user.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_state.dart';
@@ -27,10 +27,10 @@ class FakePetsBloc extends PetsBloc {
   @override PetsState get state => _s;
 }
 
-// estado sin login
+/// estado sin login
 AuthState get _unauthState => AuthState(isLoading: false);
 
-// estado con usuario normal
+/// estado con usuario normal
 AuthState get _userState => AuthState(
   token: 'tok', isLoading: false,
   user: UserWithoutPassword(
@@ -45,7 +45,7 @@ PetsState get _emptyPets => PetsState(
   relations: const [], adoptionRequests: const [],
 );
 
-// buildWidget con GoRouter porque HelpScreen usa context.go('/login')
+/// buildWidget con GoRouter porque HelpScreen usa context.go('/login')
 Widget buildWidget(AuthState authState) => MaterialApp.router(
   routerConfig: GoRouter(routes: [
     GoRoute(
@@ -225,7 +225,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(AlertDialog), findsOneWidget);
-      // sin mascotas muestra mensaje
+      /// sin mascotas muestra mensaje
       expect(find.text('No hay mascotas disponibles.'), findsOneWidget);
     });
 

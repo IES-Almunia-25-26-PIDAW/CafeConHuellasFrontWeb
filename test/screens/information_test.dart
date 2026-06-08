@@ -1,4 +1,4 @@
-// test/screens/information_test.dart
+/// test/screens/information_test.dart
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/screens/information_screen.dart';
 import 'package:cafeconhuellas_front/utils/api_conector.dart';
@@ -7,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  //lo mismo q en los otros test, lo preparamos para probarlo gracias a un provider
+  ///lo mismo q en los otros test, lo preparamos para probarlo gracias a un provider
   Widget buildWidget() => MaterialApp(
         home: BlocProvider(
           create: (_) => AuthBloc(ApiConector()),

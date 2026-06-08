@@ -29,7 +29,7 @@ class _EventFormDialogState extends State<EventFormDialog> {
   late DateTime _eventDate;
   late String _imageUrl;
 
-  // Exact values accepted by the backend — dropdowns prevent typos.
+  /// Exact values accepted by the backend — dropdowns prevent typos.
   static const List<String> _eventTypes    = ['RECAUDACION', 'ADOPCION', 'MERCADILLO', 'EDUCACIÓN', 'OTRO'];
   static const List<String> _statusOptions = ['PROGRAMADO', 'EN_CURSO', 'FINALIZADO', 'CANCELADO'];
   late String _selectedType;
@@ -49,11 +49,11 @@ class _EventFormDialogState extends State<EventFormDialog> {
     _descCtrl     = TextEditingController(text: e?.description ?? '');
     _locCtrl      = TextEditingController(text: e?.location ?? '');
     _capacityCtrl = TextEditingController(text: (e?.maxCapacity ?? 100).toString());
-    // Default date is tomorrow when creating a new event.
+    /// Default date is tomorrow when creating a new event.
     _eventDate = e?.eventdate ?? DateTime.now().add(const Duration(days: 1));
     _imageUrl  = e?.imageUrl ?? '';
 
-    // Normalize type and status to match the dropdown options.
+    /// Normalize type and status to match the dropdown options.
     final t = (e?.eventType ?? '').toUpperCase();
     final s = (e?.status ?? '').toUpperCase();
     _selectedType   = _eventTypes.contains(t)    ? t : _eventTypes.first;
@@ -69,7 +69,7 @@ class _EventFormDialogState extends State<EventFormDialog> {
     super.dispose();
   }
 
-  // Method used to pick and upload an event image from the gallery.
+  /// Method used to pick and upload an event image from the gallery.
   Future<void> _pickImage() async {
     final plugin = ImagePickerPlugin();
     final XFile? picked = await plugin.getImageFromSource(
@@ -89,8 +89,8 @@ class _EventFormDialogState extends State<EventFormDialog> {
     }
   }
 
-  // Method used to open the date and time pickers sequentially.
-  // If the user cancels the time picker, defaults to 00:00.
+  /// Method used to open the date and time pickers sequentially.
+  /// If the user cancels the time picker, defaults to 00:00.
   Future<void> _selectDate() async {
     final pickedDate = await showDatePicker(
       context: context,
@@ -104,7 +104,7 @@ class _EventFormDialogState extends State<EventFormDialog> {
       context: context,
       initialTime: TimeOfDay.fromDateTime(_eventDate),
     );
-    // Falls back to 00:00 if the time picker is dismissed.
+    /// Falls back to 00:00 if the time picker is dismissed.
     final t = pickedTime ?? const TimeOfDay(hour: 0, minute: 0);
     setState(() {
       _eventDate = DateTime(
@@ -113,7 +113,7 @@ class _EventFormDialogState extends State<EventFormDialog> {
     });
   }
 
-  // Method used to show a styled error dialog with a backend message.
+  /// Method used to show a styled error dialog with a backend message.
   Future<void> _showError(String message) async {
     if (!mounted) return;
     await showDialog(
@@ -140,8 +140,8 @@ class _EventFormDialogState extends State<EventFormDialog> {
     );
   }
 
-  // Method used to validate fields and pop the dialog with the resulting Event.
-  // The caller (Bloc) is responsible for the actual API call.
+  /// Method used to validate fields and pop the dialog with the resulting Event.
+  /// The caller (Bloc) is responsible for the actual API call.
   Future<void> _submit() async {
     final name = _nameCtrl.text.trim();
     final desc = _descCtrl.text.trim();
@@ -194,7 +194,7 @@ class _EventFormDialogState extends State<EventFormDialog> {
       maxCapacity: int.tryParse(_capacityCtrl.text) ?? 100,
     );
 
-    // Returns the event to the parent — it calls the Bloc, the Bloc calls the API.
+    /// Returns the event to the parent — it calls the Bloc, the Bloc calls the API.
     if (mounted) Navigator.pop(context, event);
   }
 
@@ -213,7 +213,7 @@ class _EventFormDialogState extends State<EventFormDialog> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-              // Title
+              /// Title
               Text(
                 _isEditing ? 'Editar Evento' : 'Nuevo Evento',
                 style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold,
@@ -221,7 +221,7 @@ class _EventFormDialogState extends State<EventFormDialog> {
               ),
               const SizedBox(height: 20),
 
-              // Image picker — shows preview or upload indicator.
+              /// Image picker — shows preview or upload indicator.
               GestureDetector(
                 onTap: _uploadingImage ? null : _pickImage,
                 child: Container(
@@ -258,13 +258,13 @@ class _EventFormDialogState extends State<EventFormDialog> {
                 ),
               ),
 
-              // Text fields
+              ///Text fields
               _field('Nombre del evento *', _nameCtrl),
               _field('Descripción * (mín. 20 caracteres)', _descCtrl, maxLines: 4),
               _field('Ubicación *', _locCtrl),
               _field('Capacidad máxima', _capacityCtrl, keyboardType: TextInputType.number),
 
-              // Date picker — always shows the selected date.
+              /// Date picker — always shows the selected date.
               const SizedBox(height: 4),
               InkWell(
                 onTap: _selectDate,
@@ -302,17 +302,17 @@ class _EventFormDialogState extends State<EventFormDialog> {
               ),
               const SizedBox(height: 16),
 
-              // Event type dropdown
+              /// Event type dropdown
               _dropdown('Tipo de evento', _selectedType, _eventTypes, purple,
                   (v) => setState(() => _selectedType = v!)),
               const SizedBox(height: 12),
 
-              // Status dropdown
+              /// Status dropdown
               _dropdown('Estado', _selectedStatus, _statusOptions, purple,
                   (v) => setState(() => _selectedStatus = v!)),
               const SizedBox(height: 28),
 
-              // Action buttons
+              /// Action buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -341,7 +341,7 @@ class _EventFormDialogState extends State<EventFormDialog> {
     );
   }
 
-  // Helper that builds a styled text field.
+  /// Helper that builds a styled text field.
   Widget _field(String label, TextEditingController ctrl,
       {int maxLines = 1, TextInputType? keyboardType}) {
     return Padding(
@@ -364,7 +364,7 @@ class _EventFormDialogState extends State<EventFormDialog> {
     );
   }
 
-  // Helper that builds a styled dropdown.
+  /// Helper that builds a styled dropdown.
   Widget _dropdown(String label, String value, List<String> options,
       Color purple, ValueChanged<String?> onChanged) {
     return Container(

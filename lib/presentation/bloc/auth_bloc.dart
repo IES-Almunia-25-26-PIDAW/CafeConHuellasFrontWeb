@@ -29,7 +29,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LogoutRequested>(_onLogout);
     /// Event responsible for updating the user's avatar.
     on<UpdateAvatarRequested>((event, emit) async {
-      // If there is no authenticated user, do nothing.
+      /// If there is no authenticated user, do nothing.
       if (state.user == null) return;
       /// Creates a copy of the current user updating only
       /// the image URL.

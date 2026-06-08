@@ -1,4 +1,4 @@
-// test/screens/pet_detail_test.dart
+/// test/screens/pet_detail_test.dart
 import 'package:cafeconhuellas_front/models/pet.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/screens/petdetail.dart';
@@ -9,7 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 void main() {
-  // mascota de prueba para no depender de la API
+  /// mascota de prueba para no depender de la API
   final Pet fakePet = Pet(
     id: 1,
     name: 'Luna',

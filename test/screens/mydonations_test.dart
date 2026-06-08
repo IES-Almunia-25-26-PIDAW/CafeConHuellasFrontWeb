@@ -1,4 +1,4 @@
-// test/screens/my_donations_test.dart
+/// test/screens/my_donations_test.dart
 import 'package:cafeconhuellas_front/models/donation.dart';
 import 'package:cafeconhuellas_front/models/user.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';

@@ -33,7 +33,7 @@ class RelationshipsScreen extends StatelessWidget {
     final bool isAdmin = authState.user?.role.toUpperCase() == 'ADMIN';
     final int? userId = authState.user?.id;
 
-    // If user is not authenticated, show login prompt screen
+    /// If user is not authenticated, show login prompt screen
     if (!authState.isAuthenticated || authState.user == null) {
       return Scaffold(
         body: Column(
@@ -463,7 +463,7 @@ class _AdoptionCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // HEADER
+          /// HEADER
           Row(
             children: [
               CircleAvatar(

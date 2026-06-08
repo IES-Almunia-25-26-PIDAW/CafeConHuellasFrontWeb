@@ -17,7 +17,7 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Determines whether to load the image from network or assets.
+    /// Determines whether to load the image from network or assets.
     final bool isNetworkImage =
         image.startsWith('http://') || image.startsWith('https://');
 

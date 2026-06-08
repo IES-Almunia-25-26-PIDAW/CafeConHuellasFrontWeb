@@ -6,11 +6,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-// 1. Declarar el Mock
+/// 1. Declarar el Mock
 class MockApiConector extends Mock implements ApiConector {}
 
 void main() {
-  // 2. Declarar mockApi a nivel de main
+  /// 2. Declarar mockApi a nivel de main
   late MockApiConector mockApi;
 
   setUp(() {
@@ -49,7 +49,7 @@ void main() {
     });
 
     testWidgets('al pulsar enviar muestra snackbar', (tester) async {
-      // 5. Mock configurado antes del pump
+      /// 5. Mock configurado antes del pump
       when(() => mockApi.sendContactMessage(any()))
           .thenAnswer((_) async => {});
 

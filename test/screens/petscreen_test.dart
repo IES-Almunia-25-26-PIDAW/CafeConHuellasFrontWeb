@@ -1,4 +1,4 @@
-// test/screens/petscreen_test.dart
+/// test/screens/petscreen_test.dart
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/pet_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/pet_state.dart';
@@ -16,8 +16,8 @@ void main() {
     await tester.pump(); // solo un pump, sin pumpAndSettle
   }
 
-  // Creamos el bloc y emitimos el estado manualmente ANTES de montarlo
-  // así evitamos que haga llamadas reales a la API
+  /// Creamos el bloc y emitimos el estado manualmente ANTES de montarlo
+  /// así evitamos que haga llamadas reales a la API
   Widget buildWidget() {
     final petsBloc = PetsBloc(api: ApiConector());
     petsBloc.emit( PetsState(pets: [], events: [], selectedSpecies: '', isEmergencyActive: true, relations: [], adoptionRequests: [])); // estado vacío, sin llamada a API
@@ -29,8 +29,8 @@ void main() {
         BlocProvider<AuthBloc>.value(value: authBloc),
         BlocProvider<PetsBloc>.value(value: petsBloc),
       ],
-      //  NO usamos PetScreen directamente porque su constructor
-      // llama a LoadPets(). En su lugar mockeamos el contenido interno.
+      ///  NO usamos PetScreen directamente porque su constructor
+      /// llama a LoadPets(). En su lugar mockeamos el contenido interno.
       child: MaterialApp(
         home: Scaffold(
           body: BlocBuilder<PetsBloc, PetsState>(
