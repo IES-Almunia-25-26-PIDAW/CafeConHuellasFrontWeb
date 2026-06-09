@@ -36,7 +36,7 @@ class PanelScreen extends StatelessWidget {
         child: Column(
           children: [
             /// Shared application header.
-            AppHeader(),
+            const AppHeader(),
             /// Main banner image.
             Image.asset('assets/images/banners/banner-inicio.png',width: double.infinity, height: 250, fit: BoxFit.cover),
             const SizedBox(height: 40),
@@ -102,7 +102,7 @@ class PanelScreen extends StatelessWidget {
           border: Border.all(color: Colors.purple.shade100, width: 2),
           boxShadow: [
             BoxShadow(
-              color: Colors.purple.withOpacity(0.08),
+              color: Colors.purple.withValues(alpha: 0.08),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),

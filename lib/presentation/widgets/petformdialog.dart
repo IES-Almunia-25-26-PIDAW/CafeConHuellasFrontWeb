@@ -44,7 +44,7 @@ class _PetFormDialogState extends State<PetFormDialog> {
   Uint8List? _imageBytes;
   String? _imageFileName;
   bool _uploadingImage = false;
-  bool _saving = false;
+  final bool _saving = false;
 
   /// True when editing an existing pet, false when creating a new one.
   bool get _isEditing => widget.pet != null;

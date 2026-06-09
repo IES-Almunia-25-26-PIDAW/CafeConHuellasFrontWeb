@@ -74,7 +74,7 @@ class PetDetailScreen extends StatelessWidget {
         /// Pet not found state.
         if (resolvedPet == null) {
           return const Scaffold(
-            body: Center(child: Text("Mascota no encontrada")),
+            body: Center(child: Text('Mascota no encontrada')),
           );
         }
 
@@ -116,7 +116,7 @@ class PetDetailScreen extends StatelessWidget {
               resolvedPet.name,
               style: const TextStyle(
                 fontSize: 40,
-                fontFamily: "WinkyMilky",
+                fontFamily: 'WinkyMilky',
               ),
             ),
             const SizedBox(height: 20),
@@ -131,9 +131,9 @@ class PetDetailScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Raza: ${resolvedPet.breed}"),
-                  Text("Edad: ${resolvedPet.age} años"),
-                  Text("Peso: ${resolvedPet.weight} kg"),
+                  Text('Raza: ${resolvedPet.breed}'),
+                  Text('Edad: ${resolvedPet.age} años'),
+                  Text('Peso: ${resolvedPet.weight} kg'),
                   Text("Ppp ${resolvedPet.isPpp ? 'Sí' : 'No'}"),
                   Text("Castrado: ${resolvedPet.neutered ? 'Sí' : 'No'}"),
                 ],
@@ -147,7 +147,7 @@ class PetDetailScreen extends StatelessWidget {
             child: Column(
               children: [
                 /// Shared application header.
-                AppHeader(userImageUrl: "assets/user.png"),
+                const AppHeader(),
                 /// Main banner image.
                 Image.asset(
                   'assets/images/banners/banner-inicio.png',
@@ -198,10 +198,10 @@ class PetDetailScreen extends StatelessWidget {
                                 child: Column(
                                   children: [
                                     Text(
-                                      "Sobre ${resolvedPet.name}",
+                                      'Sobre ${resolvedPet.name}',
                                       style: const TextStyle(
                                         fontSize: 35,
-                                        fontFamily: "MilkyVintage",
+                                        fontFamily: 'MilkyVintage',
                                       ),
                                     ),
                                     const SizedBox(height: 15),
@@ -219,11 +219,11 @@ class PetDetailScreen extends StatelessWidget {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     const Text(
-                                      "¿Quieres ayudarle?",
+                                      '¿Quieres ayudarle?',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontSize: 35,
-                                        fontFamily: "WinkyMilky",
+                                        fontFamily: 'WinkyMilky',
                                       ),
                                     ),
                                     const SizedBox(height: 30),
@@ -235,9 +235,9 @@ class PetDetailScreen extends StatelessWidget {
                                         ),
                                       ),
                                       onPressed: () {
-                                        context.go("/contactus");
+                                        context.go('/contactus');
                                       },
-                                      child: const Text("Contacta con nosotros"),
+                                      child: const Text('Contacta con nosotros'),
                                     ),
                                   ],
                                 ),

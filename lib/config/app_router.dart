@@ -1,5 +1,5 @@
 
-import 'package:cafeconhuellas_front/presentation/screens/donationFormScreen.dart';
+import 'package:cafeconhuellas_front/presentation/screens/donation_form_screen.dart';
 import 'package:cafeconhuellas_front/presentation/screens/donatios_screen.dart';
 import 'package:cafeconhuellas_front/presentation/screens/panel_screen.dart';
 import 'package:cafeconhuellas_front/presentation/screens/contactus.dart';
@@ -94,7 +94,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/events',
       builder: (context, state) =>
-          EventsScreen(),
+          const EventsScreen(),
     ),
     /// Contact screen route.
     GoRoute(

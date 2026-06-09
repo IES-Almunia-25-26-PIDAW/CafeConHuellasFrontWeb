@@ -4,7 +4,7 @@ import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart' show Auth
 import 'package:cafeconhuellas_front/presentation/bloc/pet_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_footer.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_header.dart';
-import 'package:cafeconhuellas_front/theme/AppColors.dart';
+import 'package:cafeconhuellas_front/theme/app_colors.dart';
 import 'package:cafeconhuellas_front/utils/api_conector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -132,16 +132,18 @@ class DonationsScreen extends StatelessWidget {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
               onPressed: () async {
+                final messenger = ScaffoldMessenger.of(context);
+                final userId = context.read<AuthBloc>().state.user?.id ?? 0;
                 final amount = int.tryParse(amountCtrl.text.trim());
                 if (amount == null || amount <= 0) {
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  messenger.showSnackBar(
                     const SnackBar(content: Text('Introduce una cantidad válida'), backgroundColor: Colors.red),
                   );
                   return;
                 }
                 final donation = Donation(
                   id: 0,
-                  userId: context.read<AuthBloc>().state.user?.id ?? 0,
+                  userId: userId,
                   date: selectedDate,
                   category: category,
                   method: method,
@@ -150,13 +152,13 @@ class DonationsScreen extends StatelessWidget {
                 );
                 try {
                   await ApiConector().addDonation(donation);
-                  Navigator.pop(ctx);
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  if (ctx.mounted) Navigator.pop(ctx);
+                  messenger.showSnackBar(
                     const SnackBar(content: Text('¡Donación realizada con éxito! '), backgroundColor: Colors.green),
                   );
                 } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error no tienes permisos para hacer esto, inicia sesión primero'), backgroundColor: Colors.red),
+                  messenger.showSnackBar(
+                    const SnackBar(content: Text('Error no tienes permisos para hacer esto, inicia sesión primero'), backgroundColor: Colors.red),
                   );
                 }
               },
@@ -210,15 +212,15 @@ class DonationsScreen extends StatelessWidget {
         child: Column(
           children: [
             /// Shared application header.
-            AppHeader(userImageUrl: "assets/user.png"),
+            const AppHeader(),
             /// Main banner image.
-            Image.asset("assets/images/banners/banner-inicio.png",
+            Image.asset('assets/images/banners/banner-inicio.png',
                 width: double.infinity, height: 400, fit: BoxFit.cover),
             const SizedBox(height: 40),
             /// Main screen title.
             const Text(
-              "¿Quieres ayudarnos?",
-              style: TextStyle(fontSize: 38, fontFamily: "WinkyMilky", color: AppColors.darkViolet),
+              '¿Quieres ayudarnos?',
+              style: TextStyle(fontSize: 38, fontFamily: 'WinkyMilky', color: AppColors.darkViolet),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 50),
@@ -232,18 +234,18 @@ class DonationsScreen extends StatelessWidget {
                   /// Adoption action column.
                   _donationColumn(
                     context,
-                    title: "¡Adopta!",
-                    text: "Anímate a darle un hogar a uno de nuestros peludos. La adopción es la forma más directa de ayudar, y cada mascota adoptada es una vida salvada.",
-                    buttonText: "Adoptar",
+                    title: '¡Adopta!',
+                    text: 'Anímate a darle un hogar a uno de nuestros peludos. La adopción es la forma más directa de ayudar, y cada mascota adoptada es una vida salvada.',
+                    buttonText: 'Adoptar',
                     onPressed: () => _showAdoptionDialog(context),
                   ),
                   /// Donation action column.
                   _donationColumn(
                     context,
-                    title: "¡Haznos una donación!",
-                    text: "También puedes ayudarnos mediante una donación puntual. "
-                        "Cada aportación nos ayuda a seguir rescatando y cuidando animales.",
-                    buttonText: "Donar",
+                    title: '¡Haznos una donación!',
+                    text: 'También puedes ayudarnos mediante una donación puntual. '
+                        'Cada aportación nos ayuda a seguir rescatando y cuidando animales.',
+                    buttonText: 'Donar',
                     onPressed: () => _showDonationDialog(context),
                   ),
                 ],
@@ -251,7 +253,7 @@ class DonationsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 80),
             /// Shared application footer.
-            AppFooter(),
+            const AppFooter(),
           ],
         ),
       ),
@@ -277,7 +279,7 @@ class DonationsScreen extends StatelessWidget {
       child: Column(
         children: [
           Text(title,
-              style: const TextStyle(fontSize: 32, fontFamily: "MilkyVintage", color: AppColors.charcoal),
+              style: const TextStyle(fontSize: 32, fontFamily: 'MilkyVintage', color: AppColors.charcoal),
               textAlign: TextAlign.center),
           const SizedBox(height: 20),
           Container(
@@ -290,7 +292,7 @@ class DonationsScreen extends StatelessWidget {
             child: Column(
               children: [
                 Text(text,
-                    style: const TextStyle(fontSize: 22, fontFamily: "MilkyVintage", color: AppColors.brown),
+                    style: const TextStyle(fontSize: 22, fontFamily: 'MilkyVintage', color: AppColors.brown),
                     textAlign: TextAlign.center),
                 const SizedBox(height: 30),
                 ElevatedButton(
@@ -384,7 +386,7 @@ class DonationsScreen extends StatelessWidget {
               onPressed: selectedPet == null ? null : () async {
                 try {
                   await ApiConector().requestAdoptionForm(authState.user!.id, selectedPet!.id);
-                  Navigator.pop(ctx);
+                   if (ctx.mounted) Navigator.pop(ctx);
                   messenger.showSnackBar(
                     const SnackBar(
                       content: Text('¡Solicitud enviada! Revisa tu email ❤️'),

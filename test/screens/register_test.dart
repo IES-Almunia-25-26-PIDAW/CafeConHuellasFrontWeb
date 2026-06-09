@@ -1,4 +1,5 @@
 /// test/screens/register_test.dart
+library;
 import 'package:cafeconhuellas_front/presentation/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

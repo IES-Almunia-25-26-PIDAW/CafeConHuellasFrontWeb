@@ -10,7 +10,7 @@ class ActionItem extends StatelessWidget {
   /// Label text displayed below the image.
   final String text;
   /// Creates an instance of [ActionItem].
-  const ActionItem(this.image, this.text);
+  const ActionItem(this.image, this.text, {super.key});
   @override
   Widget build(BuildContext context) {
     return SizedBox(

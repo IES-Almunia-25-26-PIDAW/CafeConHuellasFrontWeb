@@ -36,14 +36,14 @@ class MyDonationsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final authState = context.watch<AuthBloc>().state;
     final bool isAdmin = authState.user?.role.toUpperCase() == 'ADMIN';
-    final _api = api ?? ApiConector();
+    final apiConector = api ?? ApiConector();
 
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
             /// Shared application header.
-            AppHeader(),
+            const AppHeader(),
             /// Main banner image.
             Image.asset('assets/images/banners/banner-inicio.png',width: double.infinity, height: 250, fit: BoxFit.cover),
             const SizedBox(height: 40),
@@ -63,8 +63,8 @@ class MyDonationsScreen extends StatelessWidget {
             /// or [getMeDonation] for regular users.
             FutureBuilder<List<Donation>>(
               future: isAdmin
-                  ? _api.getDonations()
-                  : _api.getMeDonation(),
+                  ? apiConector.getDonations()
+                  : apiConector.getMeDonation(),
               builder: (context, snapshot) {
                 /// Loading state.
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -123,16 +123,16 @@ class MyDonationsScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.purple.shade100),
         boxShadow: [
-          BoxShadow(color: Colors.purple.withOpacity(0.06),
+          BoxShadow(color: Colors.purple.withValues(alpha: 0.06),
               blurRadius: 8, offset: const Offset(0, 3)),
         ],
       ),
       child: Row(
         children: [
           /// Donation icon avatar.
-          CircleAvatar(
-            backgroundColor: const Color(0xFF7B3FE4),
-            child: const Icon(Icons.volunteer_activism, color: Colors.white),
+          const CircleAvatar(
+            backgroundColor: Color(0xFF7B3FE4),
+            child: Icon(Icons.volunteer_activism, color: Colors.white),
           ),
           const SizedBox(width: 16),
           Expanded(

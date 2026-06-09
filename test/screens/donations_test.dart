@@ -1,4 +1,5 @@
 /// test/screens/donations_screen_test.dart
+library;
 import 'package:cafeconhuellas_front/models/pet.dart';
 import 'package:cafeconhuellas_front/models/user.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
@@ -31,11 +32,10 @@ class FakePetsBloc extends PetsBloc {
 }
 
 ///  Estados de prueba
-AuthState get _unauthState => AuthState(isLoading: false);
+AuthState get _unauthState => AuthState();
 
 AuthState get _userState => AuthState(
       token: 'tok',
-      isLoading: false,
       user: UserWithoutPassword(
         id: 1,
         firstName: 'Ana',
@@ -64,7 +64,6 @@ PetsState _petsState(List<Pet> pets) => PetsState(
       pets: pets,
       selectedSpecies: '',
       isEmergencyActive: false,
-      isLoading: false,
       events: const [],
       relations: const [],
       adoptionRequests: const [],

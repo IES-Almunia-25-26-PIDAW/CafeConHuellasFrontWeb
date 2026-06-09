@@ -5,7 +5,7 @@ import 'package:cafeconhuellas_front/presentation/widgets/app_footer.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_header.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/eventcard.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/petcard.dart';
-import 'package:cafeconhuellas_front/theme/AppColors.dart';
+import 'package:cafeconhuellas_front/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -42,43 +42,43 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           children: [
             /// Shared application header.
-            AppHeader(userImageUrl: "assets/user.png"),
+            const AppHeader(),
             /// Main banner image.
             Image.asset(
-              "assets/images/banners/banner-inicio.png",
+              'assets/images/banners/banner-inicio.png',
               width: double.infinity,
               height: 400,
               fit: BoxFit.cover,
             ),
             /// Organization welcome message.
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 40),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 60, horizontal: 40),
               child: Text(
                 "¡Bienvenid@ a 'Patitas Unidas'! Somos una protectora dedicada al rescate, cuidado y adopción responsable de animales que necesitan una segunda oportunidad.",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25,
-                  fontFamily: "MilkyVintage",
+                  fontFamily: 'MilkyVintage',
                   color: AppColors.brown,
                 ),
               ),
             ),
             /// "What we do" section.
-            _sectionTitle("Qué hacemos"),
-            Wrap(
+            _sectionTitle('Qué hacemos'),
+            const Wrap(
               spacing: 60,
               runSpacing: 40,
               alignment: WrapAlignment.center,
-              children: const [
-                ActionItem("assets/icons/rescate.png", "Rescatamos animales en situación de abandono."),
-                ActionItem("assets/icons/cuidados.png", "Les damos cuidados veterinarios y alimentación."),
-                ActionItem("assets/icons/adopcion.png", "Buscamos familias responsables para adopción."),
-                ActionItem("assets/icons/educacion.png", "Concienciamos sobre el respeto animal."),
+              children: [
+                ActionItem('assets/icons/rescate.png', 'Rescatamos animales en situación de abandono.'),
+                ActionItem('assets/icons/cuidados.png', 'Les damos cuidados veterinarios y alimentación.'),
+                ActionItem('assets/icons/adopcion.png', 'Buscamos familias responsables para adopción.'),
+                ActionItem('assets/icons/educacion.png', 'Concienciamos sobre el respeto animal.'),
               ],
             ),
             const SizedBox(height: 60),
             /// Featured pets section loaded from [PetsBloc].
-            _sectionTitle("Nuestras mascotas"),
+            _sectionTitle('Nuestras mascotas'),
             BlocBuilder<PetsBloc, PetsState>(
               builder: (context, state) {
                 /// Loading state.
@@ -103,7 +103,7 @@ class HomeScreen extends StatelessWidget {
                 if (pets.isEmpty) {
                   return const Padding(
                     padding: EdgeInsets.symmetric(vertical: 24),
-                    child: Text("No hay mascotas disponibles en este momento."),
+                    child: Text('No hay mascotas disponibles en este momento.'),
                   );
                 }
                 /// Pet cards list.
@@ -118,12 +118,12 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 20),
             /// Button linking to the full pets screen.
             ElevatedButton(
-              onPressed: () => context.go("/pets"),
-              child: const Text("Ver más"),
+              onPressed: () => context.go('/pets'),
+              child: const Text('Ver más'),
             ),
             const SizedBox(height: 60),
             /// Events section loaded from [PetsBloc].
-            _sectionTitle("Eventos"),
+            _sectionTitle('Eventos'),
             BlocBuilder<PetsBloc, PetsState>(
               builder: (context, state) {
                 /// Loading state.
@@ -148,7 +148,7 @@ class HomeScreen extends StatelessWidget {
                 if (events.isEmpty) {
                   return const Padding(
                     padding: EdgeInsets.symmetric(vertical: 24),
-                    child: Text("No hay eventos disponibles en este momento."),
+                    child: Text('No hay eventos disponibles en este momento.'),
                   );
                 }
                 /// Event cards list.
@@ -166,14 +166,14 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 60),
             /// Mini game section.
-            _sectionTitle("¡Prueba nuestro videojuego!"),
+            _sectionTitle('¡Prueba nuestro videojuego!'),
             ElevatedButton(
-              onPressed: () => context.go("/videojuego"),
-              child: const Text("Jugar ahora →"),
+              onPressed: () => context.go('/videojuego'),
+              child: const Text('Jugar ahora →'),
             ),
             const SizedBox(height: 80),
             /// Shared application footer.
-            AppFooter(),
+            const AppFooter(),
           ],
         ),
       ),
@@ -188,7 +188,7 @@ class HomeScreen extends StatelessWidget {
         text,
         style: const TextStyle(
           fontSize: 38,
-          fontFamily: "WinkyMilky",
+          fontFamily: 'WinkyMilky',
           color: AppColors.darkViolet,
         ),
       ),

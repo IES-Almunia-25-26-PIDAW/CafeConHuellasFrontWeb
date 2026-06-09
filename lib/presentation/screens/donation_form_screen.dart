@@ -151,7 +151,7 @@ class _DonationFormScreenState extends State<DonationFormScreen> {
         child: Column(
           children: [
             /// Shared application header.
-            AppHeader(),
+            const AppHeader(),
             /// Main banner image.
             Image.asset('assets/images/banners/banner-inicio.png',
                 width: double.infinity, height: 250, fit: BoxFit.cover),

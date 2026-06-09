@@ -1,4 +1,4 @@
-import 'package:cafeconhuellas_front/models/userPetRelationship.dart';
+import 'package:cafeconhuellas_front/models/user_pet_relationship.dart';
 import 'package:flutter_test/flutter_test.dart';
 /// Cambia la ruta según tu proyecto
 
@@ -33,7 +33,6 @@ void main() {
         petId: 8,
         relationshipType: 'VOLUNTARIADO',
         startDate: DateTime.parse('2024-01-10'),
-        endDate: null,
         active: false,
       );
 
@@ -49,7 +48,6 @@ void main() {
         petId: 22,
         relationshipType: 'PASEO',
         startDate: DateTime.parse('2024-03-15'),
-        endDate: null,
         active: true,
       );
 

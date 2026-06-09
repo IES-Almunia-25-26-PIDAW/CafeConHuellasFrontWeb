@@ -1,4 +1,5 @@
 /// test/screens/pet_form_dialog_test.dart
+library;
 import 'package:cafeconhuellas_front/models/pet.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/petformdialog.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +40,6 @@ final _petExistente = Pet(
   adoptionStatus: 'NO_ADOPTADO',
   weight: 12.5,
   neutered: true,
-  isPpp: false,
   imageUrls: [],
 );
 

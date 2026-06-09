@@ -1,8 +1,8 @@
-import 'package:cafeconhuellas_front/models/adoptionForm.dart';
+import 'package:cafeconhuellas_front/models/adoption_form.dart';
 import 'package:cafeconhuellas_front/models/event.dart';
 import 'package:cafeconhuellas_front/models/pet.dart';
 import 'package:cafeconhuellas_front/models/user.dart';
-import 'package:cafeconhuellas_front/models/userPetRelationship.dart';
+import 'package:cafeconhuellas_front/models/user_pet_relationship.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_event.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_state.dart';

@@ -1,4 +1,4 @@
-import 'package:cafeconhuellas_front/theme/AppColors.dart';
+import 'package:cafeconhuellas_front/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 /// A card widget that displays an event with
@@ -13,7 +13,7 @@ class EventCard extends StatelessWidget {
   /// Short description of the event.
   final String description;
 
-  const EventCard(this.image, this.title, this.description);
+  const EventCard(this.image, this.title, this.description, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +63,7 @@ class EventCard extends StatelessWidget {
             title,
             style: const TextStyle(
               fontSize: 28,
-              fontFamily: "MilkyVintage",
+              fontFamily: 'MilkyVintage',
             ),
           ),
           const SizedBox(height: 8),

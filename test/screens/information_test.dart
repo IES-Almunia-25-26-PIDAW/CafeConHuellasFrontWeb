@@ -1,4 +1,5 @@
 /// test/screens/information_test.dart
+library;
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/screens/information_screen.dart';
 import 'package:cafeconhuellas_front/utils/api_conector.dart';

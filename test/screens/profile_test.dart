@@ -1,4 +1,5 @@
 /// test/screens/profile_test.dart
+library;
 import 'package:cafeconhuellas_front/models/user.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_state.dart';

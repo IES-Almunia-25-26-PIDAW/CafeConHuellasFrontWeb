@@ -34,7 +34,7 @@ class PetCard extends StatelessWidget {
               final compact = constraints.maxWidth < 220;
               final nameStyle = TextStyle(
                 fontSize: compact ? 17 : 20,
-                fontFamily: "MilkyVintage",
+                fontFamily: 'MilkyVintage',
               );
               final bodyStyle = TextStyle(fontSize: compact ? 12 : 14);
 
@@ -119,9 +119,9 @@ Widget _adoptionBadge(String status, bool compact) {
   return Container(
     padding: EdgeInsets.symmetric(horizontal: compact ? 6 : 8, vertical: 3),
     decoration: BoxDecoration(
-      color: color.withOpacity(0.1),
+      color: color.withValues(alpha: 0.1),
       borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: color.withOpacity(0.5)),
+      border: Border.all(color: color.withValues(alpha: 0.5)),
     ),
     child: Text(
       label,

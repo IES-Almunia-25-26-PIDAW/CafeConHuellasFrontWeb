@@ -1,6 +1,6 @@
 import 'package:cafeconhuellas_front/models/event.dart';
 import 'package:cafeconhuellas_front/models/pet.dart';
-import 'package:cafeconhuellas_front/models/userPetRelationship.dart';
+import 'package:cafeconhuellas_front/models/user_pet_relationship.dart';
 
 /// Base class for all pet-related events.
 ///

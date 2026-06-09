@@ -1,4 +1,5 @@
 /// test/screens/help_screen_test.dart
+library;
 import 'package:cafeconhuellas_front/models/user.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_state.dart';
@@ -28,11 +29,11 @@ class FakePetsBloc extends PetsBloc {
 }
 
 /// estado sin login
-AuthState get _unauthState => AuthState(isLoading: false);
+AuthState get _unauthState => AuthState();
 
 /// estado con usuario normal
 AuthState get _userState => AuthState(
-  token: 'tok', isLoading: false,
+  token: 'tok',
   user: UserWithoutPassword(
     id: 1, firstName: 'Ana', lastName1: '', lastName2: '',
     email: '', phone: '', role: 'USER', imageUrl: '',
@@ -40,8 +41,7 @@ AuthState get _userState => AuthState(
 );
 
 PetsState get _emptyPets => PetsState(
-  pets: const [], selectedSpecies: '', isEmergencyActive: false,
-  isLoading: false, events: const [],
+  pets: const [], selectedSpecies: '', isEmergencyActive: false, events: const [],
   relations: const [], adoptionRequests: const [],
 );
 
@@ -55,7 +55,7 @@ Widget buildWidget(AuthState authState) => MaterialApp.router(
           BlocProvider<AuthBloc>(create: (_) => FakeAuthBloc(authState)),
           BlocProvider<PetsBloc>(create: (_) => FakePetsBloc(_emptyPets)),
         ],
-        child: HelpScreen(),
+        child: const HelpScreen(),
       ),
     ),
     GoRoute(

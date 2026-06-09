@@ -13,7 +13,7 @@ import '../bloc/auth_state.dart';
 class AppHeader extends StatelessWidget {
   /// Fallback avatar image path used when no user is logged in.
   final String userImageUrl;
-  const AppHeader({super.key, this.userImageUrl = "assets/user.png"});
+  const AppHeader({super.key, this.userImageUrl = 'assets/user.png'});
 
   @override
   Widget build(BuildContext context) {

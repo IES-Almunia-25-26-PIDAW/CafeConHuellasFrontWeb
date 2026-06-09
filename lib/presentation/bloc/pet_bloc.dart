@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
-import 'package:cafeconhuellas_front/models/adoptionForm.dart';
+import 'package:cafeconhuellas_front/models/adoption_form.dart';
 import 'package:cafeconhuellas_front/models/event.dart';
 import 'package:cafeconhuellas_front/models/pet.dart';
-import 'package:cafeconhuellas_front/models/userPetRelationship.dart';
+import 'package:cafeconhuellas_front/models/user_pet_relationship.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/pet_event.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/pet_state.dart';
 import 'package:cafeconhuellas_front/utils/api_conector.dart';
@@ -40,7 +40,6 @@ class PetsBloc extends Bloc<PetsEvent, PetsState> {
           pets: const <Pet>[],
           selectedSpecies: '',
           isEmergencyActive: false,
-          isLoading: false,
           events: const <Event>[], 
           relations: const <Userpetrelationship>[], 
           adoptionRequests: const <AdoptionRequest>[],

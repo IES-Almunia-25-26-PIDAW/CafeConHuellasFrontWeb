@@ -287,7 +287,7 @@ class _EventFormDialogState extends State<EventFormDialog> {
                           Text(
                             "${_eventDate.day.toString().padLeft(2, '0')}/"
                             "${_eventDate.month.toString().padLeft(2, '0')}/"
-                            "${_eventDate.year}  "
+                            '${_eventDate.year}  '
                             "${_eventDate.hour.toString().padLeft(2, '0')}:"
                             "${_eventDate.minute.toString().padLeft(2, '0')}",
                             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),

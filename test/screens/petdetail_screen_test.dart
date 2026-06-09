@@ -1,4 +1,5 @@
 /// test/screens/pet_detail_test.dart
+library;
 import 'package:cafeconhuellas_front/models/pet.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/screens/petdetail.dart';
@@ -16,7 +17,6 @@ void main() {
     breed: 'Mestiza',
     age: 3,
     weight: 8.5,
-    isPpp: false,
     neutered: true,
     description: 'Una perrita muy cariñosa.',
     imageUrl: 'assets/user.png',

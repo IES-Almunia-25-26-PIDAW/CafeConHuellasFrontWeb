@@ -1,4 +1,4 @@
-import 'package:cafeconhuellas_front/theme/AppColors.dart';
+import 'package:cafeconhuellas_front/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -71,12 +71,12 @@ class _LoginPageState extends State<LoginPage> {
               context: context,
               builder: (context) {
                 return AlertDialog(
-                  title: const Text("Error"),
-                  content: Text("Ha habido algun error con el incio de sesión o la contraseña o usuario no es correcto, prueba de nuevo o regístrate."),
+                  title: const Text('Error'),
+                  content: const Text('Ha habido algun error con el incio de sesión o la contraseña o usuario no es correcto, prueba de nuevo o regístrate.'),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text("OK"),
+                      child: const Text('OK'),
                     ),
                   ],
                 );
@@ -101,7 +101,7 @@ class _LoginPageState extends State<LoginPage> {
                             children: [
                               /// Screen title.
                               Text(
-                                "Iniciar Sesión",
+                                'Iniciar Sesión',
                                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                                   color: AppColors.darkPurple,
                                   fontFamily: 'WinkyMilky',
@@ -109,10 +109,10 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               const SizedBox(height: 20),
                               /// Email input field.
-                              _input("Email", emailController),
+                              _input('Email', emailController),
                               const SizedBox(height: 15),
                               /// Password input field.
-                              _input("Contraseña", passwordController, isPassword: true),
+                              _input('Contraseña', passwordController, isPassword: true),
                               const SizedBox(height: 20),
                               /// Login button.
                               ///
@@ -143,7 +143,7 @@ class _LoginPageState extends State<LoginPage> {
                                         child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                                       )
                                     : const Text(
-                                        "Iniciar sesión",
+                                        'Iniciar sesión',
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontFamily: 'MilkyVintage',
@@ -156,7 +156,7 @@ class _LoginPageState extends State<LoginPage> {
                                 onPressed: () {
                                   context.go('/register');
                                 },
-                                child: const Text("¿No tienes cuenta? Regístrate"),
+                                child: const Text('¿No tienes cuenta? Regístrate'),
                               )
                             ],
                           ),

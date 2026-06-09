@@ -1,4 +1,5 @@
 /// test/screens/panel_test.dart
+library;
 import 'package:cafeconhuellas_front/models/user.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_state.dart';
@@ -27,13 +28,13 @@ Widget buildWidget({required AuthState authState, List<GoRoute> extraRoutes = co
       routes: [
         GoRoute(
           path: '/',
-          builder: (_, __) => BlocProvider<AuthBloc>(
+          builder: (_, _) => BlocProvider<AuthBloc>(
             create: (_) => FakeAuthBloc(authState),
             child: const PanelScreen(),
           ),
         ),
-        GoRoute(path: '/panel/donations',     builder: (_, __) => const Scaffold(body: Text('donations'))),
-        GoRoute(path: '/panel/relationships', builder: (_, __) => const Scaffold(body: Text('relationships'))),
+        GoRoute(path: '/panel/donations',     builder: (_, _) => const Scaffold(body: Text('donations'))),
+        GoRoute(path: '/panel/relationships', builder: (_, _) => const Scaffold(body: Text('relationships'))),
         ...extraRoutes,
       ],
     ),
@@ -50,7 +51,7 @@ Future<void> pumpBig(WidgetTester tester, Widget widget) async {
 
 /// Estados de prueba
 AuthState get _userState => AuthState(
-  token: 'tok', isLoading: false,
+  token: 'tok',
   user: UserWithoutPassword(
     id: 1, firstName: 'Ana', lastName1: '', lastName2: '',
     email: 'ana@test.com', phone: '', role: 'USER', imageUrl: '',
@@ -58,7 +59,7 @@ AuthState get _userState => AuthState(
 );
 
 AuthState get _adminState => AuthState(
-  token: 'tok', isLoading: false,
+  token: 'tok',
   user: UserWithoutPassword(
     id: 2, firstName: 'Admin', lastName1: '', lastName2: '',
     email: 'admin@test.com', phone: '', role: 'ADMIN', imageUrl: '',

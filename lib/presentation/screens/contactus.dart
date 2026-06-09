@@ -1,6 +1,6 @@
 import 'package:cafeconhuellas_front/presentation/widgets/app_footer.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_header.dart';
-import 'package:cafeconhuellas_front/theme/AppColors.dart';
+import 'package:cafeconhuellas_front/theme/app_colors.dart';
 import 'package:cafeconhuellas_front/utils/api_conector.dart';
 import 'package:flutter/material.dart';
 
@@ -93,8 +93,8 @@ class _ContactusScreenState extends State<ContactusScreen> {
         child: Column(
           children: [
             /// Shared application header.
-            AppHeader(
-              userImageUrl: 'assets/user.png',
+            const AppHeader(
+              
             ),
             /// Main banner image.
             Image.asset(

@@ -1,4 +1,5 @@
 /// test/screens/petscreen_test.dart
+library;
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/pet_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/pet_state.dart';

@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:cafeconhuellas_front/theme/AppColors.dart';
+import 'package:cafeconhuellas_front/theme/app_colors.dart';
 import 'package:cafeconhuellas_front/utils/api_conector.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -160,14 +160,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
       }
 
       await ApiConector().register({
-        "firstName": firstNameController.text.trim(),
-        "lastName1": lastName1Controller.text.trim(),
-        "lastName2": lastName2Controller.text.trim(),
-        "email": emailController.text.trim(),
-        "password": passwordController.text,
-        "phone": phoneController.text.trim(),
-        "role": "USER",
-        "imageUrl": imageUrl,
+        'firstName': firstNameController.text.trim(),
+        'lastName1': lastName1Controller.text.trim(),
+        'lastName2': lastName2Controller.text.trim(),
+        'email': emailController.text.trim(),
+        'password': passwordController.text,
+        'phone': phoneController.text.trim(),
+        'role': 'USER',
+        'imageUrl': imageUrl,
       });
 
     } catch (e) {
@@ -184,12 +184,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text("Error"),
-          content: Text("Error al registrar: $errorMessage"),
+          title: const Text('Error'),
+          content: Text('Error al registrar: $errorMessage'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("Cerrar"),
+              child: const Text('Cerrar'),
             ),
           ],
         ),
@@ -199,15 +199,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text("Éxito"),
-          content: const Text("Usuario creado correctamente. Ahora inicia sesión."),
+          title: const Text('Éxito'),
+          content: const Text('Usuario creado correctamente. Ahora inicia sesión.'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
                 context.go('/login');
               },
-              child: const Text("OK"),
+              child: const Text('OK'),
             ),
           ],
         ),
@@ -244,7 +244,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           children: [
                             /// Screen title.
                             Text(
-                              "Registro",
+                              'Registro',
                               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                                     color: AppColors.darkPurple,
                                     fontFamily: 'WinkyMilky',
@@ -262,7 +262,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     backgroundColor: AppColors.vanilla,
                                     backgroundImage: _imageBytes != null ? MemoryImage(_imageBytes!) : null,
                                     child: _imageBytes == null
-                                        ? Icon(Icons.person, size: 48, color: AppColors.purple)
+                                        ? const Icon(Icons.person, size: 48, color: AppColors.purple)
                                         : null,
                                   ),
                                   CircleAvatar(
@@ -280,7 +280,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             const SizedBox(height: 6),
                             /// Image selection status label.
                             Text(
-                              _imageBytes != null ? "Foto seleccionada ✓" : "Añadir foto de perfil",
+                              _imageBytes != null ? 'Foto seleccionada ✓' : 'Añadir foto de perfil',
                               style: TextStyle(
                                 fontSize: 12,
                                 color: _imageBytes != null ? Colors.green[700] : Colors.grey[600],
@@ -288,22 +288,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             const SizedBox(height: 20),
                             /// First name input field.
-                            _input("Nombre", firstNameController, validator: _validateName),
+                            _input('Nombre', firstNameController, validator: _validateName),
                             const SizedBox(height: 15),
                             /// First last name input field.
-                            _input("Primer apellido", lastName1Controller, validator: _validateName),
+                            _input('Primer apellido', lastName1Controller, validator: _validateName),
                             const SizedBox(height: 15),
                             /// Second last name input field.
-                            _input("Segundo apellido", lastName2Controller, validator: _validateName),
+                            _input('Segundo apellido', lastName2Controller, validator: _validateName),
                             const SizedBox(height: 15),
                             /// Email input field.
-                            _input("Email", emailController, validator: _validateEmail),
+                            _input('Email', emailController, validator: _validateEmail),
                             const SizedBox(height: 15),
                             /// Phone input field.
-                            _input("Teléfono", phoneController, validator: _validatePhone),
+                            _input('Teléfono', phoneController, validator: _validatePhone),
                             const SizedBox(height: 15),
                             /// Password input field.
-                            _input("Contraseña", passwordController, isPassword: true, validator: _validatePassword),
+                            _input('Contraseña', passwordController, isPassword: true, validator: _validatePassword),
                             const SizedBox(height: 20),
                             /// Registration button.
                             ///
@@ -323,7 +323,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                                     )
                                   : const Text(
-                                      "Registrarse",
+                                      'Registrarse',
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontFamily: 'MilkyVintage',
@@ -334,7 +334,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             /// Link to the login screen.
                             TextButton(
                               onPressed: () => context.go('/login'),
-                              child: const Text("¿Ya tienes cuenta? Inicia sesión"),
+                              child: const Text('¿Ya tienes cuenta? Inicia sesión'),
                             ),
                           ],
                         ),

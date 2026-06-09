@@ -1,4 +1,4 @@
-import 'package:cafeconhuellas_front/theme/AppColors.dart';
+import 'package:cafeconhuellas_front/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -42,28 +42,28 @@ class AppFooter extends StatelessWidget {
               ),
               /// Contact section
               _footerColumn(
-                title: "Contacto",
+                title: 'Contacto',
                 children: const [
-                  Text("+34 600 123 456", style: TextStyle(fontFamily: 'WinkyMilky', fontSize: 18, color: AppColors.darkViolet)),
-                  Text("contacto@miapp.com", style: TextStyle(fontFamily: 'WinkyMilky', fontSize: 18, color: AppColors.darkViolet)),
-                  Text("Lun - Vie: 9:00 - 18:00", style: TextStyle(fontFamily: 'WinkyMilky', fontSize: 18, color: AppColors.darkViolet)),
+                  Text('+34 600 123 456', style: TextStyle(fontFamily: 'WinkyMilky', fontSize: 18, color: AppColors.darkViolet)),
+                  Text('contacto@miapp.com', style: TextStyle(fontFamily: 'WinkyMilky', fontSize: 18, color: AppColors.darkViolet)),
+                  Text('Lun - Vie: 9:00 - 18:00', style: TextStyle(fontFamily: 'WinkyMilky', fontSize: 18, color: AppColors.darkViolet)),
                 ],
               ),
               /// Address section
               _footerColumn(
-                title: "Dirección",
+                title: 'Dirección',
                 children: const [
-                  Text("Calle Principal 123", style: TextStyle(fontFamily: 'WinkyMilky', fontSize: 18, color: AppColors.darkViolet)),
-                  Text("Madrid, España", style: TextStyle(fontFamily: 'WinkyMilky', fontSize: 18, color: AppColors.darkViolet)),
-                  Text("CP 28001", style: TextStyle(fontFamily: 'WinkyMilky', fontSize: 18, color: AppColors.darkViolet)),
+                  Text('Calle Principal 123', style: TextStyle(fontFamily: 'WinkyMilky', fontSize: 18, color: AppColors.darkViolet)),
+                  Text('Madrid, España', style: TextStyle(fontFamily: 'WinkyMilky', fontSize: 18, color: AppColors.darkViolet)),
+                  Text('CP 28001', style: TextStyle(fontFamily: 'WinkyMilky', fontSize: 18, color: AppColors.darkViolet)),
                 ],
               ),
               /// Navigation links section
               _footerColumn(
-                title: "Navegación",
+                title: 'Navegación',
                 children: [
-                  _footerLink(context, "Inicio", "/"),
-                  _footerLink(context, "Mascotas", "/pets"),
+                  _footerLink(context, 'Inicio', '/'),
+                  _footerLink(context, 'Mascotas', '/pets'),
                 ],
               ),
             ],

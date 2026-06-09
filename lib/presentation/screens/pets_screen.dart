@@ -117,7 +117,7 @@ class PetScreen extends StatelessWidget {
         body: Column(
           children: [
             /// Shared application header.
-            AppHeader(userImageUrl: "assets/user.png"),
+            const AppHeader(),
             Expanded(
               child: CustomScrollView(
                 slivers: [
@@ -163,7 +163,7 @@ class PetScreen extends StatelessWidget {
                                     ),
                                     onPressed: () => context.read<PetsBloc>().add(ToggleEmergency()),
                                     icon: const Icon(Icons.warning_amber_rounded),
-                                    label: const Text("Emergencia"),
+                                    label: const Text('Emergencia'),
                                   ),
 
                                   /// Species filter dropdown.
@@ -176,15 +176,15 @@ class PetScreen extends StatelessWidget {
                                     ),
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton<String>(
-                                        value: state.selectedSpecies.isEmpty ? "" : state.selectedSpecies,
+                                        value: state.selectedSpecies.isEmpty ? '' : state.selectedSpecies,
                                         icon: const Icon(Icons.arrow_drop_down, color: _purple),
                                         items: const [
-                                          DropdownMenuItem(value: "", child: Text("Todas las especies")),
-                                          DropdownMenuItem(value: "Perro", child: Text("Perro")),
-                                          DropdownMenuItem(value: "Gato", child: Text("Gato")),
+                                          DropdownMenuItem(value: '', child: Text('Todas las especies')),
+                                          DropdownMenuItem(value: 'Perro', child: Text('Perro')),
+                                          DropdownMenuItem(value: 'Gato', child: Text('Gato')),
                                         ],
                                         onChanged: (value) {
-                                          context.read<PetsBloc>().add(FilterSpecies(value ?? ""));
+                                          context.read<PetsBloc>().add(FilterSpecies(value ?? ''));
                                         },
                                       ),
                                     ),
@@ -312,10 +312,10 @@ class PetScreen extends StatelessWidget {
                   ),
 
                   /// Shared application footer at the bottom of the scroll.
-                  SliverToBoxAdapter(
+                  const SliverToBoxAdapter(
                     child: Column(
                       children: [
-                        const SizedBox(height: 40),
+                        SizedBox(height: 40),
                         AppFooter(),
                       ],
                     ),

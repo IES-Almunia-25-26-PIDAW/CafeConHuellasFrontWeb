@@ -1,4 +1,5 @@
 /// test/screens/my_donations_test.dart
+library;
 import 'package:cafeconhuellas_front/models/donation.dart';
 import 'package:cafeconhuellas_front/models/user.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
@@ -20,7 +21,7 @@ class FakeAuthBloc extends AuthBloc {
 }
 
 AuthState userState() => AuthState(
-  token: 'tok', isLoading: false,
+  token: 'tok',
   user: UserWithoutPassword(
     id: 1, firstName: 'Ana', lastName1: '', lastName2: '',
     email: '', phone: '', role: 'USER', imageUrl: '',
@@ -28,7 +29,7 @@ AuthState userState() => AuthState(
 );
 
 AuthState adminState() => AuthState(
-  token: 'tok', isLoading: false,
+  token: 'tok',
   user: UserWithoutPassword(
     id: 2, firstName: 'Admin', lastName1: '', lastName2: '',
     email: '', phone: '', role: 'ADMIN', imageUrl: '',
@@ -38,7 +39,7 @@ AuthState adminState() => AuthState(
 final _fakeDonation = Donation(
   id: 1, userId: 1, amount: 50,
   category: 'MONETARIA', method: 'BIZUM',
-  notes: 'Test note', date: DateTime(2024, 6, 1),
+  notes: 'Test note', date: DateTime(2024, 6),
 );
 
 Widget buildWidget(AuthState authState, MockApi api) => MaterialApp(

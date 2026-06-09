@@ -1,6 +1,7 @@
 /// test/screens/donation_form_test.dart
+library;
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
-import 'package:cafeconhuellas_front/presentation/screens/donationFormScreen.dart';
+import 'package:cafeconhuellas_front/presentation/screens/donation_form_screen.dart';
 import 'package:cafeconhuellas_front/utils/api_conector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,9 +22,9 @@ Widget buildWidget() {
     routerConfig: GoRouter(routes: [
       GoRoute(
         path: '/',
-        builder: (_, __) => BlocProvider(
+        builder: (_, _) => BlocProvider(
           create: (_) => AuthBloc(mockApi),  // ← esto soluciona el error
-          child: DonationFormScreen(token: 'test-token'),
+          child: const DonationFormScreen(token: 'test-token'),
         ),
       ),
     ]),

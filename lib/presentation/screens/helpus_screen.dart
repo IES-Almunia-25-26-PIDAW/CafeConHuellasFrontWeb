@@ -1,11 +1,11 @@
 import 'package:cafeconhuellas_front/models/pet.dart';
-import 'package:cafeconhuellas_front/models/userPetRelationship.dart';
+import 'package:cafeconhuellas_front/models/user_pet_relationship.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/pet_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/pet_event.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_footer.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_header.dart';
-import 'package:cafeconhuellas_front/theme/AppColors.dart';
+import 'package:cafeconhuellas_front/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -49,7 +49,7 @@ class HelpScreen extends StatelessWidget {
             child: Text(
               isOptional && onClear == null
                   ? label
-                  : '${label}: ${date.day.toString().padLeft(2,'0')}/${date.month.toString().padLeft(2,'0')}/${date.year}',
+                  : '$label: ${date.day.toString().padLeft(2,'0')}/${date.month.toString().padLeft(2,'0')}/${date.year}',
               style: const TextStyle(fontWeight: FontWeight.w500),
             ),
           ),
@@ -81,12 +81,12 @@ class HelpScreen extends StatelessWidget {
         child: Column(
           children: [
             /// Shared application header.
-            AppHeader(userImageUrl: "assets/user.png"),
+            const AppHeader(),
             /// Main banner image.
-            Image.asset("assets/images/banners/banner-inicio.png", width: double.infinity, height: 400, fit: BoxFit.cover),
+            Image.asset('assets/images/banners/banner-inicio.png', width: double.infinity, height: 400, fit: BoxFit.cover),
             const SizedBox(height: 60),
             /// Screen title.
-            _title("¿Cómo puedes ayudar?"),
+            _title('¿Cómo puedes ayudar?'),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 60.0),
               child: Wrap(
@@ -98,8 +98,8 @@ class HelpScreen extends StatelessWidget {
                   /// Introductory text card.
                   _card(
                     child: const Text(
-                      "Hay muchas formas de colaborar con nuestra protectora, "
-                      "cada pequeña acción ayuda a cambiar la vida de nuestros animales.",
+                      'Hay muchas formas de colaborar con nuestra protectora, '
+                      'cada pequeña acción ayuda a cambiar la vida de nuestros animales.',
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -107,10 +107,10 @@ class HelpScreen extends StatelessWidget {
                   _card(
                     child: Column(
                       children: [
-                        _link(context, "Voluntariado"),
-                        _link(context, "Casa de acogida"),
-                        _link(context, "Paseos"),
-                        _link(context, "Apadrinamiento"),
+                        _link(context, 'Voluntariado'),
+                        _link(context, 'Casa de acogida'),
+                        _link(context, 'Paseos'),
+                        _link(context, 'Apadrinamiento'),
                       ],
                     ),
                   ),
@@ -118,49 +118,49 @@ class HelpScreen extends StatelessWidget {
                   /// Volunteering section.
                   _helpSection(
                     context,
-                    title: "Voluntariado",
-                    image: "assets/images/help_section/volunteering.jpg",
-                    text: "Colabora con nosotros ayudando en el cuidado diario.",
-                    button: "Quiero ser voluntario",
+                    title: 'Voluntariado',
+                    image: 'assets/images/help_section/volunteering.jpg',
+                    text: 'Colabora con nosotros ayudando en el cuidado diario.',
+                    button: 'Quiero ser voluntario',
                     reverse: false,
-                    relation: "VOLUNTARIADO",
+                    relation: 'VOLUNTARIADO',
                   ),
                   /// Foster home section.
                   _helpSection(
                     context,
-                    title: "Casa de acogida",
-                    image: "assets/images/help_section/petfoster.jpg",
-                    text: "Ofrece tu hogar temporalmente a un animal.",
-                    button: "Ofrecer acogida",
+                    title: 'Casa de acogida',
+                    image: 'assets/images/help_section/petfoster.jpg',
+                    text: 'Ofrece tu hogar temporalmente a un animal.',
+                    button: 'Ofrecer acogida',
                     reverse: true,
-                    relation: "CASA_DE_ACOGIDA",
+                    relation: 'CASA_DE_ACOGIDA',
                   ),
                   /// Walking section.
                   _helpSection(
                     context,
-                    title: "Paseos",
-                    image: "assets/images/help_section/walks.jpg",
-                    text: "Ayuda a nuestros perros saliendo a pasear.",
-                    button: "Apuntarme a paseos",
+                    title: 'Paseos',
+                    image: 'assets/images/help_section/walks.jpg',
+                    text: 'Ayuda a nuestros perros saliendo a pasear.',
+                    button: 'Apuntarme a paseos',
                     reverse: false,
-                    relation: "PASEO",
+                    relation: 'PASEO',
                   ),
                   /// Sponsorship section.
                   _helpSection(
                     context,
-                    title: "Apadrinamiento",
-                    image: "assets/images/help_section/sponsorship.jpg",
-                    text: "Contribuye económicamente al cuidado de un animal.",
-                    button: "Apadrinar",
+                    title: 'Apadrinamiento',
+                    image: 'assets/images/help_section/sponsorship.jpg',
+                    text: 'Contribuye económicamente al cuidado de un animal.',
+                    button: 'Apadrinar',
                     reverse: true,
-                    relation: "APADRINAMIENTO",
+                    relation: 'APADRINAMIENTO',
                   ),
                   const SizedBox(height: 100),
                 ],
               ),
             ),
             /// Shared application footer.
-            AppFooter(),
+            const AppFooter(),
           ],
         ),
       ),
@@ -368,7 +368,7 @@ class HelpScreen extends StatelessWidget {
         text,
         style: const TextStyle(
           fontSize: 38,
-          fontFamily: "WinkyMilky",
+          fontFamily: 'WinkyMilky',
           color: AppColors.darkViolet,
         ),
       ),
@@ -405,7 +405,7 @@ class HelpScreen extends StatelessWidget {
           text,
           style: const TextStyle(
             fontSize: 28,
-            fontFamily: "MilkyVintage",
+            fontFamily: 'MilkyVintage',
             color: AppColors.green,
           ),
         ),

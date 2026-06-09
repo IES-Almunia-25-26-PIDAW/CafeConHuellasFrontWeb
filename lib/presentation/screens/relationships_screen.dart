@@ -1,5 +1,5 @@
-import 'package:cafeconhuellas_front/models/adoptionForm.dart';
-import 'package:cafeconhuellas_front/models/userPetRelationship.dart';
+import 'package:cafeconhuellas_front/models/adoption_form.dart';
+import 'package:cafeconhuellas_front/models/user_pet_relationship.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/pet_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/pet_event.dart';
@@ -38,7 +38,7 @@ class RelationshipsScreen extends StatelessWidget {
       return Scaffold(
         body: Column(
           children: [
-            AppHeader(),
+            const AppHeader(),
             Expanded(
               child: Center(
                 child: Column(
@@ -93,9 +93,7 @@ class RelationshipsScreen extends StatelessWidget {
         context.read<PetsBloc>().add(LoadPetUserRelations());
       } else {
         context.read<PetsBloc>().add(LoadMyAdoptionRequests());
-        context.read<PetsBloc>().add(
-              LoadMyPetUserRelations(userId ?? 0),
-            );
+        context.read<PetsBloc>().add(LoadMyPetUserRelations(userId ?? 0));
       }
     });
 
@@ -104,7 +102,7 @@ class RelationshipsScreen extends StatelessWidget {
       child: Scaffold(
         body: Column(
           children: [
-            AppHeader(),
+            const AppHeader(),
             Image.asset(
               'assets/images/banners/banner-inicio.png',
               width: double.infinity,
@@ -162,9 +160,7 @@ class _RelacionesTab extends StatelessWidget {
     return BlocBuilder<PetsBloc, PetsState>(
       builder: (context, state) {
         if (state.isLoading) {
-          return const Center(
-            child: CircularProgressIndicator(color: _purple),
-          );
+          return const Center(child: CircularProgressIndicator(color: _purple));
         }
 
         if (state.errorMessage != null) {
@@ -177,9 +173,7 @@ class _RelacionesTab extends StatelessWidget {
         }
         final relations = state.relations;
         if (relations.isEmpty) {
-          return const Center(
-            child: Text('No relationships found.'),
-          );
+          return const Center(child: Text('No relationships found.'));
         }
         return ListView.builder(
           padding: const EdgeInsets.all(16),
@@ -200,11 +194,16 @@ class _RelacionesTab extends StatelessWidget {
                         endDate: r.endDate,
                         active: !r.active,
                       );
+                      final messenger = ScaffoldMessenger.of(context);
+                      final petsBloc = context.read<PetsBloc>();
                       try {
-                        await ApiConector().updateRelationshipStatus(r.id, updated);
-                        context.read<PetsBloc>().add(LoadPetUserRelations());
+                        await ApiConector().updateRelationshipStatus(
+                          r.id,
+                          updated,
+                        );
+                        petsBloc.add(LoadPetUserRelations());
                       } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
+                        messenger.showSnackBar(
                           SnackBar(
                             content: Text('Error: $e'),
                             backgroundColor: Colors.red,
@@ -263,10 +262,9 @@ class _RelationCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          CircleAvatar(
+          const CircleAvatar(
             backgroundColor: _purple,
-            child: const Icon(Icons.pets,
-                color: Colors.white, size: 20),
+            child: Icon(Icons.pets, color: Colors.white, size: 20),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -285,18 +283,12 @@ class _RelationCard extends StatelessWidget {
                 Text(
                   'From: ${_fmt(relation.startDate)}'
                   '${relation.endDate != null ? ' → ${_fmt(relation.endDate!)}' : ''}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
                 if (isAdmin)
                   Text(
                     'User ID: ${relation.userId}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                   ),
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -306,9 +298,7 @@ class _RelationCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: color.withValues(alpha: 0.4),
-                    ),
+                    border: Border.all(color: color.withValues(alpha: 0.4)),
                   ),
                   child: Text(
                     label,
@@ -358,9 +348,7 @@ class _AdopcionesTab extends StatelessWidget {
     return BlocBuilder<PetsBloc, PetsState>(
       builder: (context, state) {
         if (state.isLoading) {
-          return const Center(
-            child: CircularProgressIndicator(color: _purple),
-          );
+          return const Center(child: CircularProgressIndicator(color: _purple));
         }
 
         if (state.errorMessage != null) {
@@ -375,19 +363,14 @@ class _AdopcionesTab extends StatelessWidget {
         final requests = state.adoptionRequests;
 
         if (requests.isEmpty) {
-          return const Center(
-            child: Text('No adoption requests found.'),
-          );
+          return const Center(child: Text('No adoption requests found.'));
         }
 
         return ListView.builder(
           padding: const EdgeInsets.all(16),
           itemCount: requests.length,
           itemBuilder: (context, index) {
-            return _AdoptionCard(
-              request: requests[index],
-              isAdmin: isAdmin,
-            );
+            return _AdoptionCard(request: requests[index], isAdmin: isAdmin);
           },
         );
       },
@@ -410,29 +393,19 @@ class _AdoptionCard extends StatelessWidget {
   final AdoptionRequest request;
   final bool isAdmin;
 
-  const _AdoptionCard({
-    required this.request,
-    required this.isAdmin,
-  });
+  const _AdoptionCard({required this.request, required this.isAdmin});
 
-  Future<void> _cambiarStatus(
-    BuildContext context,
-    String nuevoStatus,
-  ) async {
+  Future<void> _cambiarStatus(BuildContext context, String nuevoStatus) async {
     final messenger = ScaffoldMessenger.of(context);
     final bloc = context.read<PetsBloc>();
 
     try {
-      await ApiConector()
-          .updateAdoptionStatus(request.id, nuevoStatus);
+      await ApiConector().updateAdoptionStatus(request.id, nuevoStatus);
 
       bloc.add(LoadAdoptionRequests());
     } catch (e) {
       messenger.showSnackBar(
-        SnackBar(
-          content: Text('Error: $e'),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
       );
     }
   }
@@ -442,8 +415,8 @@ class _AdoptionCard extends StatelessWidget {
     final statusColor = request.status == 'APROBADO'
         ? Colors.green
         : request.status == 'RECHAZADO'
-            ? Colors.red
-            : Colors.orange;
+        ? Colors.red
+        : Colors.orange;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -466,10 +439,9 @@ class _AdoptionCard extends StatelessWidget {
           /// HEADER
           Row(
             children: [
-              CircleAvatar(
+              const CircleAvatar(
                 backgroundColor: _purple,
-                child: const Icon(Icons.description,
-                    color: Colors.white, size: 20),
+                child: Icon(Icons.description, color: Colors.white, size: 20),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -486,25 +458,17 @@ class _AdoptionCard extends StatelessWidget {
                     ),
                     Text(
                       request.userName,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     ),
                   ],
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 4,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: statusColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: statusColor.withValues(alpha: 0.4),
-                  ),
+                  border: Border.all(color: statusColor.withValues(alpha: 0.4)),
                 ),
                 child: Text(
                   request.status,
@@ -544,10 +508,7 @@ class _AdoptionCard extends StatelessWidget {
             'Submitted: ${request.submittedAt.day.toString().padLeft(2, '0')}/'
             '${request.submittedAt.month.toString().padLeft(2, '0')}/'
             '${request.submittedAt.year}',
-            style: TextStyle(
-              fontSize: 11,
-              color: Colors.grey[500],
-            ),
+            style: TextStyle(fontSize: 11, color: Colors.grey[500]),
           ),
 
           if (isAdmin) ...[
@@ -557,8 +518,7 @@ class _AdoptionCard extends StatelessWidget {
               children: [
                 if (request.status != 'PENDIENTE')
                   TextButton(
-                    onPressed: () =>
-                        _cambiarStatus(context, 'PENDIENTE'),
+                    onPressed: () => _cambiarStatus(context, 'PENDIENTE'),
                     child: const Text(
                       'Pending',
                       style: TextStyle(color: Colors.orange),
@@ -570,8 +530,7 @@ class _AdoptionCard extends StatelessWidget {
                       backgroundColor: Colors.green,
                       foregroundColor: Colors.white,
                     ),
-                    onPressed: () =>
-                        _cambiarStatus(context, 'APROBADA'),
+                    onPressed: () => _cambiarStatus(context, 'APROBADA'),
                     child: const Text('Approve'),
                   ),
                 const SizedBox(width: 8),
@@ -581,12 +540,11 @@ class _AdoptionCard extends StatelessWidget {
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
                     ),
-                    onPressed: () =>
-                        _cambiarStatus(context, 'DENEGADA'),
+                    onPressed: () => _cambiarStatus(context, 'DENEGADA'),
                     child: const Text('Reject'),
                   ),
               ],
-            )
+            ),
           ],
         ],
       ),
@@ -598,10 +556,7 @@ class _AdoptionCard extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 3),
       child: RichText(
         text: TextSpan(
-          style: const TextStyle(
-            fontSize: 13,
-            color: Colors.black87,
-          ),
+          style: const TextStyle(fontSize: 13, color: Colors.black87),
           children: [
             TextSpan(
               text: '$label: ',
@@ -618,10 +573,7 @@ class _AdoptionCard extends StatelessWidget {
     final color = value ? Colors.green : Colors.grey;
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 8,
-        vertical: 3,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),

@@ -6,7 +6,7 @@ import 'package:cafeconhuellas_front/presentation/bloc/pet_state.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_footer.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_header.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/eventformdialog.dart';
-import 'package:cafeconhuellas_front/theme/AppColors.dart';
+import 'package:cafeconhuellas_front/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -137,9 +137,9 @@ class EventsScreen extends StatelessWidget {
             child: Column(
               children: [
                 /// Shared application header.
-                AppHeader(userImageUrl: "assets/user.png"),
+                const AppHeader(),
                 /// Main banner image.
-                Image.asset("assets/images/banners/banner-inicio.png",
+                Image.asset('assets/images/banners/banner-inicio.png',
                     width: double.infinity, height: 400, fit: BoxFit.cover),
                 const SizedBox(height: 40),
 
@@ -177,7 +177,7 @@ class EventsScreen extends StatelessWidget {
                 const SizedBox(height: 40),
 
                 /// Active events section.
-                _title("Eventos Activos"),
+                _title('Eventos Activos'),
                 if (activeEvents.isEmpty)
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
@@ -196,7 +196,7 @@ class EventsScreen extends StatelessWidget {
                 const SizedBox(height: 80),
 
                 /// Past events section.
-                _title("Eventos Pasados"),
+                _title('Eventos Pasados'),
                 if (pastEvents.isEmpty)
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
@@ -211,7 +211,7 @@ class EventsScreen extends StatelessWidget {
 
                 const SizedBox(height: 80),
                 /// Shared application footer.
-                AppFooter(),
+                const AppFooter(),
               ],
             ),
           ),
@@ -228,7 +228,7 @@ class EventsScreen extends StatelessWidget {
         text,
         style: const TextStyle(
           fontSize: 38,
-          fontFamily: "WinkyMilky",
+          fontFamily: 'WinkyMilky',
           color: AppColors.darkViolet,
         ),
       ),
@@ -273,7 +273,7 @@ class EventsScreen extends StatelessWidget {
           const SizedBox(height: 10),
           /// Event name.
           Text(event.name,
-              style: const TextStyle(fontSize: 22, fontFamily: "MilkyVintage")),
+              style: const TextStyle(fontSize: 22, fontFamily: 'MilkyVintage')),
           const SizedBox(height: 6),
           /// Event date and time.
           Row(children: [
@@ -344,7 +344,7 @@ class EventsScreen extends StatelessWidget {
           ),
           /// Event info card without fixed height.
           ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: _pastInfoCardWidth, minWidth: 200),
+            constraints: const BoxConstraints(maxWidth: _pastInfoCardWidth, minWidth: 200),
             child: Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -361,7 +361,7 @@ class EventsScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(event.name,
-                            style: const TextStyle(fontSize: 22, fontFamily: "MilkyVintage")),
+                            style: const TextStyle(fontSize: 22, fontFamily: 'MilkyVintage')),
                       ),
                       if (isAdmin) ...[
                         /// Edit button.

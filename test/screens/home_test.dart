@@ -1,4 +1,5 @@
 /// test/screens/home_test.dart
+library;
 import 'package:bloc_test/bloc_test.dart';
 import 'package:cafeconhuellas_front/models/event.dart';
 import 'package:cafeconhuellas_front/models/pet.dart';
@@ -29,8 +30,7 @@ void main() {
     pets: const [],
     events: const [],
     selectedSpecies: '',
-    isEmergencyActive: false,
-    isLoading: false, relations: [], adoptionRequests: [],
+    isEmergencyActive: false, relations: [], adoptionRequests: [],
   );
 
   /// Mascotas de ejemplo

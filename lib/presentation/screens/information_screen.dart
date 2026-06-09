@@ -1,7 +1,7 @@
-import 'package:cafeconhuellas_front/presentation/widgets/mapWidget.dart';
+import 'package:cafeconhuellas_front/presentation/widgets/map_widget.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_footer.dart';
 import 'package:cafeconhuellas_front/presentation/widgets/app_header.dart';
-import 'package:cafeconhuellas_front/theme/AppColors.dart';
+import 'package:cafeconhuellas_front/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 /// Screen that displays information about the organization.
@@ -34,13 +34,13 @@ class InformationScreen extends StatelessWidget {
         child: Column(
           children: [
             /// Shared application header.
-            AppHeader(userImageUrl: "assets/user.png"),
+            const AppHeader(),
             /// Main banner image.
-            Image.asset("assets/images/banners/banner-inicio.png",
+            Image.asset('assets/images/banners/banner-inicio.png',
                 width: double.infinity, height: 400, fit: BoxFit.cover),
             const SizedBox(height: 60),
             /// Who we are section.
-            _sectionTitle("¿Quiénes somos?"),
+            _sectionTitle('¿Quiénes somos?'),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 60.0),
               child: Wrap(
@@ -58,10 +58,10 @@ class InformationScreen extends StatelessWidget {
                       border: Border.all(color: AppColors.cream),
                     ),
                     child: const Text(
-                      "¡Hola! Nosotras somos Patitas Unidas, una protectora que nace del amor profundo por los animales "
-                      "y de la unión de tres amigas con el mismo sueño: darles una segunda oportunidad.",
+                      '¡Hola! Nosotras somos Patitas Unidas, una protectora que nace del amor profundo por los animales '
+                      'y de la unión de tres amigas con el mismo sueño: darles una segunda oportunidad.',
                       style: TextStyle(
-                        fontFamily: "MilkyVintage",
+                        fontFamily: 'MilkyVintage',
                         fontSize: 23,
                         color: AppColors.brown,
                         fontWeight: FontWeight.w500,
@@ -73,11 +73,11 @@ class InformationScreen extends StatelessWidget {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      _smallImage("assets/images/information_section/somos.jpg", 200),
+                      _smallImage('assets/images/information_section/somos.jpg', 200),
                       const SizedBox(width: 15),
                       Padding(
                         padding: const EdgeInsets.only(top: 120),
-                        child: _smallImage("assets/images/information_section/somos2.jpg", 140),
+                        child: _smallImage('assets/images/information_section/somos2.jpg', 140),
                       ),
                     ],
                   ),
@@ -86,31 +86,31 @@ class InformationScreen extends StatelessWidget {
             ),
             const SizedBox(height: 60),
             /// Our purpose section.
-            _sectionTitle("Nuestro propósito:"),
+            _sectionTitle('Nuestro propósito:'),
             _infoSection(
-              image: "assets/images/information_section/proposito.jpg",
-              text: "Nuestra misión es clara: salvar, proteger y encontrar un hogar lleno de amor para todos los animales que lo necesiten. "
-                  "En Patitas Unidas luchamos por un mundo donde ningún animal tenga que vivir en el abandono.",
+              image: 'assets/images/information_section/proposito.jpg',
+              text: 'Nuestra misión es clara: salvar, proteger y encontrar un hogar lleno de amor para todos los animales que lo necesiten. '
+                  'En Patitas Unidas luchamos por un mundo donde ningún animal tenga que vivir en el abandono.',
               reverse: false,
             ),
             const SizedBox(height: 60),
             /// Location section with embedded map.
-            _sectionTitle("Aquí estamos:"),
+            _sectionTitle('Aquí estamos:'),
             const MapWidget(),
             const SizedBox(height: 60),
             /// Organization history section.
-            _sectionTitle("Historia"),
+            _sectionTitle('Historia'),
             _infoSection(
-              image: "assets/images/information_section/historia.jpg",
-              text: "Patitas unidas nace en 2023, cuando tres chicas tras finalizar sus estudios decidieron plasmar la energía y amor por los animales. "
-                  "Durante ese momento de cambio en nuestras vidas, fuimos más conscientes que nunca de la realidad que viven muchos de los animales sin hogar. "
-                  "Así lo que comenzó como una idea se convirtió en un proyecto, trabajando ahora día a día para rescatar cuidar y acompañar a cada animal que llega a nosotras.",
+              image: 'assets/images/information_section/historia.jpg',
+              text: 'Patitas unidas nace en 2023, cuando tres chicas tras finalizar sus estudios decidieron plasmar la energía y amor por los animales. '
+                  'Durante ese momento de cambio en nuestras vidas, fuimos más conscientes que nunca de la realidad que viven muchos de los animales sin hogar. '
+                  'Así lo que comenzó como una idea se convirtió en un proyecto, trabajando ahora día a día para rescatar cuidar y acompañar a cada animal que llega a nosotras.',
               reverse: false,
               imageTopPadding: 40,
             ),
             const SizedBox(height: 80),
             /// Shared application footer.
-            AppFooter(),
+            const AppFooter(),
           ],
         ),
       ),
@@ -126,7 +126,7 @@ Widget _sectionTitle(String text) {
       text,
       style: const TextStyle(
         fontSize: 38,
-        fontFamily: "WinkyMilky",
+        fontFamily: 'WinkyMilky',
         color: AppColors.darkViolet,
       ),
     ),
@@ -221,7 +221,7 @@ Widget _infoCard(String text) {
       text,
       textAlign: TextAlign.center,
       style: const TextStyle(
-        fontFamily: "MilkyVintage",
+        fontFamily: 'MilkyVintage',
         fontSize: 23,
         color: AppColors.brown,
         fontWeight: FontWeight.w500,

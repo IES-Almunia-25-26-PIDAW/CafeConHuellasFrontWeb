@@ -1,7 +1,7 @@
-import 'package:cafeconhuellas_front/models/adoptionForm.dart';
+import 'package:cafeconhuellas_front/models/adoption_form.dart';
 import 'package:cafeconhuellas_front/models/event.dart';
 import 'package:cafeconhuellas_front/models/pet.dart';
-import 'package:cafeconhuellas_front/models/userPetRelationship.dart';
+import 'package:cafeconhuellas_front/models/user_pet_relationship.dart';
 
 /// Represents the complete pets-related state
 /// of the application.

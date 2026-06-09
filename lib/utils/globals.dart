@@ -16,7 +16,7 @@ class Globals {
       name: 'Jornada de Paseo Solidario',
       imageUrl: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b',
       description: 'Salida grupal para pasear perros del refugio y socializarlos.',
-      date: DateTime(2026, 4, 12, 10, 0),
+      date: DateTime(2026, 4, 12, 10),
  
     ),
     Event(
@@ -32,7 +32,7 @@ class Globals {
       name: 'Charla de Tenencia Responsable',
       imageUrl: 'https://images.unsplash.com/photo-1450778869180-41d0601e046e',
       description: 'Taller practico sobre cuidados, adopcion y bienestar animal.',
-      date: DateTime(2026, 6, 7, 18, 0),
+      date: DateTime(2026, 6, 7, 18),
 
     ),
     Event(
@@ -50,7 +50,7 @@ class Globals {
       name: 'Campana de Microchipado',
       imageUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9',
       description: 'Jornada gratuita de identificacion para perros y gatos.',
-      date: DateTime(2025, 2, 15, 10, 0),
+      date: DateTime(2025, 2, 15, 10),
   
     ),
     Event(
@@ -58,7 +58,7 @@ class Globals {
       name: 'Domingo de Puertas Abiertas',
       imageUrl: 'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8',
       description: 'Visita al centro para conocer voluntariado y proceso de adopcion.',
-      date: DateTime(2025, 4, 20, 12, 0),
+      date: DateTime(2025, 4, 20, 12),
  
     ),
     Event(
@@ -66,7 +66,7 @@ class Globals {
       name: 'Ruta Canina Urbana',
       imageUrl: 'https://images.unsplash.com/photo-1507146426996-ef05306b995a',
       description: 'Recorrido por la ciudad para fomentar convivencia con mascotas.',
-      date: DateTime(2025, 8, 10, 9, 0),
+      date: DateTime(2025, 8, 10, 9),
   
     ),
     Event(
@@ -74,14 +74,14 @@ class Globals {
       name: 'Navidad Sin Abandono',
       imageUrl: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1',
       description: 'Campana de sensibilizacion y recogida de donaciones.',
-      date: DateTime(2025, 12, 14, 17, 0),
+      date: DateTime(2025, 12, 14, 17),
 
     ),
   ];
 
   static final List<Pet> pets = List<Pet>.from(_fallbackPets);
-  static final List<Event> Futureevents = List<Event>.from(_fallbackFutureEvents);
-  static final List<Event> PastEvents = List<Event>.from(_fallbackPastEvents);
+  static final List<Event> futureevents = List<Event>.from(_fallbackFutureEvents);
+  static final List<Event> pastEvents = List<Event>.from(_fallbackPastEvents);
 
   /*
   static Future<void> loadInitialData() async {

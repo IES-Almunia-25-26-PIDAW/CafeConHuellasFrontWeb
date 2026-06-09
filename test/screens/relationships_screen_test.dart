@@ -1,5 +1,6 @@
 /// test/screens/relationships_test.dart
-import 'package:cafeconhuellas_front/models/adoptionForm.dart';
+library;
+import 'package:cafeconhuellas_front/models/adoption_form.dart';
 import 'package:cafeconhuellas_front/models/user.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_state.dart';
@@ -27,10 +28,10 @@ class FakePetsBloc extends PetsBloc {
   @override PetsState get state => _s;
 }
 
-AuthState get _unauthState => AuthState(isLoading: false);
+AuthState get _unauthState => AuthState();
 
 AuthState get _userState => AuthState(
-  token: 'tok', isLoading: false,
+  token: 'tok',
   user: UserWithoutPassword(
     id: 1, firstName: 'Ana', lastName1: '', lastName2: '',
     email: '', phone: '', role: 'USER', imageUrl: '',
@@ -38,7 +39,7 @@ AuthState get _userState => AuthState(
 );
 
 AuthState get _adminState => AuthState(
-  token: 'tok', isLoading: false,
+  token: 'tok',
   user: UserWithoutPassword(
     id: 2, firstName: 'Admin', lastName1: '', lastName2: '',
     email: '', phone: '', role: 'ADMIN', imageUrl: '',
@@ -46,8 +47,7 @@ AuthState get _adminState => AuthState(
 );
 
 PetsState emptyPetsState() => PetsState(
-  pets: const [], selectedSpecies: '', isEmergencyActive: false,
-  isLoading: false, events: const [],
+  pets: const [], selectedSpecies: '', isEmergencyActive: false, events: const [],
   relations: const [], adoptionRequests: const [],
 );
 
@@ -131,7 +131,7 @@ void main() {
         reasonForAdoption: 'Test',
         hasGarden: false, hasOtherPets: false,
         hasChildren: false, experienceWithPets: false,
-        agreesToFollowUp: false, submittedAt: DateTime(2024, 6, 1), formTokenId: 1, userEmail: '', additionalInfo: '', relationshipId: 1,
+        agreesToFollowUp: false, submittedAt: DateTime(2024, 6), formTokenId: 1, userEmail: '', additionalInfo: '', relationshipId: 1,
       );
       final state = emptyPetsState().copyWith(adoptionRequests: [request]);
       await pumpBig(tester, buildWidget(_userState, state));
@@ -159,7 +159,7 @@ void main() {
         reasonForAdoption: 'Test',
         hasGarden: false, hasOtherPets: false,
         hasChildren: false, experienceWithPets: false,
-        agreesToFollowUp: false, submittedAt: DateTime(2024, 6, 1), formTokenId: 1, userEmail: '', additionalInfo: '', relationshipId: 1,
+        agreesToFollowUp: false, submittedAt: DateTime(2024, 6), formTokenId: 1, userEmail: '', additionalInfo: '', relationshipId: 1,
       );
       final state = emptyPetsState().copyWith(adoptionRequests: [request]);
       await pumpBig(tester, buildWidget(_adminState, state));

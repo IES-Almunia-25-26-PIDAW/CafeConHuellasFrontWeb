@@ -1,11 +1,11 @@
 import 'dart:core';
 import 'dart:typed_data';
-import 'package:cafeconhuellas_front/models/adoptionForm.dart';
+import 'package:cafeconhuellas_front/models/adoption_form.dart';
 import 'package:cafeconhuellas_front/models/donation.dart';
 import 'package:cafeconhuellas_front/models/event.dart';
 import 'package:cafeconhuellas_front/models/pet.dart';
 import 'package:cafeconhuellas_front/models/user.dart';
-import 'package:cafeconhuellas_front/models/userPetRelationship.dart';
+import 'package:cafeconhuellas_front/models/user_pet_relationship.dart';
 import 'package:dio/dio.dart';
 
 
@@ -307,14 +307,12 @@ class ApiConector {
   /// Method used to update an existing pet.
   Future<void> updatePet (Pet pet) async {
     final Map<String, dynamic> petData = pet.toJson();
-    print('SENDING: $petData'); 
     try {
       await dio.put(
         '/pets/${pet.id}',
         data: petData,
       );
     } on DioException catch (error) {
-        print('ERROR RESPONSE: ${error.response?.data}'); 
       throw Exception(_extractApiErrorMessage(error));
     }
   }
@@ -392,7 +390,7 @@ class ApiConector {
       }
     }
     throw DioException(
-      requestOptions: RequestOptions(path: ''),
+      requestOptions: RequestOptions(),
       error: 'API response does not contain a valid list.',
     );
   }

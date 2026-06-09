@@ -1,8 +1,9 @@
 /// test/utils/api_conector_extra_test.dart
+library;
 import 'package:cafeconhuellas_front/models/donation.dart';
 import 'package:cafeconhuellas_front/models/event.dart';
 import 'package:cafeconhuellas_front/models/pet.dart';
-import 'package:cafeconhuellas_front/models/userPetRelationship.dart';
+import 'package:cafeconhuellas_front/models/user_pet_relationship.dart';
 import 'package:cafeconhuellas_front/utils/api_conector.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http_mock_adapter/http_mock_adapter.dart';

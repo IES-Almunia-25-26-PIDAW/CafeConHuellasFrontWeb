@@ -14,7 +14,7 @@ final bool _mapViewRegistered = _registerMapView();
 bool _registerMapView() {
   ui_web.platformViewRegistry.registerViewFactory(_mapViewType, (int viewId) {
     final iframe = html.IFrameElement()
-      ..src = "https://www.google.com/maps?q=Jerez+de+la+Frontera&output=embed"
+      ..src = 'https://www.google.com/maps?q=Jerez+de+la+Frontera&output=embed'
       ..style.border = 'none';
 
     return iframe;
@@ -45,7 +45,7 @@ class MapWidget extends StatelessWidget {
             border: Border.all(color: Colors.brown.shade200, width: 1.5),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.08),
+                color: Colors.black.withValues(alpha: 0.08),
                 blurRadius: 16,
                 offset: const Offset(0, 8),
               ),

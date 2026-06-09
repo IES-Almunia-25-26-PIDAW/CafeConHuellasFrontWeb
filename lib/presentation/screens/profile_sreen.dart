@@ -53,13 +53,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text("Cambiar foto de perfil"),
-        content: const Text("¿Quieres seleccionar una nueva foto de perfil?"),
+        title: const Text('Cambiar foto de perfil'),
+        content: const Text('¿Quieres seleccionar una nueva foto de perfil?'),
         actions: [
           /// Cancel button.
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text("Cancelar"),
+            child: const Text('Cancelar'),
           ),
           /// Confirm selection button.
           ElevatedButton(
@@ -71,7 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text("Seleccionar"),
+            child: const Text('Seleccionar'),
           ),
         ],
       ),
@@ -100,7 +100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Foto de perfil actualizada correctamente ✓"),
+          content: Text('Foto de perfil actualizada correctamente ✓'),
           backgroundColor: Colors.green,
         ),
       );
@@ -108,7 +108,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Error al actualizar la foto: $e"),
+          content: Text('Error al actualizar la foto: $e'),
           backgroundColor: Colors.redAccent,
         ),
       );
@@ -137,17 +137,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
           /// Not authenticated state.
           if (!state.isAuthenticated) {
-            return const Center(child: Text("No has iniciado sesión"));
+            return const Center(child: Text('No has iniciado sesión'));
           }
 
           final user = state.user;
-          final bool isAdmin = user?.role.toUpperCase() == "ADMIN";
+          final bool isAdmin = user?.role.toUpperCase() == 'ADMIN';
 
           return SingleChildScrollView(
             child: Column(
               children: [
                 /// Shared application header.
-                AppHeader(),
+                const AppHeader(),
                 /// Banner with floating avatar.
                 Stack(
                   clipBehavior: Clip.none,
@@ -160,7 +160,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       decoration: const BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage(
-                            "assets/images/banners/banner-inicio.png",
+                            'assets/images/banners/banner-inicio.png',
                           ),
                           fit: BoxFit.cover,
                         ),
@@ -189,16 +189,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       backgroundImage: user != null &&
                                               user.imageUrl.isNotEmpty
                                           ? NetworkImage(user.imageUrl)
-                                          : const AssetImage("assets/user.png")
+                                          : const AssetImage('assets/user.png')
                                               as ImageProvider,
                                     ),
                             ),
                             /// Camera icon indicating the avatar is tappable.
                             if (!_uploadingAvatar)
-                              CircleAvatar(
+                              const CircleAvatar(
                                 radius: 16,
                                 backgroundColor: Colors.purple,
-                                child: const Icon(
+                                child: Icon(
                                   Icons.camera_alt,
                                   size: 16,
                                   color: Colors.white,
@@ -232,11 +232,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               if (user != null) ...[
                                 /// User full name.
                                 Text(
-                                  "${user.firstName} ${user.lastName1}",
+                                  '${user.firstName} ${user.lastName1}',
                                   style: const TextStyle(
                                     fontSize: 35,
                                     fontWeight: FontWeight.bold,
-                                    fontFamily: "MilkyVintage",
+                                    fontFamily: 'MilkyVintage',
                                   ),
                                 ),
                                 const SizedBox(height: 6),
@@ -246,21 +246,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   style: TextStyle(
                                     fontSize: 28,
                                     color: Colors.grey[600],
-                                    fontFamily: "MilkyVintage",
+                                    fontFamily: 'MilkyVintage',
                                   ),
                                 ),
                                 const SizedBox(height: 20),
                                 const Divider(),
                                 const SizedBox(height: 10),
                                 /// Phone and role info cards.
-                                _infoCard(Icons.phone, "Teléfono", user.phone),
-                                _infoCard(Icons.badge, "Rol", user.role),
+                                _infoCard(Icons.phone, 'Teléfono', user.phone),
+                                _infoCard(Icons.badge, 'Rol', user.role),
                               ]
 
                               /// User data loading state.
                               else ...[
                                 const Text(
-                                  "Sesión Activa",
+                                  'Sesión Activa',
                                   style: TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
@@ -268,7 +268,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                                 const SizedBox(height: 10),
                                 const Text(
-                                  "Cargando datos del usuario...",
+                                  'Cargando datos del usuario...',
                                   style: TextStyle(color: Colors.grey),
                                 ),
                                 const SizedBox(height: 20),
@@ -295,7 +295,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                   onPressed: () => context.go('/panel'),
                                   icon: const Icon(Icons.settings),
-                                  label: const Text("Configuración Web"),
+                                  label: const Text('Configuración Web'),
                                 ),
                                 const SizedBox(height: 12),
                               ],
@@ -311,7 +311,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                   onPressed: () => context.go('/panel'),
                                   icon: const Icon(Icons.person),
-                                  label: const Text("Mis cosas"),
+                                  label: const Text('Mis cosas'),
                                 ),
                                 const SizedBox(height: 12),
                               ],
@@ -334,7 +334,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   context.go('/');
                                 },
                                 icon: const Icon(Icons.logout),
-                                label: const Text("Cerrar Sesión"),
+                                label: const Text('Cerrar Sesión'),
                               ),
                             ],
                           ),

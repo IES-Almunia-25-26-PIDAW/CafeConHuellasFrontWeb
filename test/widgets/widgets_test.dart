@@ -1,4 +1,5 @@
 /// test/widgets/widgets_test.dart
+library;
 import 'package:bloc_test/bloc_test.dart';
 import 'package:cafeconhuellas_front/models/pet.dart';
 import 'package:cafeconhuellas_front/presentation/bloc/auth_bloc.dart';
@@ -74,7 +75,7 @@ void main (){
 group('EventCard', () {
   testWidgets('muestra título y descripción', (tester) async {
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         home: Scaffold(
           body: EventCard('assets/img.png', 'Adopción', 'Gran evento de adopción'),
         ),
@@ -87,7 +88,7 @@ group('EventCard', () {
 
   testWidgets('renderiza con imagen de red', (tester) async {
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         home: Scaffold(
           body: EventCard('https://example.com/img.jpg', 'Evento red', 'Desc'),
         ),
@@ -100,7 +101,7 @@ group('EventCard', () {
 
   testWidgets('renderiza con imagen de asset', (tester) async {
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         home: Scaffold(
           body: EventCard('assets/img.png', 'Evento asset', 'Desc'),
         ),
@@ -117,7 +118,7 @@ group('EventCard', () {
         'Ut enim ad minim veniam, quis nostrud exercitation.';
 
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         home: Scaffold(
           body: SizedBox(
             width: 300,
@@ -155,7 +156,7 @@ group('PetCard', () {
   });
 
   testWidgets('renderiza imagen de red cuando imageUrl empieza por http', (tester) async {
-    final pet = _makePet(imageUrl: 'https://example.com/pet.jpg');
+    final pet = _makePet();
     await tester.pumpWidget(wrapWithRouter(PetCard(pet)));
     await tester.pump();
 
@@ -211,7 +212,7 @@ group('AppHeader', () {
   }
 
   testWidgets('renderiza links de navegación en pantalla ancha', (tester) async {
-    await pumpHeader(tester, width: 1400);
+    await pumpHeader(tester);
 
     expect(find.text('Inicio'), findsWidgets);
     expect(find.text('Mascotas'), findsWidgets);
@@ -248,7 +249,7 @@ group('AppHeader', () {
   });
 
   testWidgets('tap en Inicio navega a /', (tester) async {
-    await pumpHeader(tester, width: 1400);
+    await pumpHeader(tester);
 
     await tester.tap(find.text('Inicio').first);
     await tester.pumpAndSettle();
@@ -258,7 +259,7 @@ group('AppHeader', () {
   });
 
   testWidgets('tap en Mascotas navega a /pets', (tester) async {
-    await pumpHeader(tester, width: 1400);
+    await pumpHeader(tester);
 
     await tester.tap(find.text('Mascotas').first);
     await tester.pumpAndSettle();
@@ -283,7 +284,7 @@ group('AppHeader', () {
         value: authBloc,
         child: MaterialApp.router(
           routerConfig: _testRouter(
-            const Scaffold(body: AppHeader(userImageUrl: 'assets/user.png')),
+            const Scaffold(body: AppHeader()),
           ),
         ),
       ),
