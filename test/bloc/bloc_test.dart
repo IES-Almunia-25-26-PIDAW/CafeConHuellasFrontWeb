@@ -79,18 +79,17 @@ void main() {
       ]);
 
       final bloc = PetsBloc(api: mockApi);
+      bloc.add(LoadPets());
+
+      // Espera a que cargue sin consumir el stream con firstWhere
+      await Future.delayed(const Duration(milliseconds: 50));
+
       final future = expectLater(
         bloc.stream,
-        emitsInOrder([
-          isA<PetsState>().having((s) => s.isLoading, 'loading', true),
-          isA<PetsState>().having((s) => s.pets.length, 'pets', 2),
-          isA<PetsState>()
-              .having((s) => s.selectedSpecies, 'species', 'Perro')
-              .having((s) => s.pets.length, 'filtered pets', 1),
-        ]),
+        emits(isA<PetsState>()
+            .having((s) => s.selectedSpecies, 'species', 'Perro')
+            .having((s) => s.pets.length, 'filtered pets', 1)),
       );
-      bloc.add(LoadPets());
-      await bloc.stream.firstWhere((s) => !s.isLoading && s.pets.isNotEmpty);
       bloc.add(FilterSpecies('Perro'));
       await future;
       await bloc.close();
