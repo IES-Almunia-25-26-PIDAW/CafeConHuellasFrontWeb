@@ -83,42 +83,42 @@ Future<void> pumpBig(WidgetTester tester, Widget widget) async {
 
 void main() {
   group('RelationshipsScreen — sin autenticar', () {
-    testWidgets('muestra pantalla de login si no está autenticado', (tester) async {
+    testWidgets('muestra pantalla de inicio de sesión si no está autenticado', (tester) async {
       await pumpBig(tester, buildWidget(_unauthState, emptyPetsState()));
-      expect(find.text('You need to log in!'), findsOneWidget);
+      expect(find.text('¡Necesitas iniciar sesión!'), findsOneWidget);
     });
 
-    testWidgets('muestra botón de iniciar sesión', (tester) async {
+    testWidgets('muestra mensaje para iniciar sesión', (tester) async {
       await pumpBig(tester, buildWidget(_unauthState, emptyPetsState()));
-      expect(find.text('Sign in or register to view your requests.'), findsOneWidget);
+      expect(find.text('Inicia sesión o regístrate para ver tus solicitudes.'), findsOneWidget);
     });
     ///  Tap en el botón real
-    testWidgets('tap en Login navega a /login', (tester) async {
+    testWidgets('tap en Iniciar sesión navega a /login', (tester) async {
       await pumpBig(tester, buildWidget(_unauthState, emptyPetsState()));
-      await tester.tap(find.text('Login')); // ← el ElevatedButton
+      await tester.tap(find.text('Iniciar sesión')); // ← el ElevatedButton
       await tester.pumpAndSettle();
       expect(find.text('login'), findsOneWidget);
     });
   });
 
   group('RelationshipsScreen — usuario autenticado', () {
-    testWidgets('muestra título Mis Peticiones', (tester) async {
+    testWidgets('muestra título Mis solicitudes', (tester) async {
       await pumpBig(tester, buildWidget(_userState, emptyPetsState()));
-      expect(find.text('My Requests'), findsOneWidget);
+      expect(find.text('Mis solicitudes'), findsOneWidget);
     });
 
-    testWidgets('muestra las dos pestañas', (tester) async {
+    testWidgets('muestra las dos pestañas en español', (tester) async {
       await pumpBig(tester, buildWidget(_userState, emptyPetsState()));
-      expect(find.text('Relationships'), findsOneWidget);
-      expect(find.text('Adoption Requests'), findsOneWidget);
+      expect(find.text('Relaciones'), findsOneWidget);
+      expect(find.text('Solicitudes de adopción'), findsOneWidget);
     });
 
    /// Este test abre la pestaña "Solicitudes de adopción" pero busca texto de RELACIONES
    testWidgets('pestaña adopciones muestra mensaje vacío', (tester) async {
     await pumpBig(tester, buildWidget(_userState, emptyPetsState())); // ← faltaba esto
-    await tester.tap(find.text('Adoption Requests'));
+    await tester.tap(find.text('Solicitudes de adopción'));
     await tester.pumpAndSettle();
-    expect(find.text('No adoption requests found.'), findsOneWidget);
+    expect(find.text('No se encontraron solicitudes de adopción.'), findsOneWidget);
   });
 
     testWidgets('pestaña adopciones muestra solicitud cuando hay datos', (tester) async {
@@ -135,7 +135,7 @@ void main() {
       );
       final state = emptyPetsState().copyWith(adoptionRequests: [request]);
       await pumpBig(tester, buildWidget(_userState, state));
-      await tester.tap(find.text('Adoption Requests'));
+      await tester.tap(find.text('Solicitudes de adopción'));
       await tester.pumpAndSettle();
       expect(find.text('Firulais'), findsOneWidget);
       expect(find.text('PENDIENTE'), findsOneWidget);
@@ -143,9 +143,9 @@ void main() {
   });
 
   group('RelationshipsScreen — admin', () {
-    testWidgets('muestra título Gestionar Peticiones', (tester) async {
+    testWidgets('muestra título Gestionar solicitudes', (tester) async {
       await pumpBig(tester, buildWidget(_adminState, emptyPetsState()));
-      expect(find.text('Manage Requests'), findsOneWidget);
+      expect(find.text('Gestionar solicitudes'), findsOneWidget);
     });
 
   
@@ -163,10 +163,10 @@ void main() {
       );
       final state = emptyPetsState().copyWith(adoptionRequests: [request]);
       await pumpBig(tester, buildWidget(_adminState, state));
-      await tester.tap(find.text('Adoption Requests'));
+      await tester.tap(find.text('Solicitudes de adopción'));
       await tester.pumpAndSettle();
-      expect(find.text('Approve'), findsOneWidget);
-      expect(find.text('Reject'), findsOneWidget);
+      expect(find.text('Aprobar'), findsOneWidget);
+      expect(find.text('Rechazar'), findsOneWidget);
     });
   });
 }

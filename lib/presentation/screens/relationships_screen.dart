@@ -47,7 +47,7 @@ class RelationshipsScreen extends StatelessWidget {
                     const Icon(Icons.lock_outline, size: 64, color: _purple),
                     const SizedBox(height: 16),
                     const Text(
-                      'You need to log in!',
+                      '¡Necesitas iniciar sesión!',
                       style: TextStyle(
                         fontSize: 22,
                         fontFamily: 'MilkyVintage',
@@ -56,7 +56,7 @@ class RelationshipsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      'Sign in or register to view your requests.',
+                      'Inicia sesión o regístrate para ver tus solicitudes.',
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.grey),
                     ),
@@ -75,7 +75,7 @@ class RelationshipsScreen extends StatelessWidget {
                       ),
                       onPressed: () => context.go('/login'),
                       icon: const Icon(Icons.login),
-                      label: const Text('Login'),
+                      label: const Text('Iniciar sesión'),
                     ),
                   ],
                 ),
@@ -111,7 +111,7 @@ class RelationshipsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              isAdmin ? 'Manage Requests' : 'My Requests',
+              isAdmin ? 'Gestionar solicitudes' : 'Mis solicitudes',
               style: const TextStyle(
                 fontSize: 32,
                 fontFamily: 'MilkyVintage',
@@ -124,8 +124,8 @@ class RelationshipsScreen extends StatelessWidget {
               unselectedLabelColor: Colors.grey,
               indicatorColor: _purple,
               tabs: [
-                Tab(text: 'Relationships'),
-                Tab(text: 'Adoption Requests'),
+                Tab(text: 'Relaciones'),
+                Tab(text: 'Solicitudes de adopción'),
               ],
             ),
             Expanded(
@@ -173,7 +173,7 @@ class _RelacionesTab extends StatelessWidget {
         }
         final relations = state.relations;
         if (relations.isEmpty) {
-          return const Center(child: Text('No relationships found.'));
+          return const Center(child: Text('No se encontraron relaciones.'));
         }
         return ListView.builder(
           padding: const EdgeInsets.all(16),
@@ -243,7 +243,7 @@ class _RelationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = relation.active ? Colors.green : Colors.orange;
-    final label = relation.active ? 'Active' : 'Pending review';
+    final label = relation.active ? 'Activa' : 'Pendiente de revisión';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -281,13 +281,13 @@ class _RelationCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'From: ${_fmt(relation.startDate)}'
+                  'Desde: ${_fmt(relation.startDate)}'
                   '${relation.endDate != null ? ' → ${_fmt(relation.endDate!)}' : ''}',
                   style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
                 if (isAdmin)
                   Text(
-                    'User ID: ${relation.userId}',
+                    'ID de usuario: ${relation.userId}',
                     style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                   ),
                 Container(
@@ -363,7 +363,7 @@ class _AdopcionesTab extends StatelessWidget {
         final requests = state.adoptionRequests;
 
         if (requests.isEmpty) {
-          return const Center(child: Text('No adoption requests found.'));
+          return const Center(child: Text('No se encontraron solicitudes de adopción.'));
         }
 
         return ListView.builder(
@@ -483,29 +483,29 @@ class _AdoptionCard extends StatelessWidget {
           ),
           const SizedBox(height: 10),
 
-          _row('City', request.city),
-          _row('Address', request.address),
-          _row('Housing type', request.housingType),
-          _row('Hours alone per day', '${request.hoursAlonePerDay}h'),
-          _row('Reason', request.reasonForAdoption),
+          _row('Ciudad', request.city),
+          _row('Dirección', request.address),
+          _row('Tipo de vivienda', request.housingType),
+          _row('Horas sola al día', '${request.hoursAlonePerDay}h'),
+          _row('Motivo', request.reasonForAdoption),
 
           const SizedBox(height: 6),
 
           Wrap(
             spacing: 8,
             children: [
-              _chip('Garden', request.hasGarden),
-              _chip('Other pets', request.hasOtherPets),
-              _chip('Children', request.hasChildren),
-              _chip('Experience', request.experienceWithPets),
-              _chip('Follow-up', request.agreesToFollowUp),
+              _chip('Jardín', request.hasGarden),
+              _chip('Otros animales', request.hasOtherPets),
+              _chip('Niños', request.hasChildren),
+              _chip('Experiencia', request.experienceWithPets),
+              _chip('Seguimiento', request.agreesToFollowUp),
             ],
           ),
 
           const SizedBox(height: 6),
 
           Text(
-            'Submitted: ${request.submittedAt.day.toString().padLeft(2, '0')}/'
+            'Enviada: ${request.submittedAt.day.toString().padLeft(2, '0')}/'
             '${request.submittedAt.month.toString().padLeft(2, '0')}/'
             '${request.submittedAt.year}',
             style: TextStyle(fontSize: 11, color: Colors.grey[500]),
@@ -520,7 +520,7 @@ class _AdoptionCard extends StatelessWidget {
                   TextButton(
                     onPressed: () => _cambiarStatus(context, 'PENDIENTE'),
                     child: const Text(
-                      'Pending',
+                      'Pendiente',
                       style: TextStyle(color: Colors.orange),
                     ),
                   ),
@@ -531,7 +531,7 @@ class _AdoptionCard extends StatelessWidget {
                       foregroundColor: Colors.white,
                     ),
                     onPressed: () => _cambiarStatus(context, 'APROBADA'),
-                    child: const Text('Approve'),
+                    child: const Text('Aprobar'),
                   ),
                 const SizedBox(width: 8),
                 if (request.status != 'DENEGADA')
@@ -541,7 +541,7 @@ class _AdoptionCard extends StatelessWidget {
                       foregroundColor: Colors.white,
                     ),
                     onPressed: () => _cambiarStatus(context, 'DENEGADA'),
-                    child: const Text('Reject'),
+                    child: const Text('Rechazar'),
                   ),
               ],
             ),

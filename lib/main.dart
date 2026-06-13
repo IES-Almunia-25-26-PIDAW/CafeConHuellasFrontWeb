@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp.router(
-        title: 'Flutter Demo',
+        title: 'cafeconhuellas_front',
         debugShowCheckedModeBanner: false,
         theme: AppTheme().getTheme(),
         routerConfig: appRouter,
