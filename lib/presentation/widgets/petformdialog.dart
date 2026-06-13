@@ -42,6 +42,7 @@ class _PetFormDialogState extends State<PetFormDialog> {
   late String _imageUrl;
 
   Uint8List? _imageBytes;
+  //ignore: unused_field
   String? _imageFileName;
   bool _uploadingImage = false;
   final bool _saving = false;
