@@ -84,7 +84,11 @@ cafeconhuellas-front/
 │   │   └── app_theme.dart           # ThemeData global de la app
 │   ├── models/
 │   │   ├── event.dart               # Modelo Event
-│   │   ├── pet.dart                 # Modelo Pet + enum Species
+│   │   ├── pet.dart                 # Modelo Pet
+│   │   ├── contact.dart             # Modelo de contacto
+│   │   ├── adoptionForm.dart        # Formulario de adopción
+│   │   ├── donation.dart            # Modelo de una donación
+│   │   ├── userPetRelationship.dart # Relación usuario mascota
 │   │   └── user.dart                # Modelos User y UserWithoutPassword
 │   ├── presentation/
 │   │   ├── bloc/
@@ -95,29 +99,36 @@ cafeconhuellas-front/
 │   │   │   ├── pet_event.dart       # Eventos: LoadPets, LoadEvents, FilterSpecies, ToggleEmergency
 │   │   │   └── pet_state.dart       # Estado: pets, events, filtros, isLoading
 │   │   ├── screens/
-│   │   │   ├── contactus.dart       # Pantalla de contacto
-│   │   │   ├── donations.dart       # Pantalla de donaciones
-│   │   │   ├── events.dart          # Pantalla de eventos
-│   │   │   ├── helpus_screen.dart   # Pantalla de cómo ayudar
-│   │   │   ├── home_screen.dart     # Pantalla de inicio
+│   │   │   ├── contactus.dart           # Pantalla de contacto
+│   │   │   ├── donationFormScreen.dart  # Formulario de donación
+│   │   │   ├── donations.dart           # Pantalla de donaciones
+│   │   │   ├── donatios_screen.dart     # Listado de donaciones del usuario
+│   │   │   ├── events.dart              # Pantalla de eventos
+│   │   │   ├── helpus_screen.dart       # Pantalla de cómo ayudar
+│   │   │   ├── home_screen.dart         # Pantalla de inicio
 │   │   │   ├── information_screen.dart  # Quiénes somos
-│   │   │   ├── login_screen.dart    # Pantalla de login
-│   │   │   ├── petdetail.dart       # Detalle de mascota
-│   │   │   ├── pets_screen.dart     # Listado de mascotas
-│   │   │   ├── profile_screen.dart  # Perfil del usuario
-│   │   │   ├── register_screen.dart # Registro de usuario
-│   │   │   └── session_expired_screen.dart  # Sesión expirada
+│   │   │   ├── login_screen.dart        # Pantalla de login
+│   │   │   ├── panel_screen.dart        # Panel de administración
+│   │   │   ├── petdetail.dart           # Detalle de mascota
+│   │   │   ├── pets_screen.dart         # Listado de mascotas
+│   │   │   ├── profile_sreen.dart       # Perfil del usuario
+│   │   │   ├── register_screen.dart     # Registro de usuario
+│   │   │   ├── relationships_screen.dart # Relaciones usuario-mascota
+│   │   │   └── session_expired_screen.dart # Sesión expirada
 │   │   └── widgets/
 │   │       ├── actionitem.dart      # Item de "qué hacemos" en Home
 │   │       ├── app_footer.dart      # Footer común
 │   │       ├── app_header.dart      # Header/navbar común
 │   │       ├── eventcard.dart       # Tarjeta de evento
+│   │       ├── eventformdialog.dart # Diálogo de formulario de evento
 │   │       ├── mapWidget.dart       # Widget de mapa (Google Maps)
 │   │       └── petcard.dart         # Tarjeta de mascota
+│   │       └── petformdialog.dart   # Diálogo de formulario de mascota
 │   ├── theme/
 │   │   └── AppColors.dart           # Paleta de colores centralizada
 │   └── utils/
-│       └── api_conector.dart        # Cliente HTTP centralizado
+│       ├── api_conector.dart        # Cliente HTTP centralizado
+│       └── globals.dart             # Variables y utilidades globales
 ├── assets/
 │   └── images/                      # Banners, iconos, imágenes de secciones
 ├── Dockerfile
@@ -144,6 +155,10 @@ cafeconhuellas-front/
 | `/login` | Iniciar sesión |
 | `/register` | Registro |
 | `/profile` | Perfil de usuario |
+| `/panel` | Panel de administración |
+| `/panel/donations` | Donaciones del usuario |
+| `/panel/relationships` | Relaciones usuario-mascota |
+| `/adopcion/formulario/:token` | Formulario de adopción (con token seguro) |
 
 ---
 
@@ -152,7 +167,7 @@ cafeconhuellas-front/
 La app usa **BLoC** como gestión de estado:
 
 - **`AuthBloc`** — Maneja login, logout y sesión del usuario. Al hacer login obtiene el token JWT y carga el perfil del usuario desde `/users/me`.
-- **`PetsBloc`** — Carga mascotas y eventos desde la API. Soporta filtrado por especie y por emergencia.
+- **`PetsBloc`** — Carga mascotas y eventos desde la API. Soporta filtrado por categoría y por emergencia.
 
 La comunicación con el backend se centraliza en `ApiConector`, que lee la `BACKEND_URL` inyectada en tiempo de compilación.
 
@@ -191,8 +206,8 @@ Gestiona la carga y filtrado de mascotas y eventos. Extiende `Bloc<PetsEvent, Pe
 |--------|----------|
 | `LoadPets` | Carga todas las mascotas desde la API y las guarda internamente |
 | `LoadEvents` | Carga todos los eventos desde la API |
-| `FilterSpecies(species)` | Filtra las mascotas por especie (`Perro` / `Gato` / todas) |
-| `ToggleEmergency` | Activa/desactiva el filtro para mostrar solo mascotas en emergencia |
+| `FilterSpecies(category)` | Filtra las mascotas por categoría (`Dog` / `Cat` / todas) |
+| `ToggleEmergency` | Activa/desactiva el filtro para mostrar solo mascotas en urgencia |
 
 Los filtros se aplican siempre sobre la lista completa `_allPets`, por lo que cambiar un filtro no descarta los datos originales.
 
@@ -208,18 +223,18 @@ Representa una mascota de la protectora. Los campos más relevantes:
 |-------|------|-------------|
 | `id` | `int` | Identificador único |
 | `name` | `String` | Nombre de la mascota |
-| `species` | `Species` | Enum: `perro` o `gato` |
+| `category` | `String` | Especie de la mascota (ej. `Dog`, `Cat`) |
 | `breed` | `String` | Raza |
 | `age` | `int` | Edad en años |
 | `weight` | `double` | Peso en kg |
-| `adopted` | `bool` | Si ya ha sido adoptada |
-| `emergency` | `bool` | Si es un caso urgente |
+| `adoptionStatus` | `String` | Estado de adopción (`available`, `pending`, `adopted`) |
+| `urgentAdoption` | `bool` | Si es un caso urgente |
 | `isPpp` | `bool` | Si es raza potencialmente peligrosa |
 | `neutered` | `bool` | Si está castrada |
 | `imageUrl` | `String` | URL de la imagen principal |
 | `imageUrls` | `List<String>` | Galería de imágenes |
 
-El método `Pet.fromJson()` es tolerante: acepta tanto `imageUrl` como `image_url`, `isAdopted` como `adopted`, etc., para adaptarse a variaciones en la respuesta de la API.
+El método `Pet.fromJson()` es tolerante: acepta tanto `imageUrl` como `image_url`, `category` como `species`, `urgentAdoption` como `isUrgentAdoption`, etc., para adaptarse a variaciones en la respuesta de la API.
 
 ---
 
@@ -246,7 +261,7 @@ Campos comunes:
 
 ### 🌐 Navegación (`GoRouter`)
 
-**Archivo:** `lib/router/app_router.dart`
+**Archivo:** `lib/config/app_router.dart`
 
 La app usa **GoRouter** para la navegación declarativa. La ruta `/pets/:id` merece especial atención: recibe el `id` por path y, opcionalmente, el objeto `Pet` completo por `state.extra` para evitar una llamada extra a la API si ya se tiene la mascota cargada en memoria.
 
@@ -261,7 +276,7 @@ return PetDetailScreen(petId: petId, pet: selectedPet);
 
 ### 🎨 Tema visual (`AppTheme` y `AppColors`)
 
-**Archivos:** `lib/theme/AppTheme.dart` / `lib/theme/AppColors.dart`
+**Archivos:** `lib/config/app_theme.dart` / `lib/theme/AppColors.dart`
 
 La app tiene una paleta de colores centralizada en `AppColors`, con tonos morados, vainilla y crema que definen la identidad visual de la protectora. `AppTheme` configura el `ThemeData` global de Flutter usando Material 3, con:
 
@@ -295,6 +310,7 @@ Servicios disponibles tras levantar ambos:
 | 📧 Mailpit (emails) | http://localhost:8025 |
 
 ---
+
 ## 🐳 Dockerización del Frontend
 
 ### 📦 Dockerfile
@@ -404,13 +420,15 @@ Docker realiza los siguientes pasos:
 3. Crea el contenedor.
 4. Inicia el servidor Nginx.
 5. Expone la aplicación en `http://localhost:4200`.
+
 ---
+
 ## 📚 Documentación del código
 
 El código fuente está documentado con comentarios `///` compatibles con **dartdoc**.
 
 > Esta sección es solo para **desarrolladores** que quieran contribuir al proyecto.
-> Los usuarios finales no necesitan hacer nada, la app se levanta con Docker como 
+> Los usuarios finales no necesitan hacer nada, la app se levanta con Docker como
 > se indica al inicio de este README.
 
 ### Generar localmente (solo para desarrolladores)
@@ -435,6 +453,7 @@ dhttpd --path doc/api
 O abre directamente `doc/api/index.html` con VS Code + extensión **Live Server**.
 
 > La carpeta `doc/` está en `.gitignore` y no se sube al repositorio.
+
 ---
 
 ## 🧪 Testing
@@ -456,7 +475,7 @@ Prueban la lógica de negocio y los modelos de forma aislada, sin interfaz ni de
 - `adoptionform_test.dart` — validación del formulario de adopción
 - `donation_test.dart` — modelo de donación
 - `event_test.dart` — modelo de evento
-- `pet_test.dart` — modelo `Pet`, incluyendo campos alternativos de la API (`imageUrl` / `image_url`, `adopted` / `isAdopted`, etc.)
+- `pet_test.dart` — modelo `Pet`, incluyendo campos alternativos de la API (`imageUrl` / `image_url`, `category` / `species`, `urgentAdoption` / `isUrgentAdoption`, etc.)
 - `user_test.dart` — modelos `User` y `UserWithoutPassword`
 - `userPetRelationship_test.dart` — relación entre usuario y mascota
 
@@ -522,6 +541,8 @@ test/
     └── widgets_test.dart
 ```
 
+---
+
 ## 🧪 Calidad de código
 
 > Esta sección es para **desarrolladores** que quieran contribuir al proyecto.
@@ -553,6 +574,7 @@ flutter test --coverage
 
 El informe se genera en `coverage/lcov.info`.
 
+---
 
 ## ⚠️ Consideraciones importantes
 
@@ -565,6 +587,7 @@ docker compose up -d --build
 * El frontend depende del backend, por lo que este debe estar previamente en ejecución.
 
 * La red Docker debe existir previamente, ya que se define como externa.
+
 ---
 
 ## ❓ Problemas frecuentes
